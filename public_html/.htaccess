@@ -1,0 +1,7 @@
+# index.php rewrite
+# many thanks to: https://stackoverflow.com/a/6098033
+<IfModule mod_rewrite.c>
+    RewriteEngine on
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^(.*)$ /index.php [NC,QSA,L]
+</IfModule>
