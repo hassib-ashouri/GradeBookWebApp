@@ -5,14 +5,18 @@ class IndexController extends MY_Controller
 {
     public function index()
     {
-        echo "Hello world!";
+        redirect("IndexController/loginView");
     }
 
     public function loginView($errorMessage = "")
     {
-        echo "<div>display login screen</div>";
-        echo "<div>and allow for some sort of error message</div>";
-        echo "<div>" . urldecode($errorMessage) . "</div>";
+        $login = array("errorMessage" => urldecode($errorMessage));
+
+        $header["title"] = "Login - GradeBook";
+
+        $data["header"] = $this->load->view("header", $header, true);
+        $data["mainContent"] = $this->load->view("login", $login, true);
+        $this->load->view("main", $data);
     }
 
     public function login()
