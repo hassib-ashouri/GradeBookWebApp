@@ -88,6 +88,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  *      Provides support for UTF-8 environments
  * @property CI_Security $security
  *      Security Class, xss, csrf, etc...
+ * 
+ * @property Password_model password_model
  */
 class MY_Controller extends CI_Controller
 {
