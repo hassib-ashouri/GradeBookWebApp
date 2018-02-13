@@ -34,7 +34,11 @@ class IndexController extends MY_Controller
         if (!$passwordIsValid) {
             redirect("IndexController/loginView/Incorrect Email or Password");
         } else {
-            // load proper view
+            if ($this->password_model->isProfessor()) {
+                // load professor view
+            } else {
+                // load student view
+            }
         }
     }
 }

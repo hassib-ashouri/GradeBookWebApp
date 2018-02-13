@@ -2,6 +2,11 @@
 
 class Password_model extends MY_Model
 {
+    /**
+     * @var $professor bool
+     */
+    private $professor;
+
     // model is in charge of crud: create, read, update, delete
     public function __construct()
     {
@@ -22,9 +27,21 @@ class Password_model extends MY_Model
 
         // do something in database to retrieve hashed password of correct user
         // $hashed = "";
+        // also note whether specified user is a professor of student
+        // or just is a professor for simplicity's sake
+        $this->professor = true;
 
         // return password_verify($password, $hashed);
 
         return true;
+    }
+
+    /**
+     * Checks if the tested user is a professor
+     * @return bool
+     */
+    public function isProfessor()
+    {
+        return $this->professor;
     }
 }
