@@ -4,6 +4,7 @@ class Assignment
 {
     public $student_id;
     public $assignment_id;
+    public $assignment_name;
     public $points;
     public $max_points;
     public $graded;

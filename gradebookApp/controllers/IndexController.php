@@ -55,6 +55,34 @@ class IndexController extends MY_Controller
         }
     }
 
+    public function studentTableTest($studentId = "000000001")
+    {
+        $tableName = "class_29506_SE-131_table";
+
+        $this->load->model("class_model");
+        $this->class_model->loadTable($tableName, $studentId);
+        $student = $this->class_model->getStudent($studentId);
+        if (!is_null($student)) {
+            $assignments = $student->getAssignments();
+
+            echo "<h1>Grades for $student->name_first $student->name_last</h1>";
+            echo "<table>";
+            echo "<tr><th>Name</th><th>Score</th><th>Out Of</th></tr>";
+            foreach ($assignments as $assignment) {
+                $gradedPoints = ($assignment->graded) ? $assignment->points : "N/A";
+
+                echo "<tr>";
+                echo "<td>$assignment->assignment_name</td>";
+                echo "<td>$gradedPoints</td>";
+                echo "<td>$assignment->max_points</td>";
+                echo "</tr>";
+            }
+            echo "</table>";
+        } else {
+            echo "<h2>No such student exists</h2>";
+        }
+    }
+
     public function generateNewStudentId()
     {
         $row = $this->db->get("student_list")->last_row("array");

@@ -46,4 +46,9 @@ class Student
             return 100;
         }
     }
+
+    public function getAssignments()
+    {
+        return $this->assignments;
+    }
 }
