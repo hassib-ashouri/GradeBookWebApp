@@ -20,18 +20,16 @@ if (!isset($formAction)) {
     <div><?= $errorMessage ?></div>
 <?php endif; ?>
 <form action="<?= $formAction ?>" method="post">
-    <?php if (strlen($userName) > 0 && strlen($userId) > 0): ?>
-        <h2>Welcome</h2>
-        <div><?= $userName ?></div>
-        <input type="hidden" name="username" value="<?= $userId ?>">
-        <div>
-            <input type="password" name="password" placeholder="Password">
-        </div>
-    <?php else: ?>
-        <div>
-            <input type="text" name="username" placeholder="ID">
-        </div>
-    <?php endif; ?>
+    <h2>Welcome</h2>
+    <div><?= $userName ?></div>
+    <div>As this is your first time here please create your password</div>
+    <input type="hidden" name="username" value="<?= $userId ?>">
+    <div>
+        <input type="password" name="password" placeholder="Type Your Password">
+    </div>
+    <div>
+        <input type="password" name="passwordConfirm" placeholder="Type it Again">
+    </div>
     <div>
         <button type="submit"><?= $buttonText ?></button>
     </div>
