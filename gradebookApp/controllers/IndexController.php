@@ -40,4 +40,12 @@ class IndexController extends MY_Controller
             ->add_key("id", true)
             ->create_table($tableName);
     }
+
+    public function generateNewStudentId()
+    {
+        $query = $this->db->get("student_list");
+        $row = $query->last_row("array");
+        $new = intval($row["student_id"]) + 1;
+        echo sprintf("%'09s", $new);
+    }
 }
