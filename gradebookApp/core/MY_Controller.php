@@ -90,6 +90,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  *      Security Class, xss, csrf, etc...
  * 
  * @property Password_model password_model
+ * @property Class_list_model class_list_model
  */
 class MY_Controller extends CI_Controller
 {
