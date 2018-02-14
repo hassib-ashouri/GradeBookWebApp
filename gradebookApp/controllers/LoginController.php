@@ -5,15 +5,15 @@ class LoginController extends MY_Controller
 {
     public function loginView($userName = "", $userId = "")
     {
-        $this->loginErrorView("", $userName, $userId);
-    }
-
-    public function createPasswordView($userName = "", $userId = "")
-    {
-        $this->createPasswordErrorView("", $userName, $userId);
+        $this->_loginView("", $userName, $userId);
     }
 
     public function loginErrorView($errorMessage, $userName = "", $userId = "")
+    {
+        $this->_loginView($errorMessage, $userName, $userId);
+    }
+
+    private function _loginView($errorMessage, $userName, $userId)
     {
         $login = array(
             "errorMessage" => urldecode($errorMessage),
@@ -35,7 +35,17 @@ class LoginController extends MY_Controller
         $this->load->view("main", $data);
     }
 
+    public function createPasswordView($userName = "", $userId = "")
+    {
+        $this->_createPasswordView("", $userName, $userId);
+    }
+
     public function createPasswordErrorView($errorMessage, $userName = "", $userId = "")
+    {
+        $this->_createPasswordView($errorMessage, $userName, $userId);
+    }
+
+    private function _createPasswordView($errorMessage, $userName, $userId)
     {
         $login = array(
             "errorMessage" => urldecode($errorMessage),
@@ -50,6 +60,30 @@ class LoginController extends MY_Controller
         $data["header"] = $this->load->view("header", $header, true);
         $data["mainContent"] = $this->load->view("createPassword", $login, true);
         $this->load->view("main", $data);
+    }
+
+    public function loginUser()
+    {
+        $post = $this->input->post();
+        $userIsValid = false;
+
+        if (isset($post["username"])) {
+            $user = $post["username"];
+            $this->load->model("password_model");
+            $userIsValid = $this->password_model->verifyUser($user);
+        }
+        if (!$userIsValid) {
+            $view = "loginErrorView";
+            $errorMessage = "No Such ID Exists";
+            redirect(sprintf("LoginController/%s/%s",
+                $view, $errorMessage));
+        } else {
+            $view = ($this->password_model->hasPassword()) ? "loginView" : "createPasswordView";
+            $userName = $this->password_model->getUserName();
+            $userId = $this->password_model->getUserId();
+            redirect(sprintf("LoginController/%s/%s/%s",
+                $view, $userName, $userId));
+        }
     }
 
     public function loginPassword()
@@ -78,30 +112,6 @@ class LoginController extends MY_Controller
             } else {
                 // load student view
             }
-        }
-    }
-
-    public function loginUser()
-    {
-        $post = $this->input->post();
-        $userIsValid = false;
-
-        if (isset($post["username"])) {
-            $user = $post["username"];
-            $this->load->model("password_model");
-            $userIsValid = $this->password_model->verifyUser($user);
-        }
-        if (!$userIsValid) {
-            $view = "loginErrorView";
-            $errorMessage = "No Such ID Exists";
-            redirect(sprintf("LoginController/%s/%s",
-                $view, $errorMessage));
-        } else {
-            $view = ($this->password_model->hasPassword()) ? "loginView" : "createPasswordView";
-            $userName = $this->password_model->getUserName();
-            $userId = $this->password_model->getUserId();
-            redirect(sprintf("LoginController/%s/%s/%s",
-                $view, $userName, $userId));
         }
     }
 
