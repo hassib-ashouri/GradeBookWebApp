@@ -41,10 +41,23 @@ class IndexController extends MY_Controller
             ->create_table($tableName);
     }
 
+    public function classTableTest()
+    {
+        $tableName = "class_29506_SE-131_table";
+
+        $this->load->model("class_model");
+        $this->class_model->loadTable($tableName);
+        $students = $this->class_model->getStudents();
+
+        foreach ($students as $student) {
+            $grade = $student->getGrade();
+            echo "<pre>$grade% - $student</pre>";
+        }
+    }
+
     public function generateNewStudentId()
     {
-        $query = $this->db->get("student_list");
-        $row = $query->last_row("array");
+        $row = $this->db->get("student_list")->last_row("array");
         $new = intval($row["student_id"]) + 1;
         echo sprintf("%'09s", $new);
     }
