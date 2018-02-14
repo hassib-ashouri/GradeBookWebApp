@@ -9,6 +9,8 @@ class Student
      * @var Assignment[]
      */
     private $assignments = array();
+    private $points;
+    private $maxPoints;
 
     public function __set($name, $value)
     {
@@ -31,19 +33,51 @@ class Student
 
     public function getGrade()
     {
-        $points = 0;
-        $maxPoints = 0;
-        foreach ($this->assignments as $assignment) {
-            if ($assignment->graded) {
-                $points += intval($assignment->points);
-                $maxPoints += intval($assignment->max_points);
-            }
+        if (!isset($this->points) || !isset($this->maxPoints)) {
+            $this->_calculatePoints();
         }
 
-        if ($maxPoints > 0) {
-            return round($points / $maxPoints * 100, 2);
+        return $this->_getGrade();
+    }
+
+    private function _calculatePoints()
+    {
+        $this->points = 0;
+        $this->maxPoints = 0;
+        foreach ($this->assignments as $assignment) {
+            if ($assignment->graded) {
+                $this->points += intval($assignment->points);
+                $this->maxPoints += intval($assignment->max_points);
+            }
+        }
+    }
+
+    private function _getGrade()
+    {
+        if ($this->maxPoints > 0) {
+            return round($this->points / $this->maxPoints * 100, 2);
         } else {
             return 100;
+        }
+    }
+
+    public function getPoints()
+    {
+        if (isset($this->points)) {
+            return $this->points;
+        } else {
+            $this->_calculatePoints();
+            return $this->points;
+        }
+    }
+
+    public function getMaxPoints()
+    {
+        if (isset($this->maxPoints)) {
+            return $this->maxPoints;
+        } else {
+            $this->_calculatePoints();
+            return $this->maxPoints;
         }
     }
 

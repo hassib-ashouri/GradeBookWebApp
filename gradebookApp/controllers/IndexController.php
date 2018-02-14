@@ -77,7 +77,13 @@ class IndexController extends MY_Controller
                 echo "<td>$assignment->max_points</td>";
                 echo "</tr>";
             }
+            $points = $student->getPoints();
+            $maxPoints = $student->getMaxPoints();
+            $percent = $student->getGrade();
+
+            echo "<tr><td><b>Total</b></td><td>$points</td><td>$maxPoints</td></tr>";
             echo "</table>";
+            echo "<div><b>Grade: $percent%</b></div>";
         } else {
             echo "<h2>No such student exists</h2>";
         }
