@@ -47,7 +47,8 @@ class IndexController extends MY_Controller
 
         $this->load->model("class_model");
         $this->class_model->loadTable($tableName);
-        $students = $this->class_model->getStudents();
+        $classObj = $this->class_model->getClass();
+        $students = $classObj->getStudents();
 
         foreach ($students as $student) {
             $grade = $student->getGrade();
@@ -61,7 +62,8 @@ class IndexController extends MY_Controller
 
         $this->load->model("class_model");
         $this->class_model->loadTable($tableName, $studentId);
-        $student = $this->class_model->getStudent($studentId);
+        $classObj = $this->class_model->getClass();
+        $student = $classObj->getStudent($studentId);
         if (!is_null($student)) {
             $assignments = $student->getAssignments();
 

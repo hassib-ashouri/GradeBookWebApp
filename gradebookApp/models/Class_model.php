@@ -3,13 +3,9 @@
 class Class_model extends MY_Model
 {
     /**
-     * @var Assignment[]
+     * @var ClassObj
      */
-    private $assignments;
-    /**
-     * @var Student[]
-     */
-    private $students;
+    private $classObj;
 
     // model is in charge of crud: create, read, update, delete
     public function __construct()
@@ -18,8 +14,14 @@ class Class_model extends MY_Model
 
         require_once "Assignment.php";
         require_once "Student.php";
+        require_once "ClassObj.php";
     }
 
+    /**
+     * Loads a table and creates a classObj out of it
+     * @param $tableName
+     * @param null $studentId
+     */
     public function loadTable($tableName, $studentId = null)
     {
         $al = "assignment_list";
@@ -40,29 +42,30 @@ class Class_model extends MY_Model
         // needed for the other two to behave
         $query->result_array();
 
-        $this->assignments = $query->result("Assignment");
-        $this->students = $query->result("Student");
-        $this->students = array_unique($this->students, SORT_STRING);
+        /**
+         * @var Assignment[] $assignments
+         */
+        $assignments = $query->result("Assignment");
+        /**
+         * @var Student[] $students
+         */
+        $students = $query->result("Student");
+        $students = array_unique($students, SORT_STRING);
 
-        foreach ($this->students as $student) {
-            foreach ($this->assignments as $assignment) {
+        foreach ($students as $student) {
+            foreach ($assignments as $assignment) {
                 $student->addAssignment($assignment);
             }
         }
+
+        $this->classObj = new ClassObj($assignments, $students);
     }
 
-    public function getStudents()
+    /**
+     * @return ClassObj
+     */
+    public function getClass()
     {
-        return $this->students;
-    }
-
-    public function getStudent($studentId)
-    {
-        foreach ($this->students as $student) {
-            if ($studentId == $student->student_id) {
-                return $student;
-            }
-        }
-        return null;
+        return $this->classObj;
     }
 }
