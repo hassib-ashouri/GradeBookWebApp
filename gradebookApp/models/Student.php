@@ -31,6 +31,10 @@ class Student
         }
     }
 
+    /**
+     * Gets the grade of the student (0-100)
+     * @return number
+     */
     public function getGrade()
     {
         if (!isset($this->points) || !isset($this->maxPoints)) {
@@ -40,6 +44,9 @@ class Student
         return $this->_getGrade();
     }
 
+    /**
+     * Calculates the points and maxPoints for the student
+     */
     private function _calculatePoints()
     {
         $this->points = 0;
@@ -52,6 +59,10 @@ class Student
         }
     }
 
+    /**
+     * Gets the grade of the student (0-100)
+     * @return number
+     */
     private function _getGrade()
     {
         if ($this->maxPoints > 0) {
@@ -61,6 +72,9 @@ class Student
         }
     }
 
+    /**
+     * @return number
+     */
     public function getPoints()
     {
         if (isset($this->points)) {
@@ -71,6 +85,9 @@ class Student
         }
     }
 
+    /**
+     * @return number
+     */
     public function getMaxPoints()
     {
         if (isset($this->maxPoints)) {

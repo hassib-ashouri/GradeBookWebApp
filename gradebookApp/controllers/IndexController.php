@@ -25,11 +25,11 @@ class IndexController extends MY_Controller
             "id" => array("type" => "int", "unsigned" => true, "auto_increment" => true),
             "student_id" => array("type" => "tinytext"),
             "assignment_id" => array("type" => "int"),
-            "points" => array("type" => "int"),
+            "points" => array("type" => "decimal", "constraint" => "8,3"),
         );
 
-        $classId = "29506";
-        $className = "SE 131";
+        $classId = "29507";
+        $className = "SE 132";
         $className = preg_replace("/\s/", "-", $className);
         $className = preg_replace("/[^A-Za-z\-\d]/", "", $className);
         $tableName = sprintf("class_%s_%s_table", $classId, $className);
