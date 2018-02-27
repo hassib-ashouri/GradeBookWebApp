@@ -1,6 +1,6 @@
 <?php
 
-class ClassObj
+class ClassObj implements GradeStatistics
 {
     public $class_id;
     public $professor_id;
@@ -26,6 +26,10 @@ class ClassObj
      */
     public function __construct($assignments = array(), $students = array())
     {
+        require_once "Assignment.php";
+        require_once "Student.php";
+        require_once "GradeStatistics.php";
+
         $this->assignments = $assignments;
         $this->students = $students;
     }
@@ -66,5 +70,41 @@ class ClassObj
             }
         }
         return null;
+    }
+
+    /**
+     * Gets the lowest of the grades
+     * @return number
+     */
+    public function getLowGrade()
+    {
+        // TODO: Implement getLowGrade() method.
+    }
+
+    /**
+     * Gets the highest of the grades
+     * @return number
+     */
+    public function getHighGrade()
+    {
+        // TODO: Implement getHighGrade() method.
+    }
+
+    /**
+     * Gets the mean of the grades
+     * @return number
+     */
+    public function getMeanGrade()
+    {
+        // TODO: Implement getMeanGrade() method.
+    }
+
+    /**
+     * Gets the standard deviation of the grades
+     * @return number
+     */
+    public function getStdDevGrade()
+    {
+        // TODO: Implement getStdDevGrade() method.
     }
 }
