@@ -1,5 +1,7 @@
 <?php
 
+require_once "GradeStatistics.php";
+
 class ClassObj implements GradeStatistics
 {
     public $class_id;
@@ -28,7 +30,6 @@ class ClassObj implements GradeStatistics
     {
         require_once "Assignment.php";
         require_once "Student.php";
-        require_once "GradeStatistics.php";
 
         $this->assignments = $assignments;
         $this->students = $students;
