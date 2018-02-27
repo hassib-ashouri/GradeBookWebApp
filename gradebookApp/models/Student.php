@@ -53,8 +53,8 @@ class Student
         $this->maxPoints = 0;
         foreach ($this->assignments as $assignment) {
             if ($assignment->graded) {
-                $this->points += intval($assignment->points);
-                $this->maxPoints += intval($assignment->max_points);
+                $this->points += +$assignment->points;
+                $this->maxPoints += +$assignment->max_points;
             }
         }
     }
