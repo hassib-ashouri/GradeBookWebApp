@@ -30,9 +30,10 @@ class IndexController extends MY_Controller
 
         $classId = "29507";
         $className = "SE 132";
+        $classSection = "02";
         $className = preg_replace("/\s/", "-", $className);
         $className = preg_replace("/[^A-Za-z\-\d]/", "", $className);
-        $tableName = sprintf("class_%s_%s_table", $classId, $className);
+        $tableName = sprintf("class_%s_%s_%s_table", $classId, $className, $classSection);
 
         $this->load->dbforge();
         $this->dbforge
@@ -43,7 +44,7 @@ class IndexController extends MY_Controller
 
     public function classTableTest()
     {
-        $tableName = "class_29506_SE-131_table";
+        $tableName = "class_29506_SE-131_02_table";
 
         $this->load->model("class_model");
         $this->class_model->loadTable($tableName);
@@ -58,7 +59,7 @@ class IndexController extends MY_Controller
 
     public function studentTableTest($studentId = "000000001")
     {
-        $tableName = "class_29506_SE-131_table";
+        $tableName = "class_29506_SE-131_02_table";
 
         $this->load->model("class_model");
         $this->class_model->loadTable($tableName, $studentId);
