@@ -5,6 +5,9 @@ class ClassObj
     public $class_id;
     public $professor_id;
     public $class_name;
+    public $section;
+    public $class_title;
+    public $meeting_times;
     public $table_name;
 
     /**
