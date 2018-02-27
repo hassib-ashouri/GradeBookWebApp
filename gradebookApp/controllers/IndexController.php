@@ -52,8 +52,8 @@ class IndexController extends MY_Controller
         $students = $classObj->getStudents();
 
         foreach ($students as $student) {
-            $grade = $student->getGrade();
-            echo "<pre>$grade% - $student</pre>";
+            $grade = sprintf("%.2f%%", $student->getGrade());
+            echo "<pre>$grade - $student</pre>";
         }
     }
 
@@ -99,5 +99,26 @@ class IndexController extends MY_Controller
         $row = $this->db->get("student_list")->last_row("array");
         $new = intval($row["student_id"]) + 1;
         echo sprintf("%'09s", $new);
+    }
+
+    public function classStatsTest()
+    {
+        $tableName = "class_29506_SE-131_02_table";
+
+        $this->load->model("class_model");
+        $this->class_model->loadTable($tableName);
+        $classObj = $this->class_model->getClass();
+
+        $low = sprintf("%.2f%%", $classObj->getLowGrade());
+        $high = sprintf("%.2f%%", $classObj->getHighGrade());
+        $mean = sprintf("%.2f%%", $classObj->getMeanGrade());
+        $var = sprintf("%.2f", $classObj->getVarGrade());
+        $stdDev = sprintf("%.2f", $classObj->getStdDevGrade());
+
+        echo "<pre><b>Low</b>: <span>$low</span></pre>";
+        echo "<pre><b>High</b>: <span>$high</span></pre>";
+        echo "<pre><b>Mean</b>: <span>$mean</span></pre>";
+        echo "<pre><b>Variance</b>: <span>$var</span></pre>";
+        echo "<pre><b>Standard Deviation</b>: <span>$stdDev</span></pre>";
     }
 }

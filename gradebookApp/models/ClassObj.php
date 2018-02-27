@@ -21,6 +21,8 @@ class ClassObj implements GradeStatistics
      */
     private $students;
 
+    private $studentGrades;
+
     /**
      * ClassObj constructor.
      * @param Assignment[] $assignments
@@ -79,7 +81,8 @@ class ClassObj implements GradeStatistics
      */
     public function getLowGrade()
     {
-        // TODO: Implement getLowGrade() method.
+        $this->_setStudentGrades();
+        return min($this->studentGrades);
     }
 
     /**
@@ -88,7 +91,8 @@ class ClassObj implements GradeStatistics
      */
     public function getHighGrade()
     {
-        // TODO: Implement getHighGrade() method.
+        $this->_setStudentGrades();
+        return max($this->studentGrades);
     }
 
     /**
@@ -97,7 +101,23 @@ class ClassObj implements GradeStatistics
      */
     public function getMeanGrade()
     {
-        // TODO: Implement getMeanGrade() method.
+        $this->_setStudentGrades();
+        return array_sum($this->studentGrades) / count($this->studentGrades);
+    }
+
+    /**
+     * Gets the variance of the grades
+     * @return number
+     */
+    public function getVarGrade()
+    {
+        $this->_setStudentGrades();
+        $mean = $this->getMeanGrade();
+        $sumSquares = 0;
+        foreach ($this->studentGrades as $studentGrade) {
+            $sumSquares += pow($studentGrade - $mean, 2);
+        }
+        return $sumSquares / count($this->studentGrades);
     }
 
     /**
@@ -106,6 +126,21 @@ class ClassObj implements GradeStatistics
      */
     public function getStdDevGrade()
     {
-        // TODO: Implement getStdDevGrade() method.
+        $this->_setStudentGrades();
+        $variance = $this->getVarGrade();
+        return sqrt($variance);
+    }
+
+    /**
+     * Initializes the studentGrades array
+     */
+    private function _setStudentGrades()
+    {
+        if (!isset($this->studentGrades)) {
+            $this->studentGrades = array();
+            foreach ($this->students as $student) {
+                array_push($this->studentGrades, $student->getGrade());
+            }
+        }
     }
 }
