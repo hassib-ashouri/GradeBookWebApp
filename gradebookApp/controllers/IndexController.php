@@ -82,12 +82,12 @@ class IndexController extends MY_Controller
             foreach ($student->getGroupNames() as $groupName) {
                 $points = $student->getGroupPoints($groupName);
                 $maxPoints = $student->getGroupMaxPoints($groupName);
-                $percent = $student->getGroupGrade($groupName);
-                echo "<tr><td><b>$groupName</b></td><td>$percent%</td><td>$points / $maxPoints</td></tr>";
+                $percent = sprintf("%.2f%%", $student->getGroupGrade($groupName));
+                echo "<tr><td><b>$groupName</b></td><td>$percent</td><td>$points / $maxPoints</td></tr>";
             }
             echo "</table>";
-            $percent = $student->getGrade();
-            echo "<div><b>Grade: $percent%</b></div>";
+            $percent = sprintf("%.2f%%", $student->getGrade());
+            echo "<div><b>Grade: $percent</b></div>";
         } else {
             echo "<h2>No such student exists</h2>";
         }
