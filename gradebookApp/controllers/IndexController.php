@@ -25,7 +25,7 @@ class IndexController extends MY_Controller
             "id" => array("type" => "int", "unsigned" => true, "auto_increment" => true),
             "student_id" => array("type" => "tinytext"),
             "assignment_id" => array("type" => "int"),
-            "points" => array("type" => "decimal", "constraint" => "8,3"),
+            "points" => array("type" => "float"),
         );
 
         $classId = "29507";
