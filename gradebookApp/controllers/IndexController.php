@@ -79,12 +79,14 @@ class IndexController extends MY_Controller
                 echo "<td>$assignment->max_points</td>";
                 echo "</tr>";
             }
-            $points = $student->getPoints();
-            $maxPoints = $student->getMaxPoints();
-            $percent = $student->getGrade();
-
-            echo "<tr><td><b>Total</b></td><td>$points</td><td>$maxPoints</td></tr>";
+            foreach ($student->getGroupNames() as $groupName) {
+                $points = $student->getGroupPoints($groupName);
+                $maxPoints = $student->getGroupMaxPoints($groupName);
+                $percent = $student->getGroupGrade($groupName);
+                echo "<tr><td><b>$groupName</b></td><td>$percent%</td><td>$points / $maxPoints</td></tr>";
+            }
             echo "</table>";
+            $percent = $student->getGrade();
             echo "<div><b>Grade: $percent%</b></div>";
         } else {
             echo "<h2>No such student exists</h2>";

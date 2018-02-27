@@ -27,7 +27,7 @@ class Class_model extends MY_Model
         $al = "assignment_list";
         $sl = "student_list";
         $selectStudent = "$tableName.student_id, name_first, name_last";
-        $selectAssignment = "assignment_id, $al.name as assignment_name, $tableName.points, $al.points as max_points, graded";
+        $selectAssignment = "assignment_id, $al.name as assignment_name, type, weight, $tableName.points, $al.points as max_points, graded";
 
         if (!is_null($studentId)) {
             $this->db->where("$tableName.student_id", $studentId);
