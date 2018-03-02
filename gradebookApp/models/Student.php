@@ -29,6 +29,7 @@ class Student
             array_push($this->assignments, $assignment);
             if (!isset($this->groups[$assignment->type])) {
                 $this->groups[$assignment->type] = array(
+                    "graded" => 0,
                     "points" => 0,
                     "maxPoints" => 0,
                     "weight" => $assignment->weight,
@@ -71,7 +72,22 @@ class Student
     public function getGroupGrade($group)
     {
         $groupInfo = $this->_getGroupInfo($group);
-        return $groupInfo["grade"];
+        if (isset($groupInfo["grade"])) {
+            return $groupInfo["grade"];
+        } else {
+            return 0;
+        }
+    }
+
+    /**
+     * Gets whether or not an assignment group is graded
+     * @param $group
+     * @return boolean
+     */
+    public function getGroupGraded($group)
+    {
+        $groupInfo = $this->_getGroupInfo($group);
+        return $groupInfo["graded"];
     }
 
     /**
@@ -113,6 +129,7 @@ class Student
     {
         foreach ($this->assignments as $assignment) {
             if ($assignment->graded) {
+                $this->groups[$assignment->type]["graded"] = 1;
                 $this->groups[$assignment->type]["points"] += +$assignment->points;
                 $this->groups[$assignment->type]["maxPoints"] += +$assignment->max_points;
             }
@@ -129,8 +146,10 @@ class Student
         $totalWeight = 0;
         foreach ($this->groups as $group => $unused) {
             $groupInfo = $this->_getGroupInfo($group);
-            $grade += $groupInfo["weightedGrade"];
-            $totalWeight += $groupInfo["weight"];
+            if ($groupInfo["graded"]) {
+                $grade += $groupInfo["weightedGrade"];
+                $totalWeight += $groupInfo["weight"];
+            }
         }
         if (count($this->groups) == 0) {
             return 100;
@@ -152,12 +171,15 @@ class Student
             $temp = $this->groups[$group];
         }
         $groupInfo = array(
-            "grade" => $temp["points"] / $temp["maxPoints"] * 100,
+            "graded" => $temp["graded"],
             "points" => $temp["points"],
             "maxPoints" => $temp["maxPoints"],
             "weight" => $temp["weight"] / 100,
         );
-        $groupInfo["weightedGrade"] = $groupInfo["grade"] * $groupInfo["weight"];
+        if ($temp["maxPoints"] != 0) {
+            $groupInfo["grade"] = $temp["points"] / $temp["maxPoints"] * 100;
+            $groupInfo["weightedGrade"] = $groupInfo["grade"] * $groupInfo["weight"];
+        }
         return $groupInfo;
     }
 }

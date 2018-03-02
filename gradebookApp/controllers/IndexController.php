@@ -83,7 +83,12 @@ class IndexController extends MY_Controller
             foreach ($student->getGroupNames() as $groupName) {
                 $points = $student->getGroupPoints($groupName);
                 $maxPoints = $student->getGroupMaxPoints($groupName);
-                $percent = sprintf("%.2f%%", $student->getGroupGrade($groupName));
+                $graded = $student->getGroupGraded($groupName);
+                if ($graded) {
+                    $percent = sprintf("%.2f%%", $student->getGroupGrade($groupName));
+                } else {
+                    $percent = "N/A";
+                }
                 echo "<tr><td><b>$groupName</b></td><td>$percent</td><td>$points / $maxPoints</td></tr>";
             }
             echo "</table>";
