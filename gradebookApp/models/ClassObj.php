@@ -150,6 +150,9 @@ class ClassObj implements GradeStatistics
 
     /**
      * Populates assignmentLists
+     *      also ensures that every student has records for every assignment
+     *      todo second part could be rendered unnecessary depending on how the db is structured
+     *      todo if we create an entry for every student for every assignment in the db...
      */
     private function _setAssignmentLists()
     {
@@ -160,6 +163,17 @@ class ClassObj implements GradeStatistics
                 $this->assignmentLists[$id] = new AssignmentList();
             }
             $this->assignmentLists[$id]->addAssignment($assignment);
+        }
+
+        foreach ($this->students as $student) {
+            $studentId = $student->student_id;
+            foreach ($this->assignmentLists as $assignmentList) {
+                if (!$assignmentList->studentHasAssignment($studentId)) {
+                    $newAssignment = $assignmentList->getNewAssignment($studentId);
+                    $student->addAssignment($newAssignment);
+                    array_push($this->assignments, $newAssignment);
+                }
+            }
         }
     }
 

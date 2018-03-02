@@ -32,6 +32,51 @@ class AssignmentList implements GradeStatistics
     }
 
     /**
+     * Creates a new assignment for a student with a specified point value
+     *      todo could be rendered unnecessary depending on how the db is structured
+     *      todo if we create an entry for every student for every assignment in the db...
+     * @param string $studentId
+     * @param int|number $points
+     * @return Assignment
+     */
+    public function getNewAssignment($studentId, $points = 0)
+    {
+        $assignment = new Assignment();
+
+        $assignment->student_id = $studentId;
+        $assignment->points = $points;
+
+        $assignment->assignment_id = $this->assignments[0]->assignment_id;
+        $assignment->assignment_name = $this->assignments[0]->assignment_name;
+        $assignment->description = $this->assignments[0]->description;
+        $assignment->type = $this->assignments[0]->type;
+        $assignment->weight = $this->assignments[0]->weight;
+        $assignment->max_points = $this->assignments[0]->max_points;
+        $assignment->graded = $this->assignments[0]->graded;
+
+        $this->addAssignment($assignment);
+
+        return $assignment;
+    }
+
+    /**
+     * Checks if there is an assignment for a given student
+     *      todo could be rendered unnecessary depending on how the db is structured
+     *      todo if we create an entry for every student for every assignment in the db...
+     * @param string $studentId
+     * @return bool
+     */
+    public function studentHasAssignment($studentId)
+    {
+        foreach ($this->assignments as $assignment) {
+            if ($assignment->student_id === $studentId) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Gets the lowest of the grades
      * @return number
      */
