@@ -20,18 +20,13 @@ class Class_model extends MY_Model
     /**
      * Loads a table and creates a classObj out of it
      * @param $tableName
-     * @param null $studentId
      */
-    public function loadTable($tableName, $studentId = null)
+    public function loadTable($tableName)
     {
         $al = "assignment_list";
         $sl = "student_list";
         $selectStudent = "$tableName.student_id, name_first, name_last";
-        $selectAssignment = "assignment_id, $al.name as assignment_name, type, weight, $tableName.points, $al.points as max_points, graded";
-
-        if (!is_null($studentId)) {
-            $this->db->where("$tableName.student_id", $studentId);
-        }
+        $selectAssignment = "assignment_id, $al.name as assignment_name, description, type, weight, $tableName.points, $al.points as max_points, graded";
 
         $query = $this->db
             ->select("$selectStudent, $selectAssignment")

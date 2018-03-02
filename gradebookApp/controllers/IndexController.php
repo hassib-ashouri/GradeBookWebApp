@@ -62,7 +62,7 @@ class IndexController extends MY_Controller
         $tableName = "class_29506_SE-131_02_table";
 
         $this->load->model("class_model");
-        $this->class_model->loadTable($tableName, $studentId);
+        $this->class_model->loadTable($tableName);
         $classObj = $this->class_model->getClass();
         $student = $classObj->getStudent($studentId);
         if (!is_null($student)) {
@@ -120,5 +120,32 @@ class IndexController extends MY_Controller
         echo "<pre><b>Mean</b>: <span>$mean</span></pre>";
         echo "<pre><b>Variance</b>: <span>$var</span></pre>";
         echo "<pre><b>Standard Deviation</b>: <span>$stdDev</span></pre>";
+    }
+
+    public function assignmentStatsTest()
+    {
+        $tableName = "class_29506_SE-131_02_table";
+
+        $this->load->model("class_model");
+        $this->class_model->loadTable($tableName);
+        $classObj = $this->class_model->getClass();
+        $assignmentLists = $classObj->getAssignmentLists();
+
+        foreach ($assignmentLists as $assignmentList) {
+            $name = $assignmentList->getAssignmentName();
+            $low = sprintf("%.2f", $assignmentList->getLowGrade());
+            $high = sprintf("%.2f", $assignmentList->getHighGrade());
+            $mean = sprintf("%.2f", $assignmentList->getMeanGrade());
+            $var = sprintf("%.2f", $assignmentList->getVarGrade());
+            $stdDev = sprintf("%.2f", $assignmentList->getStdDevGrade());
+
+            echo "<pre>$name</pre>";
+            echo "<pre><b>Low</b>: <span>$low</span></pre>";
+            echo "<pre><b>High</b>: <span>$high</span></pre>";
+            echo "<pre><b>Mean</b>: <span>$mean</span></pre>";
+            echo "<pre><b>Variance</b>: <span>$var</span></pre>";
+            echo "<pre><b>Standard Deviation</b>: <span>$stdDev</span></pre>";
+            echo "<br>";
+        }
     }
 }

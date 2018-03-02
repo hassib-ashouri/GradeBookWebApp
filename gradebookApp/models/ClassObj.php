@@ -20,7 +20,13 @@ class ClassObj implements GradeStatistics
      * @var Student[]
      */
     private $students;
-
+    /**
+     * @var AssignmentList[]
+     */
+    private $assignmentLists;
+    /**
+     * @var number[]
+     */
     private $studentGrades;
 
     /**
@@ -31,10 +37,13 @@ class ClassObj implements GradeStatistics
     public function __construct($assignments = array(), $students = array())
     {
         require_once "Assignment.php";
+        require_once "AssignmentList.php";
         require_once "Student.php";
 
         $this->assignments = $assignments;
         $this->students = $students;
+
+        $this->_setAssignmentLists();
     }
 
     public function __set($name, $value)
@@ -42,7 +51,16 @@ class ClassObj implements GradeStatistics
     }
 
     /**
-     * Gets the array of assignments
+     * Gets the array of AssignmentLists
+     * @return AssignmentList[]
+     */
+    public function getAssignmentLists()
+    {
+        return $this->assignmentLists;
+    }
+
+    /**
+     * Gets the array of Assignments
      * @return Assignment[]
      */
     public function getAssignments()
@@ -126,9 +144,23 @@ class ClassObj implements GradeStatistics
      */
     public function getStdDevGrade()
     {
-        $this->_setStudentGrades();
         $variance = $this->getVarGrade();
         return sqrt($variance);
+    }
+
+    /**
+     * Populates assignmentLists
+     */
+    private function _setAssignmentLists()
+    {
+        $this->assignmentLists = array();
+        foreach ($this->assignments as $assignment) {
+            $id = $assignment->assignment_id;
+            if (!isset($this->assignmentLists[$id])) {
+                $this->assignmentLists[$id] = new AssignmentList();
+            }
+            $this->assignmentLists[$id]->addAssignment($assignment);
+        }
     }
 
     /**
