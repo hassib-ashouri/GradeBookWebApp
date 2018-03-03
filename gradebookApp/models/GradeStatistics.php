@@ -21,6 +21,12 @@ interface GradeStatistics
     public function getMeanGrade();
 
     /**
+     * Gets the median of the grades
+     * @return number
+     */
+    public function getMedianGrade();
+
+    /**
      * Gets the variance of the grades
      * @return number
      */

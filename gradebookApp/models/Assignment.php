@@ -58,6 +58,15 @@ class Assignment implements GradeStatistics
     }
 
     /**
+     * Gets the median of the grades
+     * @return number
+     */
+    public function getMedianGrade()
+    {
+        return $this->assignmentList->getMedianGrade();
+    }
+
+    /**
      * Gets the variance of the grades
      * @return number
      */

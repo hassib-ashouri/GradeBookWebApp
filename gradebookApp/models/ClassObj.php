@@ -100,7 +100,7 @@ class ClassObj implements GradeStatistics
     public function getLowGrade()
     {
         $this->_setStudentGrades();
-        return min($this->studentGrades);
+        return gradeLow($this->studentGrades);
     }
 
     /**
@@ -110,7 +110,7 @@ class ClassObj implements GradeStatistics
     public function getHighGrade()
     {
         $this->_setStudentGrades();
-        return max($this->studentGrades);
+        return gradeHigh($this->studentGrades);
     }
 
     /**
@@ -120,7 +120,17 @@ class ClassObj implements GradeStatistics
     public function getMeanGrade()
     {
         $this->_setStudentGrades();
-        return array_sum($this->studentGrades) / count($this->studentGrades);
+        return gradeMean($this->studentGrades);
+    }
+
+    /**
+     * Gets the median of the grades
+     * @return number
+     */
+    public function getMedianGrade()
+    {
+        $this->_setStudentGrades();
+        return gradeMedian($this->studentGrades);
     }
 
     /**
@@ -130,12 +140,7 @@ class ClassObj implements GradeStatistics
     public function getVarGrade()
     {
         $this->_setStudentGrades();
-        $mean = $this->getMeanGrade();
-        $sumSquares = 0;
-        foreach ($this->studentGrades as $studentGrade) {
-            $sumSquares += pow($studentGrade - $mean, 2);
-        }
-        return $sumSquares / count($this->studentGrades);
+        return gradeVar($this->studentGrades);
     }
 
     /**
@@ -144,8 +149,8 @@ class ClassObj implements GradeStatistics
      */
     public function getStdDevGrade()
     {
-        $variance = $this->getVarGrade();
-        return sqrt($variance);
+        $this->_setStudentGrades();
+        return gradeStdDev($this->studentGrades);
     }
 
     /**

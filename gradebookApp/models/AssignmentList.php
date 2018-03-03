@@ -83,7 +83,7 @@ class AssignmentList implements GradeStatistics
     public function getLowGrade()
     {
         $this->_setAssignmentPoints();
-        return min($this->assignmentPoints);
+        return gradeLow($this->assignmentPoints);
     }
 
     /**
@@ -93,7 +93,7 @@ class AssignmentList implements GradeStatistics
     public function getHighGrade()
     {
         $this->_setAssignmentPoints();
-        return max($this->assignmentPoints);
+        return gradeHigh($this->assignmentPoints);
     }
 
     /**
@@ -103,7 +103,17 @@ class AssignmentList implements GradeStatistics
     public function getMeanGrade()
     {
         $this->_setAssignmentPoints();
-        return array_sum($this->assignmentPoints) / count($this->assignmentPoints);
+        return gradeMean($this->assignmentPoints);
+    }
+
+    /**
+     * Gets the median of the grades
+     * @return number
+     */
+    public function getMedianGrade()
+    {
+        $this->_setAssignmentPoints();
+        return gradeMedian($this->assignmentPoints);
     }
 
     /**
@@ -113,12 +123,7 @@ class AssignmentList implements GradeStatistics
     public function getVarGrade()
     {
         $this->_setAssignmentPoints();
-        $mean = $this->getMeanGrade();
-        $sumSquares = 0;
-        foreach ($this->assignmentPoints as $assignmentPoint) {
-            $sumSquares += pow($assignmentPoint - $mean, 2);
-        }
-        return $sumSquares / count($this->assignmentPoints);
+        return gradeVar($this->assignmentPoints);
     }
 
     /**
@@ -127,8 +132,8 @@ class AssignmentList implements GradeStatistics
      */
     public function getStdDevGrade()
     {
-        $variance = $this->getVarGrade();
-        return sqrt($variance);
+        $this->_setAssignmentPoints();
+        return gradeStdDev($this->assignmentPoints);
     }
 
     /**
