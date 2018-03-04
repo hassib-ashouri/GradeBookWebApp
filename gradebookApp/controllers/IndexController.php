@@ -117,12 +117,14 @@ class IndexController extends MY_Controller
         $low = sprintf("%.2f%%", $classObj->getLowGrade());
         $high = sprintf("%.2f%%", $classObj->getHighGrade());
         $mean = sprintf("%.2f%%", $classObj->getMeanGrade());
+        $median = sprintf("%.2f%%", $classObj->getMedianGrade());
         $var = sprintf("%.2f", $classObj->getVarGrade());
         $stdDev = sprintf("%.2f", $classObj->getStdDevGrade());
 
         echo "<pre><b>Low</b>: <span>$low</span></pre>";
         echo "<pre><b>High</b>: <span>$high</span></pre>";
         echo "<pre><b>Mean</b>: <span>$mean</span></pre>";
+        echo "<pre><b>Median</b>: <span>$median</span></pre>";
         echo "<pre><b>Variance</b>: <span>$var</span></pre>";
         echo "<pre><b>Standard Deviation</b>: <span>$stdDev</span></pre>";
     }
@@ -141,6 +143,7 @@ class IndexController extends MY_Controller
             $low = sprintf("%.2f", $assignmentList->getLowGrade());
             $high = sprintf("%.2f", $assignmentList->getHighGrade());
             $mean = sprintf("%.2f", $assignmentList->getMeanGrade());
+            $median = sprintf("%.2f", $assignmentList->getMedianGrade());
             $var = sprintf("%.2f", $assignmentList->getVarGrade());
             $stdDev = sprintf("%.2f", $assignmentList->getStdDevGrade());
 
@@ -148,9 +151,31 @@ class IndexController extends MY_Controller
             echo "<pre><b>Low</b>: <span>$low</span></pre>";
             echo "<pre><b>High</b>: <span>$high</span></pre>";
             echo "<pre><b>Mean</b>: <span>$mean</span></pre>";
+            echo "<pre><b>Median</b>: <span>$median</span></pre>";
             echo "<pre><b>Variance</b>: <span>$var</span></pre>";
             echo "<pre><b>Standard Deviation</b>: <span>$stdDev</span></pre>";
             echo "<br>";
+        }
+    }
+
+    public function passwordTest()
+    {
+        $post = $this->input->post();
+        $formAction = base_url() . "IndexController/passwordTest";
+
+        echo "<form method='post' action='$formAction'>";
+        echo "<input name='password'>";
+        echo "</form>";
+
+        if (isset($post["password"])) {
+            $passwordHash = password_hash($post["password"], PASSWORD_DEFAULT);
+            $characterCount = strlen($post["password"]);
+            $hashedCharacterCount = strlen($passwordHash);
+            $works = password_verify($post["password"], $passwordHash);
+            echo "<div>$passwordHash</div>";
+            echo "<div>Password Input Length: $characterCount</div>";
+            echo "<div>Password Hash Length: $hashedCharacterCount</div>";
+            echo "<div>Works: $works</div>";
         }
     }
 }
