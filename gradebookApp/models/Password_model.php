@@ -20,12 +20,12 @@ class Password_model extends MY_Model
         $query = $this->db
             ->select("*")
             ->where("professor_id", $user)
-            ->get("professor_list");
+            ->get("professors");
         if ($query->num_rows() == 0) {
             $query = $this->db
                 ->select("*")
                 ->where("student_id", $user)
-                ->get("student_list");
+                ->get("students");
             if ($query->num_rows() == 0) {
                 return false;
             }
@@ -55,11 +55,11 @@ class Password_model extends MY_Model
         if ($this->user->type === "professor") {
             $this->db
                 ->where("professor_id", $this->user->userId)
-                ->update("professor_list", $data);
+                ->update("professors", $data);
         } else {
             $this->db
                 ->where("student_id", $this->user->userId)
-                ->update("student_list", $data);
+                ->update("students", $data);
         }
     }
 
