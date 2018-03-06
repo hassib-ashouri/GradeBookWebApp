@@ -4,6 +4,14 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class UnitTestController extends MY_Controller
 {
     /**
+     * Runs all unit tests
+     */
+    public function testAll()
+    {
+        $this->statisticsTest();
+    }
+
+    /**
      * Tests methods from statistics_helper
      *      tests: gradeLow, gradeHigh, gradeMean, gradeMedian, gradeVar, gradeStdDev
      */
