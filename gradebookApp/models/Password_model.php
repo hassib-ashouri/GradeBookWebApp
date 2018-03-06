@@ -64,6 +64,15 @@ class Password_model extends MY_Model
     }
 
     /**
+     * Sets the user for debug purposes
+     * @param User $user
+     */
+    public function setUser($user)
+    {
+        $this->user = $user;
+    }
+
+    /**
      * Checks if the tested user is a professor
      *      must be run after verifyPassword for accurate results
      * @return bool

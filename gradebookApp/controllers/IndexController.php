@@ -168,11 +168,20 @@ class IndexController extends MY_Controller
         echo "</form>";
 
         if (isset($post["password"])) {
-            $passwordHash = password_hash($post["password"], PASSWORD_DEFAULT);
-            $characterCount = strlen($post["password"]);
+            $password = $post["password"];
+            $passwordHash = password_hash($password, PASSWORD_DEFAULT);
+            echo "<div>'$passwordHash',</div>";
+            $passwordHash = password_hash($password, PASSWORD_DEFAULT);
+            echo "<div>'$passwordHash',</div>";
+            $passwordHash = password_hash($password, PASSWORD_DEFAULT);
+            echo "<div>'$passwordHash',</div>";
+            $passwordHash = password_hash($password, PASSWORD_DEFAULT);
+            echo "<div>'$passwordHash',</div>";
+            $passwordHash = password_hash($password, PASSWORD_DEFAULT);
+            echo "<div>'$passwordHash',</div>";
+            $characterCount = strlen($password);
             $hashedCharacterCount = strlen($passwordHash);
-            $works = password_verify($post["password"], $passwordHash);
-            echo "<div>$passwordHash</div>";
+            $works = password_verify($password, $passwordHash);
             echo "<div>Password Input Length: $characterCount</div>";
             echo "<div>Password Hash Length: $hashedCharacterCount</div>";
             echo "<div>Works: $works</div>";
