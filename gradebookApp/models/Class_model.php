@@ -19,33 +19,39 @@ class Class_model extends MY_Model
 
     /**
      * Loads a table and creates a classObj out of it
-     * @param $tableName
+     * @param string $classTable tableName
      */
-    public function loadTable($tableName)
+    public function loadTable($classTable)
     {
-        $al = "assignment_list";
-        $sl = "student_list";
-        $selectStudent = "$tableName.student_id, name_first, name_last";
-        $selectAssignment = "assignment_id, $al.name as assignment_name, description, type, weight, $tableName.points, $al.points as max_points, graded";
-
-        $query = $this->db
-            ->select("$selectStudent, $selectAssignment")
-            ->from($tableName)
-            ->join($al, "$tableName.assignment_id = $al.id")
-            ->join($sl, "$tableName.student_id = $sl.student_id")
-            ->get();
-        // needed for the other two to behave
-        $query->result_array();
+        $matches = array();
+        preg_match("/class_(\d{5})_.*?_(\d{2})_table/", $classTable, $matches);
+        $classId = $matches[1];
+        $section = $matches[2];
 
         /**
-         * @var Assignment[] $assignments
-         */
-        $assignments = $query->result("Assignment");
-        /**
+         * Creates $students from "students" and "students_enrolled"
+         *      matches against $classId and $section
          * @var Student[] $students
          */
-        $students = $query->result("Student");
-        $students = array_unique($students, SORT_STRING);
+        $students = $this->db
+            ->select("students.student_id, name_first, name_last")
+            ->from("students_enrolled")
+            ->where(array(
+                "class_id" => $classId,
+                "section" => $section,
+                "enrolled" => 1,
+            ))
+            ->join("students", "students_enrolled.student_id = student_list.student_id")
+            ->get()->result("Student");
+        /**
+         * Creates $assignments from $classTable and "assignments"
+         * @var Assignment[] $assignments
+         */
+        $assignments = $this->db
+            ->select("student_id, assignment_id, assignment_name, description, type, weight, points, max_points, graded")
+            ->from($classTable)
+            ->join("assignments", "assignment_id = assignments.id")
+            ->get()->result("Assignment");
 
         foreach ($students as $student) {
             foreach ($assignments as $assignment) {

@@ -101,7 +101,7 @@ class IndexController extends MY_Controller
 
     public function generateNewStudentId()
     {
-        $row = $this->db->get("student_list")->last_row("array");
+        $row = $this->db->get("students")->last_row("array");
         $new = intval($row["student_id"]) + 1;
         echo sprintf("%'09s", $new);
     }

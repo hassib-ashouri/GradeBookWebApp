@@ -19,7 +19,7 @@ class Class_list_model extends MY_Model
         $query = $this->db
             ->select("*")
             ->where("professor_id", $userId)
-            ->get("class_list");
+            ->get("classes");
         $classes = $query->result("ClassObj");
 
         return $classes;
