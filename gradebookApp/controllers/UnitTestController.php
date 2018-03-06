@@ -3,6 +3,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class UnitTestController extends MY_Controller
 {
+    /**
+     * Tests methods from statistics_helper
+     *      tests: gradeLow, gradeHigh, gradeMean, gradeMedian, gradeVar, gradeStdDev
+     */
     public function statisticsTest()
     {
         $dataSets = array(
@@ -93,12 +97,25 @@ class UnitTestController extends MY_Controller
         }
     }
 
+    /**
+     * Checks that $numberTest is about equal to $numberReal
+     *      only different (+ or -) by less than $tolerance
+     * @param number $numberTest
+     * @param number $numberReal
+     * @param float $tolerance
+     * @return bool
+     */
     private function _aboutEqual($numberTest, $numberReal, $tolerance = .001)
     {
         return ($numberTest - $tolerance < $numberReal)
             && ($numberTest + $tolerance > $numberReal);
     }
 
+    /**
+     * Prints out the result of a test
+     * @param string $testName
+     * @param bool $result
+     */
     private function _printResult($testName, $result)
     {
         if ($result) {
