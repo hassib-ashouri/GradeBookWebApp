@@ -5,16 +5,8 @@ class LoginController extends MY_Controller
 {
     public function loginView($userName = "", $userId = "")
     {
-        $this->_loginView("", $userName, $userId);
-    }
+        $errorMessage = $this->session->flashdata("errorMessage");
 
-    public function loginErrorView($errorMessage, $userName = "", $userId = "")
-    {
-        $this->_loginView($errorMessage, $userName, $userId);
-    }
-
-    private function _loginView($errorMessage, $userName, $userId)
-    {
         $login = array(
             "errorMessage" => urldecode($errorMessage),
             "userName" => urldecode($userName),
@@ -35,18 +27,10 @@ class LoginController extends MY_Controller
         $this->load->view("main", $data);
     }
 
-    public function createPasswordView($userName = "", $userId = "")
+    public function createPasswordView($userName, $userId)
     {
-        $this->_createPasswordView("", $userName, $userId);
-    }
+        $errorMessage = $this->session->flashdata("errorMessage");
 
-    public function createPasswordErrorView($errorMessage, $userName = "", $userId = "")
-    {
-        $this->_createPasswordView($errorMessage, $userName, $userId);
-    }
-
-    private function _createPasswordView($errorMessage, $userName, $userId)
-    {
         $login = array(
             "errorMessage" => urldecode($errorMessage),
             "userName" => urldecode($userName),
@@ -73,10 +57,8 @@ class LoginController extends MY_Controller
             $userIsValid = $this->password_model->verifyUser($user);
         }
         if (!$userIsValid) {
-            $view = "loginErrorView";
-            $errorMessage = "No Such ID Exists";
-            redirect(sprintf("LoginController/%s/%s",
-                $view, $errorMessage));
+            $this->session->set_flashdata("errorMessage", "No Such ID Exists");
+            redirect("LoginController/loginView");
         } else {
             $view = ($this->password_model->hasPassword()) ? "loginView" : "createPasswordView";
             $userName = $this->password_model->getUserName();
@@ -100,13 +82,12 @@ class LoginController extends MY_Controller
         }
 
         if (!$passwordIsValid) {
-            $view = "loginErrorView";
-            $errorMessage = "Incorrect Password";
+            $this->session->set_flashdata("errorMessage", "Incorrect Password");
             $userName = $this->password_model->getUserName();
             $userId = $this->password_model->getUserId();
-            redirect(sprintf("LoginController/%s/%s/%s/%s",
-                $view, $errorMessage, $userName, $userId));
+            redirect(sprintf("LoginController/loginView/%s/%s", $userName, $userId));
         } else {
+            $this->session->set_userdata("userId", $user);
             if ($this->password_model->isProfessor()) {
                 // load professor view
             } else {
@@ -129,12 +110,10 @@ class LoginController extends MY_Controller
                 $this->password_model->verifyUser($user);
                 $this->password_model->setPassword($password);
             } else {
-                $view = "createPasswordErrorView";
-                $errorMessage = "Passwords Don't Match";
+                $this->session->set_flashdata("errorMessage", "Passwords Don't Match");
                 $userName = $this->password_model->getUserName();
                 $userId = $this->password_model->getUserId();
-                redirect(sprintf("LoginController/%s/%s/%s/%s",
-                    $view, $errorMessage, $userName, $userId));
+                redirect(sprintf("LoginController/createPasswordView/%s/%s", $userName, $userId));
             }
         }
     }

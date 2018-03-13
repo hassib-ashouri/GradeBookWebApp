@@ -8,6 +8,23 @@ class IndexController extends MY_Controller
         redirect("LoginController/loginView");
     }
 
+    public function sessionTest1()
+    {
+        $user = "000000001";
+        $this->session->set_userdata("user", $user);
+
+        echo "<pre>";
+        var_dump($this->session);
+        echo "</pre>";
+    }
+
+    public function sessionTest2()
+    {
+        echo "<pre>";
+        var_dump($this->session);
+        echo "</pre>";
+    }
+
     public function classListTest()
     {
         $professorId = "0123";
