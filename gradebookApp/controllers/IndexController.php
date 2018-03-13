@@ -150,6 +150,7 @@ class IndexController extends MY_Controller
                 echo "</select>";
 
                 echo "<input name='assignMaxPts[]' value='$assignment->max_points'>";
+                echo "<input name='assignGraded[]' value='$assignment->graded' type='hidden'>";
                 echo "</div>";
             }
 
@@ -163,9 +164,46 @@ class IndexController extends MY_Controller
     {
         $post = $this->input->post();
 
-        echo "<pre>";
-        var_dump($post);
-        echo "</pre>";
+        $this->load->model("assignment_model");
+        $this->assignment_model->readPost($post);
+        $this->assignment_model->updateAssignments();
+
+        redirect("IndexController/genericAssignmentDisplay");
+    }
+
+    public function genericAssignmentDisplay()
+    {
+        $tableName = "class_29506_SE-131_02_table";
+
+        $this->load->model("class_model");
+        $this->class_model->loadTable($tableName);
+        $classObj = $this->class_model->getClass();
+        $genericAssignmentList = $classObj->getAssignmentListGeneric();
+        $groups = $genericAssignmentList->getGroupNames();
+        $grouped = $genericAssignmentList->getGroupedAssignments();
+
+        foreach ($grouped as $group) {
+            $groupName = $group->getGroupName();
+            $groupWeight = $group->getGroupWeight();
+            echo "<h3>Group: $groupName - Weight: $groupWeight%</h3>";
+
+            $assignments = $group->getGenericAssignments();
+            foreach ($assignments as $assignment) {
+                echo "<div>";
+                echo "ID: $assignment->assignment_id";
+                echo " - ";
+                echo "$assignment->assignment_name";
+                echo " - ";
+                echo "MaxPts: $assignment->max_points";
+                echo " - ";
+                echo "Graded: $assignment->graded";
+                echo "</div>";
+
+                echo "<div>";
+                echo "<p>$assignment->description</p>";
+                echo "</div>";
+            }
+        }
     }
 
     public function generateNewStudentId()
