@@ -8,6 +8,7 @@ class UnitTestController extends MY_Controller
      */
     public function testAll()
     {
+        $this->classManipulationTest();
         $this->passwordTest();
         $this->statisticsTest();
     }
@@ -181,6 +182,52 @@ class UnitTestController extends MY_Controller
         foreach ($pass as $key => $value) {
             $this->_printResult($key, $value);
         }
+    }
+
+    /**
+     * Tests methods from Class_list_model
+     *      tests: createClass and deleteClass using classData
+     */
+    public function classManipulationTest()
+    {
+        $this->load->model("class_model");
+        $this->load->model("class_list_model");
+
+        $students = array(new Student());
+        $students[0]->student_id = "000000001";
+
+        $classObj = new ClassObj(array(), $students);
+        $classObj->class_id = "26692";
+        $classObj->professor_id = "0124";
+        $classObj->class_name = "ISE 164";
+        $classObj->section = "01";
+        $classObj->class_title = "Comp & Hum Interact";
+        $classObj->meeting_times = "Tu 6:00PM - 8:45PM";
+        $classObj->table_name = "class_26692_ISE-164_01_table";
+
+        $this->class_list_model->createClass($classObj);
+        $classDataCreate = $this->class_list_model->classData($classObj);
+        $this->class_list_model->deleteClass($classObj);
+        $classDataDelete = $this->class_list_model->classData($classObj);
+
+        $passCreate = array(
+            "rowExists" => $classDataCreate["rowExists"],
+            "tableExists" => $classDataCreate["tableExists"],
+            "studentsEnrolled" => $classDataCreate["studentsEnrolled"] > 0,
+        );
+        $passDelete = array(
+            "rowExists" => $classDataDelete["rowExists"] === false,
+            "tableExists" => $classDataDelete["tableExists"] === false,
+            "studentsEnrolled" => $classDataDelete["studentsEnrolled"] == 0,
+        );
+
+        echo "<h2>Class Manipulation Test</h2>";
+        $this->_printResult("row Created", $passCreate["rowExists"]);
+        $this->_printResult("row Deleted", $passDelete["rowExists"]);
+        $this->_printResult("table Created", $passCreate["tableExists"]);
+        $this->_printResult("table Deleted", $passDelete["tableExists"]);
+        $this->_printResult("students Enrolled", $passCreate["studentsEnrolled"]);
+        $this->_printResult("students De-Enrolled", $passDelete["studentsEnrolled"]);
     }
 
     /**
