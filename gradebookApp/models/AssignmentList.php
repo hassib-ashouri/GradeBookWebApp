@@ -2,6 +2,11 @@
 
 require_once "GradeStatistics.php";
 
+/**
+ * Class AssignmentList
+ * Represents all students' copies of a single assignment in a class
+ *      mainly used for statistics
+ */
 class AssignmentList implements GradeStatistics
 {
     /**
