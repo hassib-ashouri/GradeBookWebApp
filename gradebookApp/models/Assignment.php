@@ -1,18 +1,12 @@
 <?php
 
+require_once "AssignmentGeneric.php";
 require_once "GradeStatistics.php";
 
-class Assignment implements GradeStatistics
+class Assignment extends AssignmentGeneric implements GradeStatistics
 {
     public $student_id;
-    public $assignment_id;
-    public $assignment_name;
-    public $description;
-    public $type;
-    public $weight;
     public $points;
-    public $max_points;
-    public $graded;
     /**
      * @var AssignmentList
      */
@@ -28,6 +22,18 @@ class Assignment implements GradeStatistics
     public function setAssignmentList($assignmentList)
     {
         $this->assignmentList = $assignmentList;
+    }
+
+    /**
+     * Gets a generic copy of the assignment
+     *      without student_id, or points assigned
+     * @return AssignmentGeneric
+     */
+    public function getGenericAssignment()
+    {
+        $assignment = new AssignmentGeneric();
+        $assignment->createFromAssignment($this);
+        return $assignment;
     }
 
     /**
