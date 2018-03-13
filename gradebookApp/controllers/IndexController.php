@@ -116,6 +116,58 @@ class IndexController extends MY_Controller
         }
     }
 
+    public function genericAssignmentTest()
+    {
+        $tableName = "class_29506_SE-131_02_table";
+
+        $this->load->model("class_model");
+        $this->class_model->loadTable($tableName);
+        $classObj = $this->class_model->getClass();
+        $genericAssignmentList = $classObj->getAssignmentListGeneric();
+        $groups = $genericAssignmentList->getGroupNames();
+        $grouped = $genericAssignmentList->getGroupedAssignments();
+
+        $formAction = base_url() . "IndexController/submitGenericAssignmentTest";
+        echo "<form action='$formAction' method='post'>";
+        foreach ($grouped as $group) {
+            $groupName = $group->getGroupName();
+            $groupWeight = $group->getGroupWeight();
+            echo "<input name='groupName[]' value='$groupName'>";
+            echo "<input name='groupWeight[]' value='$groupWeight'>";
+
+            $assignments = $group->getGenericAssignments();
+            foreach ($assignments as $assignment) {
+                echo "<div>";
+                echo "<input name='assignId[]' value='$assignment->assignment_id' type='hidden'>";
+                echo "<input name='assignName[]' value='$assignment->assignment_name'>";
+                echo "<textarea name='assignDesc[]'>$assignment->description</textarea>";
+
+                echo "<select name='assignType[]'>";
+                foreach ($groups as $groupName) {
+                    $selected = ($assignment->type == $groupName) ? "selected" : "";
+                    echo "<option value='$groupName' $selected>$groupName</option>";
+                }
+                echo "</select>";
+
+                echo "<input name='assignMaxPts[]' value='$assignment->max_points'>";
+                echo "</div>";
+            }
+
+            echo "<br>";
+        }
+        echo "<button type='submit'>Submit</button>";
+        echo "</form>";
+    }
+
+    public function submitGenericAssignmentTest()
+    {
+        $post = $this->input->post();
+
+        echo "<pre>";
+        var_dump($post);
+        echo "</pre>";
+    }
+
     public function generateNewStudentId()
     {
         $row = $this->db->get("students")->last_row("array");

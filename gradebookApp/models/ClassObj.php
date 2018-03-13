@@ -17,6 +17,10 @@ class ClassObj implements GradeStatistics
      */
     private $assignments;
     /**
+     * @var AssignmentListGeneric
+     */
+    private $assignmentListGeneric;
+    /**
      * @var Student[]
      */
     private $students;
@@ -38,12 +42,14 @@ class ClassObj implements GradeStatistics
     {
         require_once "Assignment.php";
         require_once "AssignmentList.php";
+        require_once "AssignmentListGeneric.php";
         require_once "Student.php";
 
         $this->assignments = $assignments;
         $this->students = $students;
 
         $this->_setAssignmentLists();
+        $this->_setAssignmentListGeneric();
     }
 
     public function __set($name, $value)
@@ -51,7 +57,7 @@ class ClassObj implements GradeStatistics
     }
 
     /**
-     * Gets the array of AssignmentLists
+     * Gets the array of Assignment Lists
      * @return AssignmentList[]
      */
     public function getAssignmentLists()
@@ -66,6 +72,15 @@ class ClassObj implements GradeStatistics
     public function getAssignments()
     {
         return $this->assignments;
+    }
+
+    /**
+     * Gets the Generic Assignment List
+     * @return AssignmentListGeneric
+     */
+    public function getAssignmentListGeneric()
+    {
+        return $this->assignmentListGeneric;
     }
 
     /**
@@ -179,6 +194,18 @@ class ClassObj implements GradeStatistics
                     array_push($this->assignments, $newAssignment);
                 }
             }
+        }
+    }
+
+    /**
+     * Populates genericAssignments
+     */
+    private function _setAssignmentListGeneric()
+    {
+        $this->assignmentListGeneric = new AssignmentListGeneric();
+
+        foreach ($this->assignments as $assignment) {
+            $this->assignmentListGeneric->addAssignment($assignment);
         }
     }
 
