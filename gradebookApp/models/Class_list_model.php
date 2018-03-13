@@ -43,12 +43,8 @@ class Class_list_model extends MY_Model
         /**
          * Gets the rows from students_enrolled for each student in the class
          */
-        $studentsEnrolledData = array(
-            "class_id" => $classObj->class_id,
-            "section" => $classObj->section,
-        );
         $studentsEnrolled = $this->db
-            ->where($studentsEnrolledData)
+            ->where("class_id", $classObj->class_id)
             ->count_all_results("students_enrolled");
         $rowExists = count($classRow) == 1;
         $tableExists = $this->db->table_exists($classObj->table_name);
@@ -96,8 +92,6 @@ class Class_list_model extends MY_Model
                 array_push($studentsEnrolledData, array(
                     "student_id" => $student->student_id,
                     "class_id" => $classObj->class_id,
-                    "section" => $classObj->section,
-                    "enrolled" => 1,
                 ));
             }
             if (count($studentsEnrolledData) > 0) {
@@ -111,7 +105,7 @@ class Class_list_model extends MY_Model
              */
             $fields = array(
                 "id" => array("type" => "int", "unsigned" => true, "auto_increment" => true),
-                "student_id" => array("type" => "tinytext"),
+                "student_id" => array("type" => "char", "constraint" => 9),
                 "assignment_id" => array("type" => "int"),
                 "points" => array("type" => "float"),
             );
@@ -142,12 +136,8 @@ class Class_list_model extends MY_Model
          * Deletes all rows from students_enrolled that match:
          *      class_id and section
          */
-        $studentsEnrolledData = array(
-            "class_id" => $classObj->class_id,
-            "section" => $classObj->section,
-        );
         $this->db
-            ->where($studentsEnrolledData)
+            ->where("class_id", $classObj->class_id)
             ->delete("students_enrolled");
 
         /**

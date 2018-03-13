@@ -23,7 +23,7 @@ class IndexController extends MY_Controller
     {
         $fields = array(
             "id" => array("type" => "int", "unsigned" => true, "auto_increment" => true),
-            "student_id" => array("type" => "tinytext"),
+            "student_id" => array("type" => "char", "constraint" => 9),
             "assignment_id" => array("type" => "int"),
             "points" => array("type" => "float"),
         );

@@ -36,11 +36,7 @@ class Class_model extends MY_Model
         $students = $this->db
             ->select("students.student_id, name_first, name_last")
             ->from("students_enrolled")
-            ->where(array(
-                "class_id" => $classId,
-                "section" => $section,
-                "enrolled" => 1,
-            ))
+            ->where("class_id", $classId)
             ->join("students", "students_enrolled.student_id = students.student_id")
             ->get()->result("Student");
         /**
