@@ -13,21 +13,13 @@ class ClassObj implements GradeStatistics
     public $table_name;
 
     /**
-     * @var Assignment[]
+     * @var AssignmentList
      */
-    private $assignments;
-    /**
-     * @var AssignmentListGeneric
-     */
-    private $assignmentListGeneric;
+    private $assignmentList;
     /**
      * @var Student[]
      */
     private $students;
-    /**
-     * @var AssignmentList[]
-     */
-    private $assignmentLists;
     /**
      * @var number[]
      */
@@ -35,21 +27,21 @@ class ClassObj implements GradeStatistics
 
     /**
      * ClassObj constructor.
-     * @param Assignment[] $assignments
+     * @param AssignmentList $assignmentList
      * @param Student[] $students
      */
-    public function __construct($assignments = array(), $students = array())
+    public function __construct($assignmentList = null, $students = array())
     {
         require_once "Assignment.php";
         require_once "AssignmentList.php";
-        require_once "AssignmentListGeneric.php";
         require_once "Student.php";
 
-        $this->assignments = $assignments;
-        $this->students = $students;
+        if (is_null($assignmentList)) {
+            $assignmentList = new AssignmentList();
+        }
 
-        $this->_setAssignmentLists();
-        $this->_setAssignmentListGeneric();
+        $this->assignmentList = $assignmentList;
+        $this->students = $students;
     }
 
     public function __set($name, $value)
@@ -57,30 +49,21 @@ class ClassObj implements GradeStatistics
     }
 
     /**
-     * Gets the array of Assignment Lists
-     * @return AssignmentList[]
+     * Gets the Assignment List
+     * @return AssignmentList
      */
-    public function getAssignmentLists()
+    public function getAssignmentList()
     {
-        return $this->assignmentLists;
+        return $this->assignmentList;
     }
 
     /**
-     * Gets the array of Assignments
+     * Gets the array of Assignments from Assignment List
      * @return Assignment[]
      */
     public function getAssignments()
     {
-        return $this->assignments;
-    }
-
-    /**
-     * Gets the Generic Assignment List
-     * @return AssignmentListGeneric
-     */
-    public function getAssignmentListGeneric()
-    {
-        return $this->assignmentListGeneric;
+        return $this->assignmentList->getAssignments();
     }
 
     /**
@@ -166,47 +149,6 @@ class ClassObj implements GradeStatistics
     {
         $this->_setStudentGrades();
         return gradeStdDev($this->studentGrades);
-    }
-
-    /**
-     * Populates assignmentLists
-     *      also ensures that every student has records for every assignment
-     *      todo second part could be rendered unnecessary depending on how the db is structured
-     *      todo if we create an entry for every student for every assignment in the db...
-     */
-    private function _setAssignmentLists()
-    {
-        $this->assignmentLists = array();
-        foreach ($this->assignments as $assignment) {
-            $id = $assignment->assignment_id;
-            if (!isset($this->assignmentLists[$id])) {
-                $this->assignmentLists[$id] = new AssignmentList();
-            }
-            $this->assignmentLists[$id]->addAssignment($assignment);
-        }
-
-        foreach ($this->students as $student) {
-            $studentId = $student->student_id;
-            foreach ($this->assignmentLists as $assignmentList) {
-                if (!$assignmentList->studentHasAssignment($studentId)) {
-                    $newAssignment = $assignmentList->getNewAssignment($studentId);
-                    $student->addAssignment($newAssignment);
-                    array_push($this->assignments, $newAssignment);
-                }
-            }
-        }
-    }
-
-    /**
-     * Populates genericAssignments
-     */
-    private function _setAssignmentListGeneric()
-    {
-        $this->assignmentListGeneric = new AssignmentListGeneric();
-
-        foreach ($this->assignments as $assignment) {
-            $this->assignmentListGeneric->addAssignment($assignment);
-        }
     }
 
     /**

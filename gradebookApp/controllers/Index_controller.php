@@ -81,15 +81,17 @@ class Index_controller extends MY_Controller
         $this->load->model("class_model");
         $this->class_model->loadTable($tableName);
         $classObj = $this->class_model->getClass();
+        $assignments = $classObj->getAssignments();
         $student = $classObj->getStudent($studentId);
         if (!is_null($student)) {
-            $assignments = $student->getAssignments();
-
             echo "<h1>Grades for $student->name_first $student->name_last</h1>";
             echo "<table>";
             echo "<tr><th>Name</th><th>Score</th><th>Out Of</th></tr>";
+            /**
+             * @var Assignment $assignment
+             */
             foreach ($assignments as $assignment) {
-                $gradedPoints = ($assignment->graded) ? $assignment->points : "N/A";
+                $gradedPoints = ($assignment->graded) ? $assignment->getPoints($studentId) : "N/A";
 
                 echo "<tr>";
                 echo "<td>$assignment->assignment_name</td>";
@@ -123,9 +125,9 @@ class Index_controller extends MY_Controller
         $this->load->model("class_model");
         $this->class_model->loadTable($tableName);
         $classObj = $this->class_model->getClass();
-        $genericAssignmentList = $classObj->getAssignmentListGeneric();
-        $groups = $genericAssignmentList->getGroupNames();
-        $grouped = $genericAssignmentList->getGroupedAssignments();
+        $assignmentList = $classObj->getAssignmentList();
+        $groups = $assignmentList->getGroupNames();
+        $grouped = $assignmentList->getGroupedAssignments();
 
         $formAction = base_url() . "Index_controller/submitGenericAssignmentTest";
         echo "<form action='$formAction' method='post'>";
@@ -135,7 +137,7 @@ class Index_controller extends MY_Controller
             echo "<input name='groupName[]' value='$groupName'>";
             echo "<input name='groupWeight[]' value='$groupWeight'>";
 
-            $assignments = $group->getGenericAssignments();
+            $assignments = $group->getAssignments();
             foreach ($assignments as $assignment) {
                 echo "<div>";
                 echo "<input name='assignId[]' value='$assignment->assignment_id' type='hidden'>";
@@ -178,16 +180,15 @@ class Index_controller extends MY_Controller
         $this->load->model("class_model");
         $this->class_model->loadTable($tableName);
         $classObj = $this->class_model->getClass();
-        $genericAssignmentList = $classObj->getAssignmentListGeneric();
-        $groups = $genericAssignmentList->getGroupNames();
-        $grouped = $genericAssignmentList->getGroupedAssignments();
+        $assignmentList = $classObj->getAssignmentList();
+        $grouped = $assignmentList->getGroupedAssignments();
 
         foreach ($grouped as $group) {
             $groupName = $group->getGroupName();
             $groupWeight = $group->getGroupWeight();
             echo "<h3>Group: $groupName - Weight: $groupWeight%</h3>";
 
-            $assignments = $group->getGenericAssignments();
+            $assignments = $group->getAssignments();
             foreach ($assignments as $assignment) {
                 echo "<div>";
                 echo "ID: $assignment->assignment_id";
@@ -243,16 +244,16 @@ class Index_controller extends MY_Controller
         $this->load->model("class_model");
         $this->class_model->loadTable($tableName);
         $classObj = $this->class_model->getClass();
-        $assignmentLists = $classObj->getAssignmentLists();
+        $assignments = $classObj->getAssignments();
 
-        foreach ($assignmentLists as $assignmentList) {
-            $name = $assignmentList->getAssignmentName();
-            $low = sprintf("%.2f", $assignmentList->getLowGrade());
-            $high = sprintf("%.2f", $assignmentList->getHighGrade());
-            $mean = sprintf("%.2f", $assignmentList->getMeanGrade());
-            $median = sprintf("%.2f", $assignmentList->getMedianGrade());
-            $var = sprintf("%.2f", $assignmentList->getVarGrade());
-            $stdDev = sprintf("%.2f", $assignmentList->getStdDevGrade());
+        foreach ($assignments as $assignment) {
+            $name = $assignment->assignment_name;
+            $low = sprintf("%.2f", $assignment->getLowGrade());
+            $high = sprintf("%.2f", $assignment->getHighGrade());
+            $mean = sprintf("%.2f", $assignment->getMeanGrade());
+            $median = sprintf("%.2f", $assignment->getMedianGrade());
+            $var = sprintf("%.2f", $assignment->getVarGrade());
+            $stdDev = sprintf("%.2f", $assignment->getStdDevGrade());
 
             echo "<pre>$name</pre>";
             echo "<pre><b>Low</b>: <span>$low</span></pre>";

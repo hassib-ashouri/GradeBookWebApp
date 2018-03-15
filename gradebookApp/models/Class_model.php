@@ -13,6 +13,7 @@ class Class_model extends MY_Model
         parent::__construct();
 
         require_once "Assignment.php";
+        require_once "AssignmentList.php";
         require_once "Student.php";
         require_once "ClassObj.php";
     }
@@ -24,9 +25,8 @@ class Class_model extends MY_Model
     public function loadTable($classTable)
     {
         $matches = array();
-        preg_match("/class_(\d{5})_.*?_(\d{2})_table/", $classTable, $matches);
+        preg_match("/class_(\d{5})_.*?_\d{2}_table/", $classTable, $matches);
         $classId = $matches[1];
-        $section = $matches[2];
 
         /**
          * Creates $students from "students" and "students_enrolled"
@@ -40,22 +40,46 @@ class Class_model extends MY_Model
             ->join("students", "students_enrolled.student_id = students.student_id")
             ->get()->result("Student");
         /**
-         * Creates $assignments from $classTable and "assignments"
-         * @var Assignment[] $assignments
+         * Creates $assignmentResult from $classTable and "assignments"
          */
-        $assignments = $this->db
+        $assignmentResult = $this->db
             ->select("student_id, assignment_id, assignment_name, description, type, weight, points, max_points, graded")
             ->from($classTable)
             ->join("assignments", "assignment_id = assignments.id")
-            ->get()->result("Assignment");
+            ->get()->result_array();
 
-        foreach ($students as $student) {
-            foreach ($assignments as $assignment) {
-                $student->addAssignment($assignment);
+        /**
+         * Creates $assignments from $assignmentResult
+         * @var Assignment[] $assignments
+         */
+        $assignments = array();
+        foreach ($assignmentResult as $assignment) {
+            $assignId = $assignment["assignment_id"];
+            $studentId = $assignment["student_id"];
+            $points = $assignment["points"];
+
+            if (!isset($assignments[$assignId])) {
+                $assignments[$assignId] = new Assignment();
+                foreach ($assignment as $key => $value) {
+                    $assignments[$assignId]->$key = $value;
+                }
             }
+            $assignments[$assignId]->setPoints($studentId, $points);
         }
 
-        $this->classObj = new ClassObj($assignments, $students);
+        /**
+         * Creates $assignmentList from $assignments
+         * @var AssignmentList $assignmentList
+         */
+        $assignmentList = new AssignmentList();
+        foreach ($assignments as $assignment) {
+            $assignmentList->addAssignment($assignment);
+        }
+        foreach ($students as $student) {
+            $student->assignmentList = $assignmentList;
+        }
+
+        $this->classObj = new ClassObj($assignmentList, $students);
     }
 
     /**
@@ -65,4 +89,7 @@ class Class_model extends MY_Model
     {
         return $this->classObj;
     }
+
+    //todo public function addStudents($studentIds)
+    //todo public function removeStudents($studentIds)
 }

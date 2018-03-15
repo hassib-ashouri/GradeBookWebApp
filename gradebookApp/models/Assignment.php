@@ -1,39 +1,52 @@
 <?php
 
-require_once "AssignmentGeneric.php";
 require_once "GradeStatistics.php";
 
-class Assignment extends AssignmentGeneric implements GradeStatistics
+class Assignment implements GradeStatistics
 {
-    public $student_id;
-    public $points;
+    public $assignment_id;
+    public $assignment_name;
+    public $description;
+    public $type;
+    public $weight;
+    public $max_points;
+    public $graded;
+
     /**
-     * @var AssignmentList
+     * @var number[]
      */
-    private $assignmentList;
+    private $grades = array();
+    /**
+     * @var number[]
+     */
+    private $points;
 
     public function __set($name, $value)
     {
     }
 
     /**
-     * @param AssignmentList $assignmentList
+     * Sets the points for a student
+     * @param string $studentId
+     * @param number $points
      */
-    public function setAssignmentList($assignmentList)
+    public function setPoints($studentId, $points)
     {
-        $this->assignmentList = $assignmentList;
+        $this->grades[$studentId] = +$points;
     }
 
     /**
-     * Gets a generic copy of the assignment
-     *      without student_id, or points assigned
-     * @return AssignmentGeneric
+     * Gets the points of a student
+     * @param string $studentId
+     * @return number
      */
-    public function getGenericAssignment()
+    public function getPoints($studentId)
     {
-        $assignment = new AssignmentGeneric();
-        $assignment->createFromAssignment($this);
-        return $assignment;
+        if (isset($this->grades[$studentId])) {
+            return $this->grades[$studentId];
+        } else {
+            return 0;
+        }
     }
 
     /**
@@ -42,7 +55,8 @@ class Assignment extends AssignmentGeneric implements GradeStatistics
      */
     public function getLowGrade()
     {
-        return $this->assignmentList->getLowGrade();
+        $this->_setPoints();
+        return gradeLow($this->points);
     }
 
     /**
@@ -51,7 +65,8 @@ class Assignment extends AssignmentGeneric implements GradeStatistics
      */
     public function getHighGrade()
     {
-        return $this->assignmentList->getHighGrade();
+        $this->_setPoints();
+        return gradeHigh($this->points);
     }
 
     /**
@@ -60,7 +75,8 @@ class Assignment extends AssignmentGeneric implements GradeStatistics
      */
     public function getMeanGrade()
     {
-        return $this->assignmentList->getMeanGrade();
+        $this->_setPoints();
+        return gradeMean($this->points);
     }
 
     /**
@@ -69,7 +85,8 @@ class Assignment extends AssignmentGeneric implements GradeStatistics
      */
     public function getMedianGrade()
     {
-        return $this->assignmentList->getMedianGrade();
+        $this->_setPoints();
+        return gradeMedian($this->points);
     }
 
     /**
@@ -78,7 +95,8 @@ class Assignment extends AssignmentGeneric implements GradeStatistics
      */
     public function getVarGrade()
     {
-        return $this->assignmentList->getVarGrade();
+        $this->_setPoints();
+        return gradeVar($this->points);
     }
 
     /**
@@ -87,6 +105,20 @@ class Assignment extends AssignmentGeneric implements GradeStatistics
      */
     public function getStdDevGrade()
     {
-        return $this->assignmentList->getStdDevGrade();
+        $this->_setPoints();
+        return gradeStdDev($this->points);
+    }
+
+    /**
+     * Initializes the assignmentPoints array
+     */
+    private function _setPoints()
+    {
+        if (!isset($this->points)) {
+            $this->points = array();
+            foreach ($this->grades as $grade) {
+                array_push($this->points, $grade);
+            }
+        }
     }
 }

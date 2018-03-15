@@ -6,10 +6,10 @@ class Student
     public $name_first;
     public $name_last;
     /**
-     * @var Assignment[]
+     * @var AssignmentList
      */
-    private $assignments = array();
-    private $groups = array();
+    public $assignmentList;
+    public $groups = array();
 
     public function __set($name, $value)
     {
@@ -21,30 +21,12 @@ class Student
     }
 
     /**
-     * @param $assignment Assignment
-     */
-    public function addAssignment($assignment)
-    {
-        if ($this->student_id === $assignment->student_id) {
-            array_push($this->assignments, $assignment);
-            if (!isset($this->groups[$assignment->type])) {
-                $this->groups[$assignment->type] = array(
-                    "graded" => 0,
-                    "points" => 0,
-                    "maxPoints" => 0,
-                    "weight" => $assignment->weight,
-                );
-            }
-        }
-    }
-
-    /**
-     * Gets the assignments associated with the student
+     * Gets the assignments with the student
      * @return Assignment[]
      */
     public function getAssignments()
     {
-        return $this->assignments;
+        return $this->assignmentList->getAssignments();
     }
 
     /**
@@ -53,6 +35,7 @@ class Student
      */
     public function getGrade()
     {
+        $this->_initGroups();
         foreach ($this->groups as $group) {
             if ($group["maxPoints"] == 0) {
                 $this->_calculatePoints();
@@ -123,15 +106,44 @@ class Student
 
     /**
      * Calculates the points and maxPoints for the student
-     *      for each assignment group
+     *      for each assignment group or for a single assignment group
+     * @param string $groupName
      */
-    private function _calculatePoints()
+    private function _calculatePoints($groupName = null)
     {
-        foreach ($this->assignments as $assignment) {
+        $assignmentGroups = $this->assignmentList->getGroupedAssignments();
+        if (is_null($groupName)) {
+            foreach ($assignmentGroups as $groupName => $assignmentGroup) {
+                $this->_calculatePointsGroup($groupName, $assignmentGroup);
+            }
+        } else {
+            $assignmentGroup = $assignmentGroups[$groupName];
+            $this->_calculatePointsGroup($groupName, $assignmentGroup);
+        }
+    }
+
+    /**
+     * Calculates the points and maxPoints for the student
+     *      for a single assignment group
+     * @param string $groupName
+     * @param AssignmentList $assignmentGroup
+     */
+    private function _calculatePointsGroup($groupName, $assignmentGroup)
+    {
+        $studentId = $this->student_id;
+        $assignments = $assignmentGroup->getAssignments();
+        $this->groups[$groupName] = array(
+            "graded" => 0,
+            "points" => 0,
+            "maxPoints" => 0,
+            "weight" => $assignmentGroup->getGroupWeight(),
+        );
+
+        foreach ($assignments as $assignment) {
             if ($assignment->graded) {
-                $this->groups[$assignment->type]["graded"] = 1;
-                $this->groups[$assignment->type]["points"] += +$assignment->points;
-                $this->groups[$assignment->type]["maxPoints"] += +$assignment->max_points;
+                $this->groups[$groupName]["graded"] = 1;
+                $this->groups[$groupName]["points"] += +$assignment->getPoints($studentId);
+                $this->groups[$groupName]["maxPoints"] += +$assignment->max_points;
             }
         }
     }
@@ -167,7 +179,7 @@ class Student
     {
         $temp = $this->groups[$group];
         if ($temp["maxPoints"] == 0) {
-            $this->_calculatePoints();
+            $this->_calculatePoints($group);
             $temp = $this->groups[$group];
         }
         $groupInfo = array(
@@ -181,5 +193,25 @@ class Student
             $groupInfo["weightedGrade"] = $groupInfo["grade"] * $groupInfo["weight"];
         }
         return $groupInfo;
+    }
+
+    /**
+     * Initializes the groups as necessary
+     */
+    private function _initGroups()
+    {
+        $assignmentGroups = $this->assignmentList->getGroupedAssignments();
+        $groupNames = array_keys($assignmentGroups);
+
+        foreach ($groupNames as $groupName) {
+            if (!isset($this->groups[$groupName])) {
+                $this->groups[$groupName] = array(
+                    "graded" => 0,
+                    "points" => 0,
+                    "maxPoints" => 0,
+                    "weight" => 0,
+                );
+            }
+        }
     }
 }

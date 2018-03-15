@@ -8,7 +8,7 @@
 class Assignment_model extends MY_Model
 {
     /**
-     * @var AssignmentGeneric[]
+     * @var Assignment[]
      */
     private $assignments = array();
 
@@ -17,7 +17,6 @@ class Assignment_model extends MY_Model
     {
         parent::__construct();
 
-        require_once "AssignmentGeneric.php";
         require_once "Assignment.php";
     }
 
@@ -33,7 +32,7 @@ class Assignment_model extends MY_Model
         $assignCount = count($post["assignId"]);
         $groupCount = count($post["groupName"]);
         for ($i = 0; $i < $assignCount; $i++) {
-            $this->assignments[$i] = new AssignmentGeneric();
+            $this->assignments[$i] = new Assignment();
             if (isset($post["assignId"])) {
                 $this->assignments[$i]->assignment_id = $post["assignId"][$i];
             }
