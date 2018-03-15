@@ -14,7 +14,7 @@ class Unit_test_controller extends MY_Controller
     }
 
     /**
-     * Tests methods from Password_model
+     * Tests methods from Login_model
      */
     public function passwordTest()
     {
@@ -68,14 +68,14 @@ class Unit_test_controller extends MY_Controller
             $pass[$i] = true;
         }
 
-        $this->load->model("password_model");
+        $this->load->model("login_model");
         for ($i = 0; $i < count($dataSets); $i++) {
             $passwordInput = $dataSets[$i];
             foreach ($answerSets[$i] as $passwordHash) {
                 $user = new User();
                 $user->password_hash = $passwordHash;
-                $this->password_model->setUser($user);
-                $passed = $this->password_model->verifyPassword($passwordInput);
+                $this->login_model->setUser($user);
+                $passed = $this->login_model->verifyPassword($passwordInput);
                 if (!$passed) {
                     $pass[$i] = false;
                 }

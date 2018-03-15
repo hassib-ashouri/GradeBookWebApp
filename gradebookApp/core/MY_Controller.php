@@ -89,7 +89,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @property CI_Security $security
  *      Security Class, xss, csrf, etc...
  * 
- * @property Password_model password_model
+ * @property Login_model login_model
  * @property Class_list_model class_list_model
  * @property Class_model class_model
  * @property Assignment_model assignment_model

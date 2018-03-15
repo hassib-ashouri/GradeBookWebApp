@@ -1,6 +1,6 @@
 <?php
 
-class Password_model extends MY_Model
+class Login_model extends MY_Model
 {
     /**
      * @var $user User
