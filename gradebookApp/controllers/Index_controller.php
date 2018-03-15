@@ -1,11 +1,11 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class IndexController extends MY_Controller
+class Index_controller extends MY_Controller
 {
     public function index()
     {
-        redirect("LoginController/loginView");
+        redirect("Login_controller/loginView");
     }
 
     public function sessionTest1()
@@ -127,7 +127,7 @@ class IndexController extends MY_Controller
         $groups = $genericAssignmentList->getGroupNames();
         $grouped = $genericAssignmentList->getGroupedAssignments();
 
-        $formAction = base_url() . "IndexController/submitGenericAssignmentTest";
+        $formAction = base_url() . "Index_controller/submitGenericAssignmentTest";
         echo "<form action='$formAction' method='post'>";
         foreach ($grouped as $group) {
             $groupName = $group->getGroupName();
@@ -168,7 +168,7 @@ class IndexController extends MY_Controller
         $this->assignment_model->readPost($post);
         $this->assignment_model->updateAssignments();
 
-        redirect("IndexController/genericAssignmentDisplay");
+        redirect("Index_controller/genericAssignmentDisplay");
     }
 
     public function genericAssignmentDisplay()
@@ -268,7 +268,7 @@ class IndexController extends MY_Controller
     public function passwordTest()
     {
         $post = $this->input->post();
-        $formAction = base_url() . "IndexController/passwordTest";
+        $formAction = base_url() . "Index_controller/passwordTest";
 
         echo "<form method='post' action='$formAction'>";
         echo "<input name='password'>";

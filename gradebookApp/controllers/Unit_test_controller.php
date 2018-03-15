@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class UnitTestController extends MY_Controller
+class Unit_test_controller extends MY_Controller
 {
     /**
      * Runs all unit tests

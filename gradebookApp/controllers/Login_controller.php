@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class LoginController extends MY_Controller
+class Login_controller extends MY_Controller
 {
     public function loginView($userName = "", $userId = "")
     {
@@ -11,12 +11,12 @@ class LoginController extends MY_Controller
             "errorMessage" => urldecode($errorMessage),
             "userName" => urldecode($userName),
             "userId" => urldecode($userId),
-            "formAction" => base_url() . "LoginController/loginUser",
+            "formAction" => base_url() . "Login_controller/loginUser",
             "buttonText" => "Next",
         );
 
         if (strlen($userId) > 0) {
-            $login["formAction"] = base_url() . "LoginController/loginPassword";
+            $login["formAction"] = base_url() . "Login_controller/loginPassword";
             $login["buttonText"] = "Log In";
         }
 
@@ -35,7 +35,7 @@ class LoginController extends MY_Controller
             "errorMessage" => urldecode($errorMessage),
             "userName" => urldecode($userName),
             "userId" => urldecode($userId),
-            "formAction" => base_url() . "LoginController/createPassword",
+            "formAction" => base_url() . "Login_controller/createPassword",
             "buttonText" => "Next",
         );
 
@@ -58,12 +58,12 @@ class LoginController extends MY_Controller
         }
         if (!$userIsValid) {
             $this->session->set_flashdata("errorMessage", "No Such ID Exists");
-            redirect("LoginController/loginView");
+            redirect("Login_controller/loginView");
         } else {
             $view = ($this->password_model->hasPassword()) ? "loginView" : "createPasswordView";
             $userName = $this->password_model->getUserName();
             $userId = $this->password_model->getUserId();
-            redirect(sprintf("LoginController/%s/%s/%s",
+            redirect(sprintf("Login_controller/%s/%s/%s",
                 $view, $userName, $userId));
         }
     }
@@ -85,7 +85,7 @@ class LoginController extends MY_Controller
             $this->session->set_flashdata("errorMessage", "Incorrect Password");
             $userName = $this->password_model->getUserName();
             $userId = $this->password_model->getUserId();
-            redirect(sprintf("LoginController/loginView/%s/%s", $userName, $userId));
+            redirect(sprintf("Login_controller/loginView/%s/%s", $userName, $userId));
         } else {
             $this->session->set_userdata("userId", $user);
             if ($this->password_model->isProfessor()) {
@@ -113,7 +113,7 @@ class LoginController extends MY_Controller
                 $this->session->set_flashdata("errorMessage", "Passwords Don't Match");
                 $userName = $this->password_model->getUserName();
                 $userId = $this->password_model->getUserId();
-                redirect(sprintf("LoginController/createPasswordView/%s/%s", $userName, $userId));
+                redirect(sprintf("Login_controller/createPasswordView/%s/%s", $userName, $userId));
             }
         }
     }
