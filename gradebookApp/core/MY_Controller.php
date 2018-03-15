@@ -93,6 +93,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @property Class_list_model class_list_model
  * @property Class_model class_model
  * @property Assignment_model assignment_model
+ * @property Student_model student_model
  */
 class MY_Controller extends CI_Controller
 {

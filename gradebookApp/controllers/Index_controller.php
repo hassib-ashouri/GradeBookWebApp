@@ -294,4 +294,14 @@ class Index_controller extends MY_Controller
             echo "<div>Works: $works</div>";
         }
     }
+
+    public function testVerify($studentId = "000000001")
+    {
+        $this->load->model("student_model");
+        $student = $this->student_model->getStudent($studentId);
+
+        echo "<pre>";
+        var_dump($student);
+        echo "</pre>";
+    }
 }
