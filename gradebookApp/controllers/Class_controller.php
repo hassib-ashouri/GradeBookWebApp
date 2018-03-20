@@ -7,4 +7,16 @@ class Class_controller extends MY_Controller
     {
         redirect("Login_controller/loginView");
     }
+
+    /**
+     * View methods
+     */
+
+    /**
+     * Action methods
+     */
+
+    /**
+     * Private methods
+     */
 }

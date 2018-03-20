@@ -3,6 +3,28 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Login_controller extends MY_Controller
 {
+    /**
+     * View methods
+     */
+    public function createPasswordView($userName, $userId)
+    {
+        $errorMessage = $this->session->flashdata("errorMessage");
+
+        $login = array(
+            "errorMessage" => urldecode($errorMessage),
+            "userName" => urldecode($userName),
+            "userId" => urldecode($userId),
+            "formAction" => base_url() . "Login_controller/createPassword",
+            "buttonText" => "Next",
+        );
+
+        $header["title"] = "Create Password - GradeBook";
+
+        $data["header"] = $this->load->view("header", $header, true);
+        $data["mainContent"] = $this->load->view("createPassword", $login, true);
+        $this->load->view("main", $data);
+    }
+
     public function loginView($userName = "", $userId = "")
     {
         $errorMessage = $this->session->flashdata("errorMessage");
@@ -27,44 +49,28 @@ class Login_controller extends MY_Controller
         $this->load->view("main", $data);
     }
 
-    public function createPasswordView($userName, $userId)
-    {
-        $errorMessage = $this->session->flashdata("errorMessage");
-
-        $login = array(
-            "errorMessage" => urldecode($errorMessage),
-            "userName" => urldecode($userName),
-            "userId" => urldecode($userId),
-            "formAction" => base_url() . "Login_controller/createPassword",
-            "buttonText" => "Next",
-        );
-
-        $header["title"] = "Create Password - GradeBook";
-
-        $data["header"] = $this->load->view("header", $header, true);
-        $data["mainContent"] = $this->load->view("createPassword", $login, true);
-        $this->load->view("main", $data);
-    }
-
-    public function loginUser()
+    /**
+     * Action methods
+     */
+    public function createPassword()
     {
         $post = $this->input->post();
-        $userIsValid = false;
 
-        if (isset($post["username"])) {
+        if (isset($post["username"]) && isset($post["password"]) && isset($post["passwordConfirm"])) {
             $user = $post["username"];
-            $this->load->model("login_model");
-            $userIsValid = $this->login_model->verifyUser($user);
-        }
-        if (!$userIsValid) {
-            $this->session->set_flashdata("errorMessage", "No Such ID Exists");
-            redirect("Login_controller/loginView");
-        } else {
-            $view = ($this->login_model->hasPassword()) ? "loginView" : "createPasswordView";
-            $userName = $this->login_model->getUserName();
-            $userId = $this->login_model->getUserId();
-            redirect(sprintf("Login_controller/%s/%s/%s",
-                $view, $userName, $userId));
+            $password = $post["password"];
+            $passwordConfirm = $post["passwordConfirm"];
+
+            if ($password == $passwordConfirm) {
+                $this->load->model("login_model");
+                $this->login_model->verifyUser($user);
+                $this->login_model->setPassword($password);
+            } else {
+                $this->session->set_flashdata("errorMessage", "Passwords Don't Match");
+                $userName = $this->login_model->getUserName();
+                $userId = $this->login_model->getUserId();
+                redirect(sprintf("Login_controller/createPasswordView/%s/%s", $userName, $userId));
+            }
         }
     }
 
@@ -96,25 +102,29 @@ class Login_controller extends MY_Controller
         }
     }
 
-    public function createPassword()
+    public function loginUser()
     {
         $post = $this->input->post();
+        $userIsValid = false;
 
-        if (isset($post["username"]) && isset($post["password"]) && isset($post["passwordConfirm"])) {
+        if (isset($post["username"])) {
             $user = $post["username"];
-            $password = $post["password"];
-            $passwordConfirm = $post["passwordConfirm"];
-
-            if ($password == $passwordConfirm) {
-                $this->load->model("login_model");
-                $this->login_model->verifyUser($user);
-                $this->login_model->setPassword($password);
-            } else {
-                $this->session->set_flashdata("errorMessage", "Passwords Don't Match");
-                $userName = $this->login_model->getUserName();
-                $userId = $this->login_model->getUserId();
-                redirect(sprintf("Login_controller/createPasswordView/%s/%s", $userName, $userId));
-            }
+            $this->load->model("login_model");
+            $userIsValid = $this->login_model->verifyUser($user);
+        }
+        if (!$userIsValid) {
+            $this->session->set_flashdata("errorMessage", "No Such ID Exists");
+            redirect("Login_controller/loginView");
+        } else {
+            $view = ($this->login_model->hasPassword()) ? "loginView" : "createPasswordView";
+            $userName = $this->login_model->getUserName();
+            $userId = $this->login_model->getUserId();
+            redirect(sprintf("Login_controller/%s/%s/%s",
+                $view, $userName, $userId));
         }
     }
+
+    /**
+     * Private methods
+     */
 }
