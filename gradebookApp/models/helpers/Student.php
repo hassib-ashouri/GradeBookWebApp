@@ -1,20 +1,44 @@
 <?php
 
+/**
+ * Represents a student
+ * Class Student
+ */
 class Student
 {
     public $student_id;
     public $name_first;
     public $name_last;
+
     /**
+     * Assignment list object,
+     *      matches copy in class object
      * @var AssignmentList
      */
     public $assignmentList;
+    /**
+     * Contains information used to calculate grades for each assignment category
+     *      where keys are assignment categories
+     * @var array
+     */
     public $groups = array();
 
+    /**
+     * Do nothing
+     * __set is typically used to set values where an error would otherwise be thrown
+     *      such as when accessing a private field, or a field that doesn't exist
+     * @param $name
+     * @param $value
+     */
     public function __set($name, $value)
     {
     }
 
+    /**
+     * Returns a simple representation of the student as a string
+     *      todo needed still?
+     * @return string
+     */
     public function __toString()
     {
         return "$this->name_last, $this->name_first $this->student_id";
@@ -140,6 +164,9 @@ class Student
         );
 
         foreach ($assignments as $assignment) {
+            /**
+             * @var Assignment $assignment
+             */
             if ($assignment->graded) {
                 $this->groups[$groupName]["graded"] = 1;
                 $this->groups[$groupName]["points"] += +$assignment->getPoints($studentId);

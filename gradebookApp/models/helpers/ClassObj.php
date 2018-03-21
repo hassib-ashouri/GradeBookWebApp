@@ -2,6 +2,11 @@
 
 require_once "GradeStatistics.php";
 
+/**
+ * Represents a class
+ *      includes the assignment list, students, and the students' grades
+ * Class ClassObj
+ */
 class ClassObj implements GradeStatistics
 {
     public $class_id;
@@ -13,14 +18,18 @@ class ClassObj implements GradeStatistics
     public $table_name;
 
     /**
+     * Assignment list object
      * @var AssignmentList
      */
     private $assignmentList;
     /**
+     * Array of student objects
      * @var Student[]
      */
     private $students;
     /**
+     * Array of students' grades
+     *      used for statistics
      * @var number[]
      */
     private $studentGrades;
@@ -44,12 +53,19 @@ class ClassObj implements GradeStatistics
         $this->students = $students;
     }
 
+    /**
+     * Do nothing
+     * __set is typically used to set values where an error would otherwise be thrown
+     *      such as when accessing a private field, or a field that doesn't exist
+     * @param $name
+     * @param $value
+     */
     public function __set($name, $value)
     {
     }
 
     /**
-     * Gets the Assignment List
+     * Gets the Assignment list object
      * @return AssignmentList
      */
     public function getAssignmentList()
@@ -67,7 +83,7 @@ class ClassObj implements GradeStatistics
     }
 
     /**
-     * Gets the array of students
+     * Gets the array of student objects
      * @return Student[]
      */
     public function getStudents()
@@ -76,7 +92,7 @@ class ClassObj implements GradeStatistics
     }
 
     /**
-     * Gets an individual student
+     * Gets an individual student object
      *      returns null if student not found
      * @param $studentId
      * @return null|Student

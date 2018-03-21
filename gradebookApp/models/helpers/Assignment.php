@@ -2,6 +2,11 @@
 
 require_once "GradeStatistics.php";
 
+/**
+ * Represents an assignment
+ *      with all students' grades included
+ * Class Assignment
+ */
 class Assignment implements GradeStatistics
 {
     public $assignment_id;
@@ -13,14 +18,19 @@ class Assignment implements GradeStatistics
     public $graded;
 
     /**
+     * Array of students' points for assignment
+     *      where keys are student ids
      * @var number[]
      */
     private $grades = array();
-    /**
-     * @var number[]
-     */
-    private $points;
 
+    /**
+     * Do nothing
+     * __set is typically used to set values where an error would otherwise be thrown
+     *      such as when accessing a private field, or a field that doesn't exist
+     * @param $name
+     * @param $value
+     */
     public function __set($name, $value)
     {
     }
@@ -55,8 +65,7 @@ class Assignment implements GradeStatistics
      */
     public function getLowGrade()
     {
-        $this->_setPoints();
-        return gradeLow($this->points);
+        return gradeLow($this->grades);
     }
 
     /**
@@ -65,8 +74,7 @@ class Assignment implements GradeStatistics
      */
     public function getHighGrade()
     {
-        $this->_setPoints();
-        return gradeHigh($this->points);
+        return gradeHigh($this->grades);
     }
 
     /**
@@ -75,8 +83,7 @@ class Assignment implements GradeStatistics
      */
     public function getMeanGrade()
     {
-        $this->_setPoints();
-        return gradeMean($this->points);
+        return gradeMean($this->grades);
     }
 
     /**
@@ -85,8 +92,7 @@ class Assignment implements GradeStatistics
      */
     public function getMedianGrade()
     {
-        $this->_setPoints();
-        return gradeMedian($this->points);
+        return gradeMedian($this->grades);
     }
 
     /**
@@ -95,8 +101,7 @@ class Assignment implements GradeStatistics
      */
     public function getVarGrade()
     {
-        $this->_setPoints();
-        return gradeVar($this->points);
+        return gradeVar($this->grades);
     }
 
     /**
@@ -105,20 +110,6 @@ class Assignment implements GradeStatistics
      */
     public function getStdDevGrade()
     {
-        $this->_setPoints();
-        return gradeStdDev($this->points);
-    }
-
-    /**
-     * Initializes the assignmentPoints array
-     */
-    private function _setPoints()
-    {
-        if (!isset($this->points)) {
-            $this->points = array();
-            foreach ($this->grades as $grade) {
-                array_push($this->points, $grade);
-            }
-        }
+        return gradeStdDev($this->grades);
     }
 }

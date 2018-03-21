@@ -1,22 +1,31 @@
 <?php
 
+/**
+ * Represents a grouping of assignments
+ * Class AssignmentList
+ */
 class AssignmentList
 {
     /**
+     * Whether or not to group assignments by category
      * @var bool
      */
     public $doGroup = true;
-
     /**
+     * Array of all assignments in the list
      * @var Assignment[]
      */
     private $assignments = array();
     /**
+     * Array of assignment lists
+     *      where keys are names of groups
      * @var AssignmentList[]
-     *      keys are names of groups
      */
     private $grouped = array();
 
+    /**
+     * AssignmentList constructor.
+     */
     public function __construct()
     {
         require_once "Assignment.php";
@@ -72,12 +81,12 @@ class AssignmentList
 
     /**
      * Gets the type of the group
+     *      doesn't apply to top level
      *      Many thanks: https://stackoverflow.com/a/3771228
      * @return string
      */
     public function getGroupName()
     {
-        // doesn't apply to top level
         if ($this->doGroup) {
             return "";
         }
@@ -86,12 +95,12 @@ class AssignmentList
 
     /**
      * Gets the weight of the group
+     *      doesn't apply to top level
      *      Many thanks: https://stackoverflow.com/a/3771228
      * @return float
      */
     public function getGroupWeight()
     {
-        // doesn't apply to top level
         if ($this->doGroup) {
             return 0;
         }

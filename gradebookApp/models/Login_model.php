@@ -54,11 +54,11 @@ class Login_model extends MY_Model
         );
         if ($this->user->type === "professor") {
             $this->db
-                ->where("professor_id", $this->user->userId)
+                ->where("professor_id", $this->user->user_id)
                 ->update("professors", $data);
         } else {
             $this->db
-                ->where("student_id", $this->user->userId)
+                ->where("student_id", $this->user->user_id)
                 ->update("students", $data);
         }
     }
@@ -89,7 +89,7 @@ class Login_model extends MY_Model
 
     public function getUserId()
     {
-        return $this->user->userId;
+        return $this->user->user_id;
     }
 
     public function getUserName()
