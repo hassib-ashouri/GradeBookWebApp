@@ -12,7 +12,7 @@ class Login_model extends MY_Model
     {
         parent::__construct();
 
-        require_once "User.php";
+        require_once "helpers/User.php";
     }
 
     public function verifyUser($user)

@@ -7,7 +7,7 @@ class Class_list_model extends MY_Model
     {
         parent::__construct();
 
-        require_once "ClassObj.php";
+        require_once "helpers/ClassObj.php";
     }
 
     /**

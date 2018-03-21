@@ -12,10 +12,10 @@ class Class_model extends MY_Model
     {
         parent::__construct();
 
-        require_once "Assignment.php";
-        require_once "AssignmentList.php";
-        require_once "Student.php";
-        require_once "ClassObj.php";
+        require_once "helpers/Assignment.php";
+        require_once "helpers/AssignmentList.php";
+        require_once "helpers/Student.php";
+        require_once "helpers/ClassObj.php";
     }
 
     /**
