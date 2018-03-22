@@ -37,6 +37,19 @@ if (!function_exists('guid')) {
     }
 }
 
+if (!function_exists('pretty_dump')) {
+    /**
+     * Var_dumps an $object in a <pre></pre> block
+     * @param $object
+     */
+    function pretty_dump($object)
+    {
+        echo "<pre>";
+        var_dump($object);
+        echo "</pre>";
+    }
+}
+
 if (!function_exists('images_url')) {
     /**
      * Gets the absolute url to the assets/images directory
