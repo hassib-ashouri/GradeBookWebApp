@@ -130,6 +130,7 @@ class Index_controller extends MY_Controller
 
         $formAction = base_url() . "Index_controller/submitGenericAssignmentTest";
         echo "<form action='$formAction' method='post'>";
+        echo "<input name='tableName' value='$tableName' type='hidden'>";
         foreach ($grouped as $group) {
             $groupName = $group->getGroupName();
             $groupWeight = $group->getGroupWeight();
@@ -151,6 +152,7 @@ class Index_controller extends MY_Controller
                 echo "</select>";
 
                 echo "<input name='assignMaxPts[]' value='$assignment->max_points'>";
+                echo "<input name='assignMaxPtsOld[]' value='$assignment->max_points' type='hidden'>";
                 echo "<input name='assignGraded[]' value='$assignment->graded' type='hidden'>";
                 echo "</div>";
             }

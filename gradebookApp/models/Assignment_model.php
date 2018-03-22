@@ -14,6 +14,11 @@ class Assignment_model extends MY_Model
      * @var Assignment[]
      */
     private $assignments = array();
+    /**
+     * Name of the database table
+     * @var string
+     */
+    private $tableName;
 
     // model is in charge of crud: create, read, update, delete
     public function __construct()
@@ -28,6 +33,7 @@ class Assignment_model extends MY_Model
      *      to use in other methods;
      * Only assigns what is available from post;
      * Requires that the assignType match some groupName.
+     * Saves tableName as well
      * @param $post
      */
     public function readPost($post)
@@ -51,6 +57,9 @@ class Assignment_model extends MY_Model
             if (isset($post["assignMaxPts"])) {
                 $this->assignments[$i]->max_points = $post["assignMaxPts"][$i];
             }
+            if (isset($post["assignMaxPtsOld"])) {
+                $this->assignments[$i]->max_points_old = $post["assignMaxPtsOld"][$i];
+            }
             if (isset($post["assignGraded"])) {
                 $this->assignments[$i]->graded = $post["assignGraded"][$i];
             }
@@ -63,6 +72,10 @@ class Assignment_model extends MY_Model
                 }
             }
         }
+
+        if (isset($post["tableName"])) {
+            $this->tableName = $post["tableName"];
+        }
     }
 
     /**
@@ -71,7 +84,16 @@ class Assignment_model extends MY_Model
      */
     public function updateAssignments()
     {
-        $batch = array();
+        $this->_updateClassAssignments();
+        $this->_updateBatchAssignments();
+    }
+
+    /**
+     * Updates the batch of assignment meta data
+     */
+    private function _updateBatchAssignments()
+    {
+        $batchAssignments = array();
 
         foreach ($this->assignments as $assignment) {
             $temp = array();
@@ -81,19 +103,54 @@ class Assignment_model extends MY_Model
                         case "assignment_id":
                             $temp["id"] = $value;
                             break;
+                        case "max_points_old":
+                            // not a column in the db
+                            break;
                         default:
                             $temp[$propertyName] = $value;
                             break;
                     }
                 }
             }
-            array_push($batch, $temp);
+            array_push($batchAssignments, $temp);
         }
 
-        // todo account for changing max_points
+        if (count($batchAssignments) > 0) {
+            $this->db->update_batch("assignments", $batchAssignments, "id");
+        }
+    }
 
-        if (count($batch) > 0) {
-            $this->db->update_batch("assignments", $batch, "id");
+    /**
+     * Updates the batch of assignments from a class
+     */
+    private function _updateClassAssignments()
+    {
+        $classAssignments = array();
+
+        if (isset($this->tableName)) {
+            $ratios = array();
+            foreach ($this->assignments as $assignment) {
+                $ratio = +$assignment->max_points / +$assignment->max_points_old;
+                $ratios[$assignment->assignment_id] = $ratio;
+            }
+
+            $assignments = $this->db
+                ->select("id, assignment_id, student_id, points")
+                ->from($this->tableName)
+                ->get()->result_array();
+
+            foreach ($assignments as $assignment) {
+                $tempPoints = +$assignment["points"] * $ratios[$assignment["assignment_id"]];
+                $temp = array(
+                    "id" => $assignment["id"],
+                    "points" => $tempPoints,
+                );
+                array_push($classAssignments, $temp);
+            }
+        }
+
+        if (count($classAssignments) > 0) {
+            $this->db->update_batch($this->tableName, $classAssignments, "id");
         }
     }
 }

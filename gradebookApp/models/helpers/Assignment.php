@@ -18,6 +18,11 @@ class Assignment implements GradeStatistics
     public $graded;
 
     /**
+     * Previous value of max_points
+     * @var number
+     */
+    public $max_points_old;
+    /**
      * Array of students' points for assignment
      *      where keys are student ids
      * @var number[]
