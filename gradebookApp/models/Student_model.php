@@ -1,9 +1,10 @@
 <?php
 
 /**
- * Class Student_model
- * Not used for reading students
+ * Database interaction for students;
+ * Not used for reading students,
  *      only create, update, and delete
+ * Class Student_model
  */
 class Student_model extends MY_Model
 {

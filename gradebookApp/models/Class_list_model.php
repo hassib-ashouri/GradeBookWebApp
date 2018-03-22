@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * Database interaction for class lists;
+ * In charge of "meta data" interactions,
+ *      such as creating and deleting whole classes,
+ *      as well as just listing out basic info.
+ * Class Class_list_model
+ */
 class Class_list_model extends MY_Model
 {
     // model is in charge of crud: create, read, update, delete
@@ -11,8 +18,9 @@ class Class_list_model extends MY_Model
     }
 
     /**
-     * @param $userId
-     * @return array
+     * Gets the array of classes for a professor
+     * @param string $userId
+     * @return ClassObj[]
      */
     public function readProfessorClassList($userId)
     {

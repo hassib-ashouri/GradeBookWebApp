@@ -1,9 +1,17 @@
 <?php
 
+/**
+ * Database interaction for login;
+ * Verifies that a user exists, and that a valid password was input;
+ * Also used for setting password, etc.
+ * Class Login_model
+ */
 class Login_model extends MY_Model
 {
     /**
-     * @var $user User
+     * The user,
+     *      created by reading the user_id and matching with a user in the database
+     * @var User
      */
     private $user;
 
@@ -15,16 +23,21 @@ class Login_model extends MY_Model
         require_once "helpers/User.php";
     }
 
-    public function verifyUser($user)
+    /**
+     * Verifies that a user exists for the given userId
+     * @param string $userId
+     * @return bool
+     */
+    public function verifyUser($userId)
     {
         $query = $this->db
             ->select("*")
-            ->where("professor_id", $user)
+            ->where("professor_id", $userId)
             ->get("professors");
         if ($query->num_rows() == 0) {
             $query = $this->db
                 ->select("*")
-                ->where("student_id", $user)
+                ->where("student_id", $userId)
                 ->get("students");
             if ($query->num_rows() == 0) {
                 return false;
@@ -36,9 +49,9 @@ class Login_model extends MY_Model
     }
 
     /**
-     * Tests the password against the database
+     * Tests the password against the database;
      *      many thanks to: https://stackoverflow.com/a/6337021
-     * @param $password string
+     * @param string $password
      * @return bool
      */
     public function verifyPassword($password)
@@ -47,6 +60,10 @@ class Login_model extends MY_Model
         return password_verify($password, $hashed);
     }
 
+    /**
+     * Sets the password for the user
+     * @param string $password
+     */
     public function setPassword($password)
     {
         $data = array(
@@ -82,18 +99,21 @@ class Login_model extends MY_Model
         return $this->user->type === "professor";
     }
 
+    /**
+     * Checks if the user has a password_hash set
+     * @return bool
+     */
     public function hasPassword()
     {
         return strlen($this->user->password_hash) > 0;
     }
 
-    public function getUserId()
+    /**
+     * Getter for user
+     * @return User
+     */
+    public function getUser()
     {
-        return $this->user->user_id;
-    }
-
-    public function getUserName()
-    {
-        return $this->user->name_first . " " . $this->user->name_last;
+        return $this->user;
     }
 }

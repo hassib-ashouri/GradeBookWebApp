@@ -1,13 +1,16 @@
 <?php
 
 /**
+ * Database interaction for assignments;
+ * Not used for reading assignments,
+ *      only create, update, and delete.
  * Class Assignment_model
- * Not used for reading assignments
- *      only create, update, and delete
  */
 class Assignment_model extends MY_Model
 {
     /**
+     * Array of assignments
+     *      read in from post
      * @var Assignment[]
      */
     private $assignments = array();
@@ -22,9 +25,9 @@ class Assignment_model extends MY_Model
 
     /**
      * Reads in assignments from post
-     *      to use in other methods
-     * Only assigns what is available from post
-     * Requires that the assignType match some groupName
+     *      to use in other methods;
+     * Only assigns what is available from post;
+     * Requires that the assignType match some groupName.
      * @param $post
      */
     public function readPost($post)

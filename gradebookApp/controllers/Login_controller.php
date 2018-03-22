@@ -67,8 +67,9 @@ class Login_controller extends MY_Controller
                 $this->login_model->setPassword($password);
             } else {
                 $this->session->set_flashdata("errorMessage", "Passwords Don't Match");
-                $userName = $this->login_model->getUserName();
-                $userId = $this->login_model->getUserId();
+                $user = $this->login_model->getUser();
+                $userName = $user->name_first . " " . $user->name_last;
+                $userId = $user->user_id;
                 redirect(sprintf("Login_controller/createPasswordView/%s/%s", $userName, $userId));
             }
         }
@@ -89,8 +90,9 @@ class Login_controller extends MY_Controller
 
         if (!$passwordIsValid) {
             $this->session->set_flashdata("errorMessage", "Incorrect Password");
-            $userName = $this->login_model->getUserName();
-            $userId = $this->login_model->getUserId();
+            $user = $this->login_model->getUser();
+            $userName = $user->name_first . " " . $user->name_last;
+            $userId = $user->user_id;
             redirect(sprintf("Login_controller/loginView/%s/%s", $userName, $userId));
         } else {
             $this->session->set_userdata("userId", $user);
@@ -117,8 +119,9 @@ class Login_controller extends MY_Controller
             redirect("Login_controller/loginView");
         } else {
             $view = ($this->login_model->hasPassword()) ? "loginView" : "createPasswordView";
-            $userName = $this->login_model->getUserName();
-            $userId = $this->login_model->getUserId();
+            $user = $this->login_model->getUser();
+            $userName = $user->name_first . " " . $user->name_last;
+            $userId = $user->user_id;
             redirect(sprintf("Login_controller/%s/%s/%s",
                 $view, $userName, $userId));
         }

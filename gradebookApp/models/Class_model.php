@@ -1,8 +1,16 @@
 <?php
 
+/**
+ * Database interaction for classes;
+ * Used for reading, and editing class info,
+ *      such as enrolled students
+ * Class Class_model
+ */
 class Class_model extends MY_Model
 {
     /**
+     * Class object,
+     *      created from class table in the database
      * @var ClassObj
      */
     private $classObj;
