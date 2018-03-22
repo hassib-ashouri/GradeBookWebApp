@@ -37,30 +37,50 @@ class Class_model extends MY_Model
         preg_match("/class_(\d{5})_.*?_\d{2}_table/", $classTableName, $matches);
         $classId = $matches[1];
 
-        /**
-         * Creates $students from "students" and "students_enrolled"
-         *      matches against $classId and $section
-         * @var Student[] $students
-         */
+        $students = $this->_getStudents($classId);
+        $assignments = $this->_getAssignments($classTableName);
+        $assignmentList = $this->_getAssignmentList($assignments);
+
+        $this->_setAssignmentList($assignmentList, $students);
+
+        $this->classObj = new ClassObj($assignmentList, $students);
+        $this->classObj->table_name = $classTableName;
+
+        return $this->classObj;
+    }
+
+    /**
+     * Creates $students from "students" and "students_enrolled"
+     *      matches against $classId
+     * @param string $classId
+     * @return Student[]
+     */
+    private function _getStudents($classId)
+    {
         $students = $this->db
             ->select("students.student_id, name_first, name_last")
             ->from("students_enrolled")
             ->where("class_id", $classId)
             ->join("students", "students_enrolled.student_id = students.student_id")
             ->get()->result("Student");
-        /**
-         * Creates $assignmentResult from $classTable and "assignments"
-         */
+
+        return $students;
+    }
+
+    /**
+     * Creates $assignments from $assignmentResult;
+     * Creates $assignmentResult from $classTable and "assignments"
+     * @param string $classTableName
+     * @return Assignment[]
+     */
+    private function _getAssignments($classTableName)
+    {
         $assignmentResult = $this->db
             ->select("student_id, assignment_id, assignment_name, description, type, weight, points, max_points, graded")
             ->from($classTableName)
             ->join("assignments", "assignment_id = assignments.id")
             ->get()->result_array();
 
-        /**
-         * Creates $assignments from $assignmentResult
-         * @var Assignment[] $assignments
-         */
         $assignments = array();
         foreach ($assignmentResult as $assignment) {
             $assignId = $assignment["assignment_id"];
@@ -76,22 +96,34 @@ class Class_model extends MY_Model
             $assignments[$assignId]->setPoints($studentId, $points);
         }
 
-        /**
-         * Creates $assignmentList from $assignments
-         * @var AssignmentList $assignmentList
-         */
+        return $assignments;
+    }
+
+    /**
+     * Creates $assignmentList from $assignments
+     * @param Assignment[] $assignments
+     * @return AssignmentList
+     */
+    private function _getAssignmentList($assignments)
+    {
         $assignmentList = new AssignmentList();
         foreach ($assignments as $assignment) {
             $assignmentList->addAssignment($assignment);
         }
+
+        return $assignmentList;
+    }
+
+    /**
+     * Sets the assignment list for each student
+     * @param AssignmentList $assignmentList
+     * @param Student[] $students
+     */
+    private function _setAssignmentList($assignmentList, $students)
+    {
         foreach ($students as $student) {
             $student->assignmentList = $assignmentList;
         }
-
-        $this->classObj = new ClassObj($assignmentList, $students);
-        $this->classObj->table_name = $classTableName;
-
-        return $this->classObj;
     }
 
     //todo public function addStudents($studentIds)
