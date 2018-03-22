@@ -64,8 +64,7 @@ class Index_controller extends MY_Controller
         $tableName = "class_29506_SE-131_02_table";
 
         $this->load->model("class_model");
-        $this->class_model->loadTable($tableName);
-        $classObj = $this->class_model->getClass();
+        $classObj = $this->class_model->getClass($tableName);
         $students = $classObj->getStudents();
 
         foreach ($students as $student) {
@@ -81,8 +80,7 @@ class Index_controller extends MY_Controller
         $tableName = "class_29506_SE-131_02_table";
 
         $this->load->model("class_model");
-        $this->class_model->loadTable($tableName);
-        $classObj = $this->class_model->getClass();
+        $classObj = $this->class_model->getClass($tableName);
         $assignments = $classObj->getAssignments();
         $student = $classObj->getStudent($studentId);
         if (!is_null($student)) {
@@ -125,8 +123,7 @@ class Index_controller extends MY_Controller
         $tableName = "class_29506_SE-131_02_table";
 
         $this->load->model("class_model");
-        $this->class_model->loadTable($tableName);
-        $classObj = $this->class_model->getClass();
+        $classObj = $this->class_model->getClass($tableName);
         $assignmentList = $classObj->getAssignmentList();
         $groups = $assignmentList->getGroupNames();
         $grouped = $assignmentList->getGroupedAssignments();
@@ -180,8 +177,7 @@ class Index_controller extends MY_Controller
         $tableName = "class_29506_SE-131_02_table";
 
         $this->load->model("class_model");
-        $this->class_model->loadTable($tableName);
-        $classObj = $this->class_model->getClass();
+        $classObj = $this->class_model->getClass($tableName);
         $assignmentList = $classObj->getAssignmentList();
         $grouped = $assignmentList->getGroupedAssignments();
 
@@ -221,8 +217,7 @@ class Index_controller extends MY_Controller
         $tableName = "class_29506_SE-131_02_table";
 
         $this->load->model("class_model");
-        $this->class_model->loadTable($tableName);
-        $classObj = $this->class_model->getClass();
+        $classObj = $this->class_model->getClass($tableName);
 
         $low = sprintf("%.2f%%", $classObj->getLowGrade());
         $high = sprintf("%.2f%%", $classObj->getHighGrade());
@@ -244,8 +239,7 @@ class Index_controller extends MY_Controller
         $tableName = "class_29506_SE-131_02_table";
 
         $this->load->model("class_model");
-        $this->class_model->loadTable($tableName);
-        $classObj = $this->class_model->getClass();
+        $classObj = $this->class_model->getClass($tableName);
         $assignments = $classObj->getAssignments();
 
         foreach ($assignments as $assignment) {

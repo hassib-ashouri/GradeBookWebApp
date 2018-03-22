@@ -27,13 +27,14 @@ class Class_model extends MY_Model
     }
 
     /**
-     * Loads a table and creates a classObj out of it
-     * @param string $classTable tableName
+     * Loads a table, creates and returns a classObj
+     * @param string $classTableName
+     * @return ClassObj
      */
-    public function loadTable($classTable)
+    public function getClass($classTableName)
     {
         $matches = array();
-        preg_match("/class_(\d{5})_.*?_\d{2}_table/", $classTable, $matches);
+        preg_match("/class_(\d{5})_.*?_\d{2}_table/", $classTableName, $matches);
         $classId = $matches[1];
 
         /**
@@ -52,7 +53,7 @@ class Class_model extends MY_Model
          */
         $assignmentResult = $this->db
             ->select("student_id, assignment_id, assignment_name, description, type, weight, points, max_points, graded")
-            ->from($classTable)
+            ->from($classTableName)
             ->join("assignments", "assignment_id = assignments.id")
             ->get()->result_array();
 
@@ -88,13 +89,8 @@ class Class_model extends MY_Model
         }
 
         $this->classObj = new ClassObj($assignmentList, $students);
-    }
+        $this->classObj->table_name = $classTableName;
 
-    /**
-     * @return ClassObj
-     */
-    public function getClass()
-    {
         return $this->classObj;
     }
 
