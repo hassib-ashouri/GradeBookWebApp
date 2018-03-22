@@ -35,16 +35,6 @@ class Student
     }
 
     /**
-     * Returns a simple representation of the student as a string
-     *      todo needed still?
-     * @return string
-     */
-    public function __toString()
-    {
-        return "$this->name_last, $this->name_first $this->student_id";
-    }
-
-    /**
      * Gets the assignments with the student
      * @return Assignment[]
      */

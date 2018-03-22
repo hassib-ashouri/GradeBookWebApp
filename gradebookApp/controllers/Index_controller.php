@@ -70,7 +70,9 @@ class Index_controller extends MY_Controller
 
         foreach ($students as $student) {
             $grade = sprintf("%.2f%%", $student->getGrade());
-            echo "<pre>$grade - $student</pre>";
+            $studentName = sprintf("%s, %s", $student->name_last, $student->name_first);
+            $studentId = $student->student_id;
+            echo "<pre>$grade - $studentName, $studentId</pre>";
         }
     }
 
@@ -247,6 +249,9 @@ class Index_controller extends MY_Controller
         $assignments = $classObj->getAssignments();
 
         foreach ($assignments as $assignment) {
+            /**
+             * @var Assignment $assignment
+             */
             $name = $assignment->assignment_name;
             $low = sprintf("%.2f", $assignment->getLowGrade());
             $high = sprintf("%.2f", $assignment->getHighGrade());
