@@ -29,7 +29,6 @@ class AssignmentList
      */
     public function __construct()
     {
-        require_once "Assignment.php";
     }
 
     /**

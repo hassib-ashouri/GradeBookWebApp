@@ -40,10 +40,6 @@ class ClassObj implements \Interfaces\GradeStatistics
      */
     public function __construct($assignmentList = null, $students = array())
     {
-        require_once "Assignment.php";
-        require_once "AssignmentList.php";
-        require_once "Student.php";
-
         if (is_null($assignmentList)) {
             $assignmentList = new AssignmentList();
         }

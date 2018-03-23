@@ -1,4 +1,4 @@
-<?php
+<?php namespace Models;
 
 /**
  * Database interaction for classes;
@@ -6,7 +6,7 @@
  *      such as enrolled students
  * Class Class_model
  */
-class Class_model extends MY_Model
+class Class_model extends \MY_Model
 {
     /**
      * Class object,

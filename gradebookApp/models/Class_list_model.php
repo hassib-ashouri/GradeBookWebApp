@@ -1,4 +1,4 @@
-<?php
+<?php namespace Models;
 
 /**
  * Database interaction for class lists;
@@ -7,7 +7,7 @@
  *      as well as just listing out basic info.
  * Class Class_list_model
  */
-class Class_list_model extends MY_Model
+class Class_list_model extends \MY_Model
 {
     // model is in charge of crud: create, read, update, delete
     public function __construct()
