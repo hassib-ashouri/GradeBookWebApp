@@ -1,8 +1,9 @@
-<?php
+<?php namespace Objects;
 
 /**
  * Represents a grouping of assignments
  * Class AssignmentList
+ *  @package Objects
  */
 class AssignmentList
 {

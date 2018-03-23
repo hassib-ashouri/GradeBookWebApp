@@ -12,15 +12,13 @@ class Student_model extends MY_Model
     public function __construct()
     {
         parent::__construct();
-
-        require_once "helpers/Student.php";
     }
 
     /**
      * Gets a student from the db
      *      if doesn't exist, returns null
      * @param $studentId
-     * @return Student|null
+     * @return \Objects\Student|null
      */
     public function getStudent($studentId)
     {
@@ -28,7 +26,7 @@ class Student_model extends MY_Model
             ->select("student_id, name_first, name_last")
             ->from("students")
             ->where("student_id", $studentId)
-            ->get()->row(0, "Student");
+            ->get()->row(0, "\Objects\Student");
         return $student;
     }
 }

@@ -1,8 +1,9 @@
-<?php
+<?php namespace Objects;
 
 /**
  * Represents a student
  * Class Student
+ * @package Objects
  */
 class Student
 {

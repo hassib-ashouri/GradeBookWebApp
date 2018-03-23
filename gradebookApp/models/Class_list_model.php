@@ -13,14 +13,12 @@ class Class_list_model extends MY_Model
     public function __construct()
     {
         parent::__construct();
-
-        require_once "helpers/ClassObj.php";
     }
 
     /**
      * Gets the array of classes for a professor
      * @param string $userId
-     * @return ClassObj[]
+     * @return \Objects\ClassObj[]
      */
     public function readProfessorClassList($userId)
     {
@@ -28,7 +26,7 @@ class Class_list_model extends MY_Model
             ->select("*")
             ->where("professor_id", $userId)
             ->get("classes");
-        $classes = $query->result("ClassObj");
+        $classes = $query->result("\Objects\ClassObj");
 
         return $classes;
     }
@@ -37,7 +35,7 @@ class Class_list_model extends MY_Model
      * Checks for a class in the db with specified table_name
      *      checks single row exists in classes
      *      checks table exists for class
-     * @param ClassObj $classObj
+     * @param \Objects\ClassObj $classObj
      * @return bool[]
      */
     public function classData($classObj)
@@ -68,7 +66,7 @@ class Class_list_model extends MY_Model
      * Creates a class in the db with specified table_name
      *      inserts row into classes
      *      creates table for class
-     * @param ClassObj $classObj
+     * @param \Objects\ClassObj $classObj
      */
     public function createClass($classObj)
     {
@@ -129,7 +127,7 @@ class Class_list_model extends MY_Model
      * Deletes a class in the db with specified table_name
      *      deletes row from classes
      *      drops table for class
-     * @param ClassObj $classObj
+     * @param \Objects\ClassObj $classObj
      */
     public function deleteClass($classObj)
     {

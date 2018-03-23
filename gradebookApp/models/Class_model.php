@@ -11,7 +11,7 @@ class Class_model extends MY_Model
     /**
      * Class object,
      *      created from class table in the database
-     * @var ClassObj
+     * @var \Objects\ClassObj
      */
     private $classObj;
 
@@ -19,17 +19,12 @@ class Class_model extends MY_Model
     public function __construct()
     {
         parent::__construct();
-
-        require_once "helpers/Assignment.php";
-        require_once "helpers/AssignmentList.php";
-        require_once "helpers/Student.php";
-        require_once "helpers/ClassObj.php";
     }
 
     /**
      * Loads a table, creates and returns a classObj
      * @param string $classTableName
-     * @return ClassObj
+     * @return \Objects\ClassObj
      */
     public function getClass($classTableName)
     {
@@ -43,7 +38,7 @@ class Class_model extends MY_Model
 
         $this->_setAssignmentList($assignmentList, $students);
 
-        $this->classObj = new ClassObj($assignmentList, $students);
+        $this->classObj = new \Objects\ClassObj($assignmentList, $students);
         $this->classObj->table_name = $classTableName;
 
         return $this->classObj;
@@ -53,7 +48,7 @@ class Class_model extends MY_Model
      * Creates $students from "students" and "students_enrolled"
      *      matches against $classId
      * @param string $classId
-     * @return Student[]
+     * @return \Objects\Student[]
      */
     private function _getStudents($classId)
     {
@@ -62,7 +57,7 @@ class Class_model extends MY_Model
             ->from("students_enrolled")
             ->where("class_id", $classId)
             ->join("students", "students_enrolled.student_id = students.student_id")
-            ->get()->result("Student");
+            ->get()->result("\Objects\Student");
 
         return $students;
     }
@@ -71,7 +66,7 @@ class Class_model extends MY_Model
      * Creates $assignments from $assignmentResult;
      * Creates $assignmentResult from $classTable and "assignments"
      * @param string $classTableName
-     * @return Assignment[]
+     * @return \Objects\Assignment[]
      */
     private function _getAssignments($classTableName)
     {
@@ -88,7 +83,7 @@ class Class_model extends MY_Model
             $points = $assignment["points"];
 
             if (!isset($assignments[$assignId])) {
-                $assignments[$assignId] = new Assignment();
+                $assignments[$assignId] = new \Objects\Assignment();
                 foreach ($assignment as $key => $value) {
                     $assignments[$assignId]->$key = $value;
                 }
@@ -101,12 +96,12 @@ class Class_model extends MY_Model
 
     /**
      * Creates $assignmentList from $assignments
-     * @param Assignment[] $assignments
-     * @return AssignmentList
+     * @param \Objects\Assignment[] $assignments
+     * @return \Objects\AssignmentList
      */
     private function _getAssignmentList($assignments)
     {
-        $assignmentList = new AssignmentList();
+        $assignmentList = new \Objects\AssignmentList();
         foreach ($assignments as $assignment) {
             $assignmentList->addAssignment($assignment);
         }
@@ -116,8 +111,8 @@ class Class_model extends MY_Model
 
     /**
      * Sets the assignment list for each student
-     * @param AssignmentList $assignmentList
-     * @param Student[] $students
+     * @param \Objects\AssignmentList $assignmentList
+     * @param \Objects\Student[] $students
      */
     private function _setAssignmentList($assignmentList, $students)
     {

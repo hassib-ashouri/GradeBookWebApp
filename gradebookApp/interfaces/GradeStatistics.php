@@ -1,5 +1,10 @@
-<?php
+<?php namespace Interfaces;
 
+/**
+ * Implementing classes can calculate grade statistics
+ * Interface GradeStatistics
+ * @package Interfaces
+ */
 interface GradeStatistics
 {
     /**

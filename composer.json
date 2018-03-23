@@ -1,0 +1,12 @@
+{
+  "require-dev": {
+  },
+  "require": {
+  },
+  "autoload": {
+    "psr-4": {
+      "Interfaces\\": "interfaces/",
+      "Objects\\": "objects/"
+    }
+  }
+}

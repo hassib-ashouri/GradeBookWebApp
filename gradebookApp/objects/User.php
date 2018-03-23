@@ -1,9 +1,10 @@
-<?php
+<?php namespace Objects;
 
 /**
  * Represents a user of the system
  *      either a professor or a student
  * Class User
+ * @package Objects
  */
 class User
 {

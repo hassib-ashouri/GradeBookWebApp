@@ -11,7 +11,7 @@ class Assignment_model extends MY_Model
     /**
      * Array of assignments
      *      read in from post
-     * @var Assignment[]
+     * @var \Objects\Assignment[]
      */
     private $assignments = array();
     /**
@@ -24,8 +24,6 @@ class Assignment_model extends MY_Model
     public function __construct()
     {
         parent::__construct();
-
-        require_once "helpers/Assignment.php";
     }
 
     /**
@@ -41,7 +39,7 @@ class Assignment_model extends MY_Model
         $assignCount = count($post["assignId"]);
         $groupCount = count($post["groupName"]);
         for ($i = 0; $i < $assignCount; $i++) {
-            $this->assignments[$i] = new Assignment();
+            $this->assignments[$i] = new \Objects\Assignment();
             if (isset($post["assignId"])) {
                 $this->assignments[$i]->assignment_id = $post["assignId"][$i];
             }

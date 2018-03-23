@@ -11,7 +11,7 @@ class Login_model extends MY_Model
     /**
      * The user,
      *      created by reading the user_id and matching with a user in the database
-     * @var User
+     * @var \Objects\User
      */
     private $user;
 
@@ -19,8 +19,6 @@ class Login_model extends MY_Model
     public function __construct()
     {
         parent::__construct();
-
-        require_once "helpers/User.php";
     }
 
     /**
@@ -43,7 +41,7 @@ class Login_model extends MY_Model
                 return false;
             }
         }
-        $this->user = $query->row(0, "User");
+        $this->user = $query->row(0, "\Objects\User");
 
         return true;
     }
@@ -82,7 +80,7 @@ class Login_model extends MY_Model
 
     /**
      * Sets the user for debug purposes
-     * @param User $user
+     * @param \Objects\User $user
      */
     public function setUser($user)
     {
@@ -110,7 +108,7 @@ class Login_model extends MY_Model
 
     /**
      * Getter for user
-     * @return User
+     * @return \Objects\User
      */
     public function getUser()
     {

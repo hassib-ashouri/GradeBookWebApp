@@ -1,13 +1,12 @@
-<?php
-
-require_once "GradeStatistics.php";
+<?php namespace Objects;
 
 /**
  * Represents a class
  *      includes the assignment list, students, and the students' grades
  * Class ClassObj
+ * @package Objects
  */
-class ClassObj implements GradeStatistics
+class ClassObj implements \Interfaces\GradeStatistics
 {
     public $class_id;
     public $professor_id;
