@@ -8,7 +8,14 @@ if (!isset($mainContent)) {
     $mainContent = "";
 }
 ?>
+
+<!--this combines both view to creat the full view.
+this is also the general template for all the pages-->
+
+
+
 <?= $header ?>
 <body>
+
 <?= $mainContent ?>
 </body>
