@@ -1,4 +1,4 @@
-<?php
+<?php namespace Models;
 
 /**
  * Database interaction for students;
@@ -6,7 +6,7 @@
  *      only create, update, and delete
  * Class Student_model
  */
-class Student_model extends MY_Model
+class Student_model extends \MY_Model
 {
     // model is in charge of crud: create, read, update, delete
     public function __construct()

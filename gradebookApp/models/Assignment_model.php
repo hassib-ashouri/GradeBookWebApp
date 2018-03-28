@@ -1,4 +1,4 @@
-<?php
+<?php namespace Models;
 
 /**
  * Database interaction for assignments;
@@ -6,7 +6,7 @@
  *      only create, update, and delete.
  * Class Assignment_model
  */
-class Assignment_model extends MY_Model
+class Assignment_model extends \MY_Model
 {
     /**
      * Array of assignments

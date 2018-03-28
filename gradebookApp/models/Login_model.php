@@ -1,4 +1,4 @@
-<?php
+<?php namespace Models;
 
 /**
  * Database interaction for login;
@@ -6,7 +6,7 @@
  * Also used for setting password, etc.
  * Class Login_model
  */
-class Login_model extends MY_Model
+class Login_model extends \MY_Model
 {
     /**
      * The user,
