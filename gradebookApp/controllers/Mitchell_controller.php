@@ -11,7 +11,7 @@ class Mitchell_controller extends MY_Controller
 {
     public function index()
     {
-        redirect("Login_controller/loginView");
+        redirect("Login_controller/newUserView");
     }
 
     public function sessionTest1()
@@ -94,7 +94,7 @@ class Mitchell_controller extends MY_Controller
             echo "<table>";
             echo "<tr><th>Name</th><th>Score</th><th>Out Of</th></tr>";
             /**
-             * @var Assignment $assignment
+             * @var Objects\Assignment $assignment
              */
             foreach ($assignments as $assignment) {
                 $gradedPoints = ($assignment->graded) ? $assignment->getPoints($studentId) : "N/A";
@@ -252,7 +252,7 @@ class Mitchell_controller extends MY_Controller
 
         foreach ($assignments as $assignment) {
             /**
-             * @var Assignment $assignment
+             * @var Objects\Assignment $assignment
              */
             $name = $assignment->assignment_name;
             $low = sprintf("%.2f", $assignment->getLowGrade());

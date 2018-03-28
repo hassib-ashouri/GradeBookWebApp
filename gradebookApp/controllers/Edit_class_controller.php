@@ -5,7 +5,7 @@ class Edit_class_controller extends MY_Controller
 {
     public function index()
     {
-        redirect("Login_controller/loginView");
+        redirect("Login_controller/newUserView");
     }
 
     /**
