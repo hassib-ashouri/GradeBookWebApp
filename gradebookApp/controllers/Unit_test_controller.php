@@ -190,13 +190,12 @@ class Unit_test_controller extends MY_Controller
      */
     public function classManipulationTest()
     {
-        $this->load->model("class_model");
         $this->load->model("class_list_model");
 
-        $students = array(new Student());
+        $students = array(new \Objects\Student());
         $students[0]->student_id = "000000001";
 
-        $classObj = new ClassObj(array(), $students);
+        $classObj = new \Objects\ClassObj(array(), $students);
         $classObj->class_id = "26692";
         $classObj->professor_id = "0124";
         $classObj->class_name = "ISE 164";
