@@ -96,6 +96,30 @@ class Assignment_model extends \MY_Model
     }
 
     /**
+     * Deletes an assignment
+     *      from both class_table and assignments
+     * @param \Objects\Assignment $assignment
+     * @param \Objects\ClassObj $classObj
+     */
+    public function deleteAssignment($assignment, $classObj)
+    {
+        $this->db->delete("assignments", array("id" => $assignment->assignment_id));
+        $this->db->delete($classObj->table_name, array("id" => $assignment->assignment_id));
+    }
+
+    /**
+     * Deletes all specified assignments for a class
+     * @param \Objects\ClassObj $classObj
+     */
+    public function deleteAssignments($classObj)
+    {
+        $assignments = $classObj->getAssignments();
+        foreach ($assignments as $assignment) {
+            $this->deleteAssignment($assignment, $classObj);
+        }
+    }
+
+    /**
      * Reads in assignments from post
      *      to use in other methods;
      * Only assigns what is available from post;
