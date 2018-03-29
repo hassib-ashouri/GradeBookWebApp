@@ -65,6 +65,62 @@ class Mitchell_controller extends MY_Controller
             ->create_table($tableName);
     }
 
+    private function _getTestClass()
+    {
+        $assignment1 = new \Objects\Assignment();
+        $assignment1->assignment_name = "Activity 1";
+        $assignment1->type = "Assignments";
+        $assignment1->weight = 100;
+        $assignment1->max_points = 20;
+
+        $assignment2 = new \Objects\Assignment();
+        $assignment2->assignment_name = "Activity 1";
+        $assignment2->type = "Assignments";
+        $assignment2->weight = 100;
+        $assignment2->max_points = 20;
+
+        $assignmentList = new \Objects\AssignmentList();
+        $assignmentList->addAssignment($assignment1);
+        $assignmentList->addAssignment($assignment2);
+
+        $student1 = new \Objects\Student();
+        $student1->student_id = "000000001";
+        $student2 = new \Objects\Student();
+        $student2->student_id = "000000002";
+        $students = array($student1, $student2,);
+
+        $classObj = new \Objects\ClassObj($assignmentList, $students);
+        $classObj->class_id = "26692";
+        $classObj->professor_id = "0124";
+        $classObj->class_name = "ISE 164";
+        $classObj->section = "01";
+        $classObj->class_title = "Comp & Hum Interact";
+        $classObj->meeting_times = "Tu 6:00PM - 8:45PM";
+        $classObj->table_name = "class_26692_ISE-164_01_table";
+
+        return $classObj;
+    }
+
+    public function testClassTest()
+    {
+        $classObj = $this->_getTestClass();
+        pretty_dump($classObj);
+    }
+
+    public function createClassTest()
+    {
+        $this->load->model("class_list_model");
+        $classObj = $this->_getTestClass();
+        $this->class_list_model->createClass($classObj);
+    }
+
+    public function deleteClassTest()
+    {
+        $this->load->model("class_list_model");
+        $classObj = $this->_getTestClass();
+        $this->class_list_model->deleteClass($classObj);
+    }
+
     public function classTableTest()
     {
         $tableName = "class_29506_SE-131_02_table";

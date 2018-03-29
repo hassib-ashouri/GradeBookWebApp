@@ -27,6 +27,75 @@ class Assignment_model extends \MY_Model
     }
 
     /**
+     * Creates an assignment,
+     *      also initializes grades for students in a class
+     * @param \Objects\Assignment $assignment
+     * @param \Objects\ClassObj $classObj
+     */
+    public function createAssignment($assignment, $classObj)
+    {
+        /**
+         * Prepares the assignment for insertion into the db
+         */
+        $temp = array();
+        foreach ($assignment as $propertyName => $value) {
+            if (isset($value)) {
+                switch ($propertyName) {
+                    case "assignment_id":
+                        $temp["id"] = $value;
+                        break;
+                    case "max_points_old":
+                        // not a column in the db
+                        break;
+                    default:
+                        $temp[$propertyName] = $value;
+                        break;
+                }
+            }
+        }
+
+        /**
+         * Inserts the assignment into the db and saves the assigned id
+         */
+        $this->db->insert("assignments", $temp);
+        $assignmentArr = $this->db
+            ->from("assignments")
+            ->where($temp)
+            ->limit(1)
+            ->order_by("id", "DESC")
+            ->get()->row_array();
+        $assignment->assignment_id = $assignmentArr["id"];
+
+        /**
+         * Initializes the assignment for each student in the class
+         */
+        $tableBatch = array();
+        $students = $classObj->getStudents();
+        foreach ($students as $student) {
+            array_push($tableBatch, array(
+                "student_id" => $student->student_id,
+                "assignment_id" => $assignment->assignment_id,
+                "points" => 0,
+            ));
+        }
+        if (count($tableBatch) > 0) {
+            $this->db->insert_batch($classObj->table_name, $tableBatch);
+        }
+    }
+
+    /**
+     * Creates all specified assignments for a class
+     * @param \Objects\ClassObj $classObj
+     */
+    public function createAssignments($classObj)
+    {
+        $assignments = $classObj->getAssignments();
+        foreach ($assignments as $assignment) {
+            $this->createAssignment($assignment, $classObj);
+        }
+    }
+
+    /**
      * Reads in assignments from post
      *      to use in other methods;
      * Only assigns what is available from post;

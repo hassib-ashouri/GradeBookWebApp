@@ -121,6 +121,9 @@ class Class_list_model extends \MY_Model
                 ->add_key("id", true)
                 ->create_table($classObj->table_name);
         }
+
+        $this->load->model("assignment_model");
+        $this->assignment_model->createAssignments($classObj);
     }
 
     /**
@@ -145,6 +148,19 @@ class Class_list_model extends \MY_Model
         $this->db
             ->where("class_id", $classObj->class_id)
             ->delete("students_enrolled");
+
+        /**
+         * Deletes assignments contained within class_table
+         */
+        $results = $this->db
+            ->select("assignment_id as id")
+            ->from($classObj->table_name)
+            ->get()->result_array();
+        $results = array_unique($results, SORT_REGULAR);
+        foreach ($results as $result) {
+            $this->db->or_where($result);
+        }
+        $this->db->delete("assignments");
 
         /**
          * Drops table for class from db

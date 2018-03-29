@@ -3,7 +3,7 @@
 /**
  * Represents a grouping of assignments
  * Class AssignmentList
- *  @package Objects
+ * @package Objects
  */
 class AssignmentList
 {
@@ -40,7 +40,11 @@ class AssignmentList
         $id = $assignment->assignment_id;
         $group = $assignment->type;
 
-        $this->assignments[$id] = $assignment;
+        if (is_null($id)) {
+            array_push($this->assignments, $assignment);
+        } else {
+            $this->assignments[$id] = $assignment;
+        }
         // only applies if top level
         if ($this->doGroup) {
             if (!isset($this->grouped[$group])) {
