@@ -120,10 +120,13 @@ class Class_list_model extends \MY_Model
                 ->add_field($fields)
                 ->add_key("id", true)
                 ->create_table($classObj->table_name);
-        }
 
-        $this->load->model("assignment_model");
-        $this->assignment_model->createAssignments($classObj);
+            /**
+             * Creates assignments
+             */
+            $this->load->model("assignment_model");
+            $this->assignment_model->createAssignments($classObj);
+        }
     }
 
     /**
