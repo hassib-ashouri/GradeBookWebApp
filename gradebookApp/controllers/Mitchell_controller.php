@@ -74,6 +74,24 @@ class Mitchell_controller extends MY_Controller
         $this->class_list_model->createClass($classObj);
     }
 
+    public function addAssignmentsTest()
+    {
+        $this->load->model("assignment_model");
+        $this->load->model("class_model");
+        $classObj = $this->_getTestClass();
+        $classObj = $this->class_model->getClass($classObj->table_name);
+        $this->assignment_model->createAssignments($classObj);
+    }
+
+    public function addStudentsTest()
+    {
+        $students = array("000000003");
+        $this->load->model("class_model");
+        $classObj = $this->_getTestClass();
+        $classObj = $this->class_model->getClass($classObj->table_name);
+        $this->class_model->addStudents($students, $classObj);
+    }
+
     public function deleteClassTest()
     {
         $this->load->model("class_list_model");

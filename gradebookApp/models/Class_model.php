@@ -22,6 +22,61 @@ class Class_model extends \MY_Model
     }
 
     /**
+     * Inserts rows into students_enrolled for each student in the class;
+     * Also creates assignments for each student
+     * @param \Objects\Student[]|string[] $students
+     * @param \Objects\ClassObj $classObj
+     */
+    public function addStudents($students, $classObj)
+    {
+        /**
+         * Checks students for validity
+         */
+        $this->load->model("student_model");
+        $students = $this->student_model->asStudents($students);
+
+        /**
+         * Determines which students are enrolled already
+         */
+        $blacklist = $this->db
+            ->select("student_id")
+            ->from("students_enrolled")
+            ->where("class_id", $classObj->class_id)
+            ->get()->result("\Objects\Student");
+
+        /**
+         * Only enrolls new students
+         */
+        $studentsEnrolledData = array();
+        foreach ($students as $student) {
+            $blacklisted = false;
+            foreach ($blacklist as $bStudent) {
+                if ($bStudent->student_id == $student->student_id) {
+                    $blacklisted = true;
+                    break;
+                }
+            }
+
+            if (!$blacklisted) {
+                array_push($studentsEnrolledData, array(
+                    "student_id" => $student->student_id,
+                    "class_id" => $classObj->class_id,
+                ));
+            }
+        }
+
+        if (count($studentsEnrolledData) > 0) {
+            $this->db->insert_batch("students_enrolled", $studentsEnrolledData);
+        }
+
+        /**
+         * Creates assignments
+         */
+        $this->load->model("assignment_model");
+        $this->assignment_model->createAssignments($classObj);
+    }
+
+    /**
      * Loads a table, creates and returns a classObj
      * @param string $classTableName
      * @return \Objects\ClassObj
@@ -84,6 +139,5 @@ class Class_model extends \MY_Model
         }
     }
 
-    //todo public function addStudents($studentIds)
     //todo public function removeStudents($studentIds)
 }

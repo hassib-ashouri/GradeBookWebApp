@@ -88,44 +88,20 @@ class Class_list_model extends \MY_Model
             $this->db->insert("classes", $classesData);
         }
 
+        if (!$classData["tableExists"]) {
+            /**
+             * Creates table for class in db
+             */
+            $this->_createTable($classObj->table_name);
+        }
+
         if ($classData["studentsEnrolled"] == 0) {
             /**
              * Inserts rows into students_enrolled for each student in the class
              */
             $students = $classObj->getStudents();
-            $studentsEnrolledData = array();
-            foreach ($students as $student) {
-                array_push($studentsEnrolledData, array(
-                    "student_id" => $student->student_id,
-                    "class_id" => $classObj->class_id,
-                ));
-            }
-            if (count($studentsEnrolledData) > 0) {
-                $this->db->insert_batch("students_enrolled", $studentsEnrolledData);
-            }
-        }
-
-        if (!$classData["tableExists"]) {
-            /**
-             * Creates table for class in db
-             */
-            $fields = array(
-                "id" => array("type" => "int", "unsigned" => true, "auto_increment" => true),
-                "student_id" => array("type" => "char", "constraint" => 9),
-                "assignment_id" => array("type" => "int"),
-                "points" => array("type" => "float"),
-            );
-            $this->load->dbforge();
-            $this->dbforge
-                ->add_field($fields)
-                ->add_key("id", true)
-                ->create_table($classObj->table_name);
-
-            /**
-             * Creates assignments
-             */
-            $this->load->model("assignment_model");
-            $this->assignment_model->createAssignments($classObj);
+            $this->load->model("class_model");
+            $this->class_model->addStudents($students, $classObj);
         }
     }
 
@@ -186,5 +162,24 @@ class Class_list_model extends \MY_Model
             ->get()->result("\Objects\ClassObj");
 
         return $classes;
+    }
+
+    /**
+     * Creates table for class in db
+     * @param string $classTableName
+     */
+    private function _createTable($classTableName)
+    {
+        $fields = array(
+            "id" => array("type" => "int", "unsigned" => true, "auto_increment" => true),
+            "student_id" => array("type" => "char", "constraint" => 9),
+            "assignment_id" => array("type" => "int"),
+            "points" => array("type" => "float"),
+        );
+        $this->load->dbforge();
+        $this->dbforge
+            ->add_field($fields)
+            ->add_key("id", true)
+            ->create_table($classTableName);
     }
 }
