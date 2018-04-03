@@ -33,49 +33,91 @@ class Assignment_model extends \MY_Model
     public function createAssignment($assignment, $classObj)
     {
         /**
-         * Prepares the assignment for insertion into the db
+         * Checks if assignment already exists
          */
-        $temp = array();
-        foreach ($assignment as $propertyName => $value) {
-            if (isset($value)) {
-                switch ($propertyName) {
-                    case "assignment_id":
-                        $temp["id"] = $value;
-                        break;
-                    case "max_points_old":
-                        // not a column in the db
-                        break;
-                    default:
-                        $temp[$propertyName] = $value;
-                        break;
-                }
-            }
+        $exists = false;
+        if (isset($assignment->assignment_id)) {
+            $assignmentCount = $this->db
+                ->from("assignments")
+                ->where("id", $assignment->assignment_id)
+                ->count_all_results();
+            $exists = $assignmentCount > 0;
         }
 
-        /**
-         * Inserts the assignment into the db and saves the assigned id
-         */
-        $this->db->insert("assignments", $temp);
-        $assignmentArr = $this->db
-            ->from("assignments")
-            ->where($temp)
-            ->limit(1)
-            ->order_by("id", "DESC")
-            ->get()->row_array();
-        $assignment->assignment_id = $assignmentArr["id"];
+        if (!$exists) {
+            /**
+             * Prepares the assignment for insertion into the db
+             */
+            $temp = array();
+            foreach ($assignment as $propertyName => $value) {
+                if (isset($value)) {
+                    switch ($propertyName) {
+                        case "assignment_id":
+                            // shouldn't know id of a new assignment
+                            break;
+                        case "max_points_old":
+                            // not a column in the db
+                            break;
+                        default:
+                            $temp[$propertyName] = $value;
+                            break;
+                    }
+                }
+            }
+
+            /**
+             * Inserts the assignment into the db
+             */
+            $this->db->insert("assignments", $temp);
+
+            /**
+             * And saves the assigned id
+             */
+            $assignmentArr = $this->db
+                ->from("assignments")
+                ->where($temp)
+                ->limit(1)
+                ->order_by("id", "DESC")
+                ->get()->row_array();
+            $assignment->assignment_id = $assignmentArr["id"];
+        }
 
         /**
          * Initializes the assignment for each student in the class
          */
         $tableBatch = array();
         $students = $classObj->getStudents();
+
+        /**
+         * Determines which students have the assignment already
+         */
+        $blacklist = $this->db
+            ->select("student_id")
+            ->from($classObj->table_name)
+            ->where("assignment_id", $assignment->assignment_id)
+            ->get()->result("\Objects\Student");
+
+        /**
+         * Only initializes assignment for students that need it
+         */
         foreach ($students as $student) {
-            array_push($tableBatch, array(
-                "student_id" => $student->student_id,
-                "assignment_id" => $assignment->assignment_id,
-                "points" => 0,
-            ));
+            $blacklisted = false;
+            foreach ($blacklist as $bStudent) {
+                if ($bStudent->student_id == $student->student_id) {
+                    $blacklisted = true;
+                    break;
+                }
+            }
+
+            if (!$blacklisted) {
+                array_push($tableBatch, array(
+                    "student_id" => $student->student_id,
+                    "assignment_id" => $assignment->assignment_id,
+                    "points" => 0,
+                ));
+            }
         }
+
         if (count($tableBatch) > 0) {
             $this->db->insert_batch($classObj->table_name, $tableBatch);
         }
