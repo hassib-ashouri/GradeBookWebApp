@@ -8,6 +8,7 @@ class Unit_test_controller extends MY_Controller
      */
     public function testAll()
     {
+        $this->asStudentsTest();
         $this->classManipulationTest();
         $this->passwordTest();
         $this->statisticsTest();
@@ -227,6 +228,45 @@ class Unit_test_controller extends MY_Controller
         $this->_printResult("table Deleted", $passDelete["tableExists"]);
         $this->_printResult("students Enrolled", $passCreate["studentsEnrolled"]);
         $this->_printResult("students De-Enrolled", $passDelete["studentsEnrolled"]);
+    }
+
+    /**
+     * Tests student_model's asStudents method
+     */
+    public function asStudentsTest()
+    {
+        $students = array(
+            array(
+                "123456789",
+                "234567890",
+                "012345678",
+                "23456789",
+                "01234567",
+            ),
+            array(
+                "123456789",
+                "234567890",
+                "012345678",
+                "123abc789",
+                "abc456xyz",
+            ),
+        );
+        $validEntries = array(3, 3,);
+
+        $pass = array();
+        for ($i = 0; $i < count($students); $i++) {
+            $pass[$i] = true;
+        }
+
+        $this->load->model("student_model");
+        for ($i = 0; $i < count($students); $i++) {
+            $temp = $this->student_model->asStudents($students[$i]);
+            $pass[$i] = count($temp) === $validEntries[$i];
+        }
+
+        echo "<h2>As Students Method Test</h2>";
+        $this->_printResult("invalid length", $pass[0]);
+        $this->_printResult("invalid characters", $pass[1]);
     }
 
     /**
