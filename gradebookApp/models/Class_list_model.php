@@ -171,4 +171,20 @@ class Class_list_model extends \MY_Model
         $this->load->dbforge();
         $this->dbforge->drop_table($classObj->table_name, true);
     }
+
+    /**
+     * Gets classes from the db with a property that matches the given property
+     * @param string $propertyName
+     * @param string $property
+     * @return array \Objects\ClassObj[]
+     */
+    public function getClassesBy($propertyName, $property)
+    {
+        $classes = $this->db
+            ->from("classes")
+            ->where($propertyName, $property)
+            ->get()->result("\Objects\ClassObj");
+
+        return $classes;
+    }
 }

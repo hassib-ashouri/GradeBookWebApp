@@ -34,6 +34,7 @@ class Class_model extends \MY_Model
 
         $this->load->model("student_model");
         $this->load->model("assignment_model");
+        $this->load->model("class_list_model");
 
         $students = $this->student_model->getStudents($classId);
         $assignments = $this->assignment_model->getAssignments($classTableName);
@@ -43,6 +44,15 @@ class Class_model extends \MY_Model
 
         $this->classObj = new \Objects\ClassObj($assignmentList, $students);
         $this->classObj->table_name = $classTableName;
+
+        $classes = $this->class_list_model->getClassesBy("table_name", $classTableName);
+        if (isset($classes[0])) {
+            foreach ($classes[0] as $propertyName => $value) {
+                if (isset($value)) {
+                    $this->classObj->$propertyName = $value;
+                }
+            }
+        }
 
         return $this->classObj;
     }
