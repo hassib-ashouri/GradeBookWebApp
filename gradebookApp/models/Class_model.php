@@ -36,38 +36,9 @@ class Class_model extends \MY_Model
         $students = $this->student_model->asStudents($students);
 
         /**
-         * Determines which students are enrolled already
+         * Enrolls new students into the class
          */
-        $blacklist = $this->db
-            ->select("student_id")
-            ->from("students_enrolled")
-            ->where("class_id", $classObj->class_id)
-            ->get()->result("\Objects\Student");
-
-        /**
-         * Only enrolls new students
-         */
-        $studentsEnrolledData = array();
-        foreach ($students as $student) {
-            $blacklisted = false;
-            foreach ($blacklist as $bStudent) {
-                if ($bStudent->student_id == $student->student_id) {
-                    $blacklisted = true;
-                    break;
-                }
-            }
-
-            if (!$blacklisted) {
-                array_push($studentsEnrolledData, array(
-                    "student_id" => $student->student_id,
-                    "class_id" => $classObj->class_id,
-                ));
-            }
-        }
-
-        if (count($studentsEnrolledData) > 0) {
-            $this->db->insert_batch("students_enrolled", $studentsEnrolledData);
-        }
+        $this->_enrollStudents($students, $classObj->class_id);
 
         /**
          * Creates assignments
@@ -110,6 +81,47 @@ class Class_model extends \MY_Model
         }
 
         return $this->classObj;
+    }
+
+    /**
+     * Enrolls new students into the specified class
+     * @param \Objects\Student[] $students
+     * @param string $classId
+     */
+    private function _enrollStudents($students, $classId) {
+        /**
+         * Determines which students are enrolled already
+         */
+        $blacklist = $this->db
+            ->select("student_id")
+            ->from("students_enrolled")
+            ->where("class_id", $classId)
+            ->get()->result("\Objects\Student");
+
+        /**
+         * Only enrolls new students
+         */
+        $studentsEnrolledData = array();
+        foreach ($students as $student) {
+            $blacklisted = false;
+            foreach ($blacklist as $bStudent) {
+                if ($bStudent->student_id == $student->student_id) {
+                    $blacklisted = true;
+                    break;
+                }
+            }
+
+            if (!$blacklisted) {
+                array_push($studentsEnrolledData, array(
+                    "student_id" => $student->student_id,
+                    "class_id" => $classId,
+                ));
+            }
+        }
+
+        if (count($studentsEnrolledData) > 0) {
+            $this->db->insert_batch("students_enrolled", $studentsEnrolledData);
+        }
     }
 
     /**
