@@ -2,8 +2,6 @@
 
 /**
  * Database interaction for assignments;
- * Not used for reading assignments,
- *      only create, update, and delete.
  * Class Assignment_model
  */
 class Assignment_model extends \MY_Model
@@ -117,6 +115,38 @@ class Assignment_model extends \MY_Model
         foreach ($assignments as $assignment) {
             $this->deleteAssignment($assignment, $classObj);
         }
+    }
+
+    /**
+     * Creates $assignments from $assignmentResult;
+     * Creates $assignmentResult from $classTable and "assignments"
+     * @param string $classTableName
+     * @return \Objects\Assignment[]
+     */
+    public function getAssignments($classTableName)
+    {
+        $assignmentResult = $this->db
+            ->select("student_id, assignment_id, assignment_name, description, type, weight, points, max_points, graded")
+            ->from($classTableName)
+            ->join("assignments", "assignment_id = assignments.id")
+            ->get()->result_array();
+
+        $assignments = array();
+        foreach ($assignmentResult as $assignment) {
+            $assignId = $assignment["assignment_id"];
+            $studentId = $assignment["student_id"];
+            $points = $assignment["points"];
+
+            if (!isset($assignments[$assignId])) {
+                $assignments[$assignId] = new \Objects\Assignment();
+                foreach ($assignment as $key => $value) {
+                    $assignments[$assignId]->$key = $value;
+                }
+            }
+            $assignments[$assignId]->setPoints($studentId, $points);
+        }
+
+        return $assignments;
     }
 
     /**

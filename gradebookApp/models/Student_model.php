@@ -2,8 +2,6 @@
 
 /**
  * Database interaction for students;
- * Not used for reading students,
- *      only create, update, and delete
  * Class Student_model
  */
 class Student_model extends \MY_Model
@@ -28,5 +26,23 @@ class Student_model extends \MY_Model
             ->where("student_id", $studentId)
             ->get()->row(0, "\Objects\Student");
         return $student;
+    }
+
+    /**
+     * Creates $students from "students" and "students_enrolled"
+     *      matches against $classId
+     * @param string $classId
+     * @return \Objects\Student[]
+     */
+    public function getStudents($classId)
+    {
+        $students = $this->db
+            ->select("students.student_id, name_first, name_last")
+            ->from("students_enrolled")
+            ->where("class_id", $classId)
+            ->join("students", "students_enrolled.student_id = students.student_id")
+            ->get()->result("\Objects\Student");
+
+        return $students;
     }
 }
