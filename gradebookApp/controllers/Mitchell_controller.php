@@ -14,23 +14,6 @@ class Mitchell_controller extends MY_Controller
         redirect("Login_controller/newUserView");
     }
 
-    public function sessionTest1()
-    {
-        $user = "000000001";
-        $this->session->set_userdata("user", $user);
-
-        echo "<pre>";
-        var_dump($this->session);
-        echo "</pre>";
-    }
-
-    public function sessionTest2()
-    {
-        echo "<pre>";
-        var_dump($this->session);
-        echo "</pre>";
-    }
-
     public function classListTest()
     {
         $professorId = "0123";
@@ -40,29 +23,6 @@ class Mitchell_controller extends MY_Controller
         echo "<pre>";
         var_dump($classes);
         echo "</pre>";
-    }
-
-    public function createClassTable()
-    {
-        $fields = array(
-            "id" => array("type" => "int", "unsigned" => true, "auto_increment" => true),
-            "student_id" => array("type" => "char", "constraint" => 9),
-            "assignment_id" => array("type" => "int"),
-            "points" => array("type" => "float"),
-        );
-
-        $classId = "29507";
-        $className = "SE 132";
-        $classSection = "02";
-        $className = preg_replace("/\s/", "-", $className);
-        $className = preg_replace("/[^A-Za-z\-\d]/", "", $className);
-        $tableName = sprintf("class_%s_%s_%s_table", $classId, $className, $classSection);
-
-        $this->load->dbforge();
-        $this->dbforge
-            ->add_field($fields)
-            ->add_key("id", true)
-            ->create_table($tableName);
     }
 
     private function _getTestClass()
