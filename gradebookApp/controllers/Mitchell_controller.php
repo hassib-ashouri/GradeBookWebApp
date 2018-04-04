@@ -101,6 +101,15 @@ class Mitchell_controller extends MY_Controller
         $this->class_model->addStudents($students, $classObj);
     }
 
+    public function removeStudentsTest()
+    {
+        $students = array("000000003");
+        $this->load->model("class_model");
+        $classObj = $this->_getTestClass();
+        $classObj = $this->class_model->getClass($classObj->table_name);
+        $this->class_model->removeStudents($students, $classObj);
+    }
+
     public function deleteClassTest()
     {
         $this->load->model("class_list_model");

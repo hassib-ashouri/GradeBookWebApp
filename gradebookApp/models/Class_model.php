@@ -84,11 +84,52 @@ class Class_model extends \MY_Model
     }
 
     /**
+     * Removes rows from students_enrolled for each student in the class;
+     * Also removes assignments for each student
+     * @param \Objects\Student[]|string[] $students
+     * @param \Objects\ClassObj $classObj
+     */
+    public function removeStudents($students, $classObj)
+    {
+        /**
+         * Checks students for validity
+         */
+        $this->load->model("student_model");
+        $students = $this->student_model->asStudents($students);
+
+        /**
+         * Unenrolls students from the class
+         */
+        $this->_unenrollStudents($students, $classObj->class_id);
+
+        /**
+         * Removes assignments for students
+         */
+        $this->_deleteStudentsAssignments($students, $classObj);
+    }
+
+    /**
+     * Removes assignment entries for each student
+     * @param \Objects\Student[] $students
+     * @param \Objects\ClassObj $classObj
+     */
+    private function _deleteStudentsAssignments($students, $classObj)
+    {
+        foreach ($students as $student) {
+            $this->db->or_where(array("student_id" => $student->student_id));
+        }
+        if (count($students) > 0) {
+            $this->db->delete($classObj->table_name);
+        }
+    }
+
+    /**
      * Enrolls new students into the specified class
      * @param \Objects\Student[] $students
      * @param string $classId
      */
-    private function _enrollStudents($students, $classId) {
+    private function _enrollStudents($students, $classId)
+    {
         /**
          * Determines which students are enrolled already
          */
@@ -151,5 +192,24 @@ class Class_model extends \MY_Model
         }
     }
 
-    //todo public function removeStudents($studentIds)
+    /**
+     * Enrolls students from the specified class
+     * @param \Objects\Student[] $students
+     * @param string $classId
+     */
+    private function _unenrollStudents($students, $classId)
+    {
+        foreach ($students as $student) {
+            $this->db
+                ->or_group_start()
+                ->where(array(
+                    "student_id" => $student->student_id,
+                    "class_id" => $classId,
+                ))
+                ->group_end();
+        }
+        if (count($students) > 0) {
+            $this->db->delete("students_enrolled");
+        }
+    }
 }
