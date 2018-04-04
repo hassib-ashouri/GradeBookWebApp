@@ -57,7 +57,7 @@ class Assignment_model extends \MY_Model
     public function deleteAssignment($assignment, $classObj)
     {
         $this->db->delete("assignments", array("id" => $assignment->assignment_id));
-        $this->db->delete($classObj->table_name, array("id" => $assignment->assignment_id));
+        $this->db->delete($classObj->table_name, array("assignment_id" => $assignment->assignment_id));
     }
 
     /**
@@ -67,8 +67,25 @@ class Assignment_model extends \MY_Model
     public function deleteAssignments($classObj)
     {
         $assignments = $classObj->getAssignments();
+
+        /**
+         * Deletes from assignments
+         */
         foreach ($assignments as $assignment) {
-            $this->deleteAssignment($assignment, $classObj);
+            $this->db->or_where(array("id" => $assignment->assignment_id));
+        }
+        if (count($assignments) > 0) {
+            $this->db->delete("assignments");
+        }
+
+        /**
+         * Deletes from class table
+         */
+        foreach ($assignments as $assignment) {
+            $this->db->or_where(array("assignment_id" => $assignment->assignment_id));
+        }
+        if (count($assignments) > 0) {
+            $this->db->delete($classObj->table_name);
         }
     }
 
