@@ -92,15 +92,16 @@ class Assignment_model extends \MY_Model
     /**
      * Creates $assignments from $assignmentResult;
      * Creates $assignmentResult from $classTable and "assignments"
-     * @param string $classTableName
+     * @param \Objects\ClassObj $classObj
      * @return \Objects\Assignment[]
      */
-    public function getAssignments($classTableName)
+    public function getAssignments($classObj)
     {
         $assignmentResult = $this->db
-            ->select("student_id, assignment_id, assignment_name, description, type, weight, points, max_points, graded")
-            ->from($classTableName)
-            ->join("assignments", "assignment_id = assignments.id")
+            ->select("student_id, assignments.id as assignment_id, class_id, assignment_name, description, type, weight, points, max_points, graded")
+            ->where("class_id", $classObj->class_id)
+            ->from("assignments")
+            ->join($classObj->table_name, "assignments.id = assignment_id", "left")
             ->get()->result_array();
 
         $assignments = array();

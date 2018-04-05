@@ -130,19 +130,9 @@ class Class_list_model extends \MY_Model
 
         if ($this->db->table_exists($classObj->table_name)) {
             /**
-             * Deletes assignments contained within class_table
+             * Deletes assignments for the class
              */
-            $results = $this->db
-                ->select("assignment_id as id")
-                ->from($classObj->table_name)
-                ->get()->result_array();
-            $results = array_unique($results, SORT_REGULAR);
-            foreach ($results as $result) {
-                $this->db->or_where($result);
-            }
-            if (count($results) > 0) {
-                $this->db->delete("assignments");
-            }
+            $this->db->delete("assignments", array("class_id" => $classObj->class_id));
 
             /**
              * Drops table for class from db

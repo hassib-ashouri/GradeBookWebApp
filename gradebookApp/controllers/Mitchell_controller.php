@@ -28,12 +28,14 @@ class Mitchell_controller extends MY_Controller
     private function _getTestClass()
     {
         $assignment1 = new \Objects\Assignment();
+        $assignment1->class_id = "26692";
         $assignment1->assignment_name = "Activity 1";
         $assignment1->type = "Assignments";
         $assignment1->weight = 100;
         $assignment1->max_points = 20;
 
         $assignment2 = new \Objects\Assignment();
+        $assignment2->class_id = "26692";
         $assignment2->assignment_name = "Activity 1";
         $assignment2->type = "Assignments";
         $assignment2->weight = 100;
@@ -90,6 +92,25 @@ class Mitchell_controller extends MY_Controller
         $classObj = $this->_getTestClass();
         $classObj = $this->class_model->getClass($classObj->table_name);
         $this->assignment_model->deleteAssignments($classObj);
+    }
+
+    /**
+     * Testing how assignments show up when no students in the class
+     */
+    public function emptyClassTest()
+    {
+        $this->load->model("assignment_model");
+        $this->load->model("class_list_model");
+        $this->load->model("class_model");
+
+        $testClassObj = $this->_getTestClass();
+        $classObj = $this->class_model->getClass($testClassObj->table_name);
+
+        $students = array("000000001", "000000002",);
+        $this->class_model->removeStudents($students, $classObj);
+
+        $classObj = $this->class_model->getClass($testClassObj->table_name);
+        pretty_dump($classObj->getAssignments());
     }
 
     public function addStudentsTest()

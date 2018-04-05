@@ -48,39 +48,50 @@ class Class_model extends \MY_Model
     }
 
     /**
-     * Loads a table, creates and returns a classObj
-     * @param string $classTableName
+     * Loads a table, creates and returns a classObj;
+     *      throws an exception if class not found
+     * @param $classTableName
      * @return \Objects\ClassObj
+     * @throws \Exception
      */
     public function getClass($classTableName)
     {
-        $matches = array();
-        preg_match("/class_(\d{5})_.*?_\d{2}_table/", $classTableName, $matches);
-        $classId = $matches[1];
-
-        $this->load->model("student_model");
-        $this->load->model("assignment_model");
+        /**
+         * Gets classes from the db that match the table name
+         */
         $this->load->model("class_list_model");
-
-        $students = $this->student_model->getStudents($classId);
-        $assignments = $this->assignment_model->getAssignments($classTableName);
-        $assignmentList = $this->_getAssignmentList($assignments);
-
-        $this->_setAssignmentList($assignmentList, $students);
-
-        $this->classObj = new \Objects\ClassObj($assignmentList, $students);
-        $this->classObj->table_name = $classTableName;
-
         $classes = $this->class_list_model->getClassesBy("table_name", $classTableName);
+
         if (isset($classes[0])) {
-            foreach ($classes[0] as $propertyName => $value) {
+            /**
+             * @var \Objects\ClassObj $classObj
+             */
+            $classObj = $classes[0];
+
+            $this->load->model("student_model");
+            $this->load->model("assignment_model");
+
+            $students = $this->student_model->getStudents($classObj->class_id);
+            $assignments = $this->assignment_model->getAssignments($classObj);
+            $assignmentList = $this->_getAssignmentList($assignments);
+
+            $this->_setAssignmentList($assignmentList, $students);
+
+            $this->classObj = new \Objects\ClassObj($assignmentList, $students);
+
+            /**
+             * Copies all properties from $classObj to $this->classObj
+             */
+            foreach ($classObj as $propertyName => $value) {
                 if (isset($value)) {
                     $this->classObj->$propertyName = $value;
                 }
             }
+
+            return $this->classObj;
         }
 
-        return $this->classObj;
+        throw new \Exception("No class with such table found: '$classTableName'");
     }
 
     /**

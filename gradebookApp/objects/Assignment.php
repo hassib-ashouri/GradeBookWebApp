@@ -9,6 +9,7 @@
 class Assignment implements \Interfaces\GradeStatistics
 {
     public $assignment_id;
+    public $class_id;
     public $assignment_name;
     public $description;
     public $type;
@@ -46,7 +47,9 @@ class Assignment implements \Interfaces\GradeStatistics
      */
     public function setPoints($studentId, $points)
     {
-        $this->grades[$studentId] = +$points;
+        if (strlen($studentId) == 9) {
+            $this->grades[$studentId] = +$points;
+        }
     }
 
     /**
