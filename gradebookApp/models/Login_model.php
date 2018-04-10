@@ -22,40 +22,31 @@ class Login_model extends \MY_Model
     }
 
     /**
-     * Verifies that a user exists for the given userId
-     * @param string $userId
-     * @return bool
+     * Getter for user
+     * @return \Objects\User
      */
-    public function verifyUser($userId)
+    public function getUser()
     {
-        $query = $this->db
-            ->select("*")
-            ->where("professor_id", $userId)
-            ->get("professors");
-        if ($query->num_rows() == 0) {
-            $query = $this->db
-                ->select("*")
-                ->where("student_id", $userId)
-                ->get("students");
-            if ($query->num_rows() == 0) {
-                return false;
-            }
-        }
-        $this->user = $query->row(0, "\Objects\User");
-
-        return true;
+        return $this->user;
     }
 
     /**
-     * Tests the password against the database;
-     *      many thanks to: https://stackoverflow.com/a/6337021
-     * @param string $password
+     * Checks if the user has a password_hash set
      * @return bool
      */
-    public function verifyPassword($password)
+    public function hasPassword()
     {
-        $hashed = $this->user->password_hash;
-        return password_verify($password, $hashed);
+        return strlen($this->user->password_hash) > 0;
+    }
+
+    /**
+     * Checks if the tested user is a professor
+     *      must be run after verifyPassword for accurate results
+     * @return bool
+     */
+    public function isProfessor()
+    {
+        return $this->user->type === "professor";
     }
 
     /**
@@ -88,30 +79,39 @@ class Login_model extends \MY_Model
     }
 
     /**
-     * Checks if the tested user is a professor
-     *      must be run after verifyPassword for accurate results
+     * Tests the password against the database;
+     *      many thanks to: https://stackoverflow.com/a/6337021
+     * @param string $password
      * @return bool
      */
-    public function isProfessor()
+    public function verifyPassword($password)
     {
-        return $this->user->type === "professor";
+        $hashed = $this->user->password_hash;
+        return password_verify($password, $hashed);
     }
 
     /**
-     * Checks if the user has a password_hash set
+     * Verifies that a user exists for the given userId
+     * @param string $userId
      * @return bool
      */
-    public function hasPassword()
+    public function verifyUser($userId)
     {
-        return strlen($this->user->password_hash) > 0;
-    }
+        $query = $this->db
+            ->select("*")
+            ->where("professor_id", $userId)
+            ->get("professors");
+        if ($query->num_rows() == 0) {
+            $query = $this->db
+                ->select("*")
+                ->where("student_id", $userId)
+                ->get("students");
+            if ($query->num_rows() == 0) {
+                return false;
+            }
+        }
+        $this->user = $query->row(0, "\Objects\User");
 
-    /**
-     * Getter for user
-     * @return \Objects\User
-     */
-    public function getUser()
-    {
-        return $this->user;
+        return true;
     }
 }

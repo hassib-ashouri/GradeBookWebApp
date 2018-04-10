@@ -16,22 +16,6 @@ class Class_list_model extends \MY_Model
     }
 
     /**
-     * Gets the array of classes for a professor
-     * @param string $userId
-     * @return \Objects\ClassObj[]
-     */
-    public function readProfessorClassList($userId)
-    {
-        $query = $this->db
-            ->select("*")
-            ->where("professor_id", $userId)
-            ->get("classes");
-        $classes = $query->result("\Objects\ClassObj");
-
-        return $classes;
-    }
-
-    /**
      * Checks for a class in the db with specified table_name
      *      checks single row exists in classes
      *      checks table exists for class
@@ -154,6 +138,22 @@ class Class_list_model extends \MY_Model
             ->from("classes")
             ->where($propertyName, $property)
             ->get()->result("\Objects\ClassObj");
+
+        return $classes;
+    }
+
+    /**
+     * Gets the array of classes for a professor
+     * @param string $userId
+     * @return \Objects\ClassObj[]
+     */
+    public function readProfessorClassList($userId)
+    {
+        $query = $this->db
+            ->select("*")
+            ->where("professor_id", $userId)
+            ->get("classes");
+        $classes = $query->result("\Objects\ClassObj");
 
         return $classes;
     }
