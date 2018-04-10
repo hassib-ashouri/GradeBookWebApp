@@ -159,6 +159,33 @@ class Class_list_model extends \MY_Model
     }
 
     /**
+     * Updates a class in the db with specified class_id;
+     *     Updates class metadata only,
+     *     eg. class_name, class_title, meeting_times, etc.
+     * @param \Objects\ClassObj $classObj
+     */
+    public function updateClass($classObj)
+    {
+        $update = array();
+        foreach ($classObj as $property => $value) {
+            switch ($property) {
+                case "class_id":
+                case "professor_id":
+                case "table_name":
+                    // do nothing
+                    break;
+                default:
+                    $update[$property] = $value;
+                    break;
+            }
+        }
+
+        $this->db
+            ->where("class_id", $classObj->class_id)
+            ->update("classes", $update);
+    }
+
+    /**
      * Creates table for class in db
      * @param string $classTableName
      */
