@@ -5,7 +5,7 @@
  * Class Student
  * @package Objects
  */
-class Student
+class Student implements \JsonSerializable
 {
     public $student_id;
     public $name_first;
@@ -117,6 +117,18 @@ class Student
     public function getGroupNames()
     {
         return array_keys($this->groups);
+    }
+
+    /**
+     * Specify data which should be serialized to JSON
+     * @return mixed data which can be serialized by json_encode,
+     *      which is a value of any type other than a resource.
+     */
+    public function jsonSerialize()
+    {
+        $vars = get_object_vars($this);
+
+        return $vars;
     }
 
     /**

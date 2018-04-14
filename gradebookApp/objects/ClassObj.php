@@ -6,7 +6,7 @@
  * Class ClassObj
  * @package Objects
  */
-class ClassObj implements \Interfaces\GradeStatistics
+class ClassObj implements \Interfaces\GradeStatistics, \JsonSerializable
 {
     public $class_id;
     public $professor_id;
@@ -160,6 +160,18 @@ class ClassObj implements \Interfaces\GradeStatistics
     {
         $this->_setStudentGrades();
         return gradeStdDev($this->studentGrades);
+    }
+
+    /**
+     * Specify data which should be serialized to JSON
+     * @return mixed data which can be serialized by json_encode,
+     *      which is a value of any type other than a resource.
+     */
+    public function jsonSerialize()
+    {
+        $vars = get_object_vars($this);
+
+        return $vars;
     }
 
     /**

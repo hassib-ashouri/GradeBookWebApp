@@ -6,7 +6,7 @@
  * Class Assignment
  * @package Objects
  */
-class Assignment implements \Interfaces\GradeStatistics
+class Assignment implements \Interfaces\GradeStatistics, \JsonSerializable
 {
     public $assignment_id;
     public $class_id;
@@ -118,5 +118,17 @@ class Assignment implements \Interfaces\GradeStatistics
     public function getStdDevGrade()
     {
         return gradeStdDev($this->grades);
+    }
+
+    /**
+     * Specify data which should be serialized to JSON
+     * @return mixed data which can be serialized by json_encode,
+     *      which is a value of any type other than a resource.
+     */
+    public function jsonSerialize()
+    {
+        $vars = get_object_vars($this);
+
+        return $vars;
     }
 }

@@ -5,7 +5,7 @@
  * Class AssignmentList
  * @package Objects
  */
-class AssignmentList
+class AssignmentList implements \JsonSerializable
 {
     /**
      * Whether or not to group assignments by category
@@ -109,5 +109,17 @@ class AssignmentList
             return 0;
         }
         return array_values($this->assignments)[0]->weight;
+    }
+
+    /**
+     * Specify data which should be serialized to JSON
+     * @return mixed data which can be serialized by json_encode,
+     *      which is a value of any type other than a resource.
+     */
+    public function jsonSerialize()
+    {
+        $vars = get_object_vars($this);
+
+        return $vars;
     }
 }
