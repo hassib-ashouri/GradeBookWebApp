@@ -121,14 +121,13 @@ class Student implements \JsonSerializable
 
     /**
      * Specify data which should be serialized to JSON
+     * many thanks to: https://stackoverflow.com/a/20117815
      * @return mixed data which can be serialized by json_encode,
      *      which is a value of any type other than a resource.
      */
     public function jsonSerialize()
     {
-        $vars = get_object_vars($this);
-
-        return $vars;
+        return get_object_vars($this);
     }
 
     /**
