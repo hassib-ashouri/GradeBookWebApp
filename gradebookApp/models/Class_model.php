@@ -24,7 +24,7 @@ class Class_model extends \MY_Model
     /**
      * Inserts rows into students_enrolled for each student in the class;
      * Also creates assignments for each student
-     * @param \Objects\Student[]|string[] $students
+     * @param \Objects\Student[]|string[] $students string[] should be student ids to add
      * @param \Objects\ClassObj $classObj
      */
     public function addStudents($students, $classObj)
@@ -97,8 +97,8 @@ class Class_model extends \MY_Model
     /**
      * Removes rows from students_enrolled for each student in the class;
      * Also removes assignments for each student
-     * @param \Objects\Student[]|string[] $students
-     * @param \Objects\ClassObj $classObj
+     * @param \Objects\Student[]|string[] $students string[] should be student ids to remove
+     * @param \Objects\ClassObj $classObj needs class_id, and table_name
      */
     public function removeStudents($students, $classObj)
     {
@@ -116,21 +116,22 @@ class Class_model extends \MY_Model
         /**
          * Removes assignments for students
          */
-        $this->_deleteStudentsAssignments($students, $classObj);
+        $this->_deleteStudentsAssignments($students, $classObj->table_name);
     }
 
     /**
      * Removes assignment entries for each student
+     *      $classObj needs table_name
      * @param \Objects\Student[] $students
-     * @param \Objects\ClassObj $classObj
+     * @param string $tableName
      */
-    private function _deleteStudentsAssignments($students, $classObj)
+    private function _deleteStudentsAssignments($students, $tableName)
     {
         foreach ($students as $student) {
             $this->db->or_where(array("student_id" => $student->student_id));
         }
         if (count($students) > 0) {
-            $this->db->delete($classObj->table_name);
+            $this->db->delete($tableName);
         }
     }
 

@@ -6,17 +6,7 @@
  */
 class Assignment_model extends \MY_Model
 {
-    /**
-     * Array of assignments
-     *      read in from post
-     * @var \Objects\Assignment[]
-     */
-    private $assignments = array();
-    /**
-     * Name of the database table
-     * @var string
-     */
-    private $tableName;
+    private $NEW_ASSIGNMENT_ID = -1;
 
     // model is in charge of crud: create, read, update, delete
     public function __construct()
@@ -123,63 +113,23 @@ class Assignment_model extends \MY_Model
     }
 
     /**
-     * Reads in assignments from post
-     *      to use in other methods;
-     * Only assigns what is available from post;
-     * Requires that the assignType match some groupName.
-     * Saves tableName as well
-     * @param $post
+     * Sets the assignment as new
+     * @param \Objects\Assignment $assignment
      */
-    public function readPost($post)
+    public function markAsNew($assignment)
     {
-        $assignCount = count($post["assignId"]);
-        $groupCount = count($post["groupName"]);
-        for ($i = 0; $i < $assignCount; $i++) {
-            $this->assignments[$i] = new \Objects\Assignment();
-            if (isset($post["assignId"])) {
-                $this->assignments[$i]->assignment_id = $post["assignId"][$i];
-            }
-            if (isset($post["assignName"])) {
-                $this->assignments[$i]->assignment_name = $post["assignName"][$i];
-            }
-            if (isset($post["assignDesc"])) {
-                $this->assignments[$i]->description = $post["assignDesc"][$i];
-            }
-            if (isset($post["assignType"])) {
-                $this->assignments[$i]->type = $post["assignType"][$i];
-            }
-            if (isset($post["assignMaxPts"])) {
-                $this->assignments[$i]->max_points = $post["assignMaxPts"][$i];
-            }
-            if (isset($post["assignMaxPtsOld"])) {
-                $this->assignments[$i]->max_points_old = $post["assignMaxPtsOld"][$i];
-            }
-            if (isset($post["assignGraded"])) {
-                $this->assignments[$i]->graded = $post["assignGraded"][$i];
-            }
-
-            if (isset($post["groupName"]) && isset($post["groupWeight"])) {
-                for ($j = 0; $j < $groupCount; $j++) {
-                    if ($post["assignType"][$i] == $post["groupName"][$j]) {
-                        $this->assignments[$i]->weight = $post["groupWeight"][$j];
-                    }
-                }
-            }
-        }
-
-        if (isset($post["tableName"])) {
-            $this->tableName = $post["tableName"];
-        }
+        $assignment->assignment_id = $this->NEW_ASSIGNMENT_ID;
     }
 
     /**
      * Updates the assignments in the db
-     *      with assignments created with readPost
+     * @param \Objects\Assignment[] $assignments
+     * @param string $tableName
      */
-    public function updateAssignments()
+    public function updateAssignments($assignments, $tableName)
     {
-        $this->_updateClassAssignments();
-        $this->_updateBatchAssignments();
+        $this->_updateClassAssignments($assignments, $tableName);
+        $this->_updateBatchAssignments($assignments);
     }
 
     /**
@@ -287,12 +237,13 @@ class Assignment_model extends \MY_Model
 
     /**
      * Updates the batch of assignment meta data
+     * @param \Objects\Assignment[] $assignments
      */
-    private function _updateBatchAssignments()
+    private function _updateBatchAssignments($assignments)
     {
         $batchAssignments = array();
 
-        foreach ($this->assignments as $assignment) {
+        foreach ($assignments as $assignment) {
             $temp = array();
             foreach ($assignment as $propertyName => $value) {
                 if (isset($value)) {
@@ -319,27 +270,31 @@ class Assignment_model extends \MY_Model
 
     /**
      * Updates the batch of assignments from a class
+     *      for manipulating max points only
+     * @param \Objects\Assignment[] $assignments
+     * @param string $tableName
      */
-    private function _updateClassAssignments()
+    private function _updateClassAssignments($assignments, $tableName)
     {
         $classAssignments = array();
 
-        if (isset($this->tableName)) {
+        if (isset($tableName)) {
             $ratios = array();
-            foreach ($this->assignments as $assignment) {
+            foreach ($assignments as $assignment) {
                 $ratio = +$assignment->max_points / +$assignment->max_points_old;
                 $ratios[$assignment->assignment_id] = $ratio;
             }
 
-            $assignments = $this->db
+            $assignmentsData = $this->db
                 ->select("id, assignment_id, student_id, points")
-                ->from($this->tableName)
+                ->from($tableName)
                 ->get()->result_array();
 
-            foreach ($assignments as $assignment) {
-                $tempPoints = +$assignment["points"] * $ratios[$assignment["assignment_id"]];
+            foreach ($assignmentsData as $assignmentData) {
+                $tempPoints = +$assignmentData["points"] *
+                    $ratios[$assignmentData["assignment_id"]];
                 $temp = array(
-                    "id" => $assignment["id"],
+                    "id" => $assignmentData["id"],
                     "points" => $tempPoints,
                 );
                 array_push($classAssignments, $temp);
@@ -347,7 +302,9 @@ class Assignment_model extends \MY_Model
         }
 
         if (count($classAssignments) > 0) {
-            $this->db->update_batch($this->tableName, $classAssignments, "id");
+            $this->db->update_batch($tableName, $classAssignments, "id");
         }
     }
+
+    // todo remove assignments from assignments table based on what ids are not present in the array that are present in the database
 }
