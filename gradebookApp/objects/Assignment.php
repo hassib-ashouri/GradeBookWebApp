@@ -41,18 +41,6 @@ class Assignment implements \Interfaces\GradeStatistics, \JsonSerializable
     }
 
     /**
-     * Sets the points for a student
-     * @param string $studentId
-     * @param number $points
-     */
-    public function setPoints($studentId, $points)
-    {
-        if (strlen($studentId) == 9) {
-            $this->grades[$studentId] = +$points;
-        }
-    }
-
-    /**
      * Gets the points of a student
      * @param string $studentId
      * @return number
@@ -63,6 +51,18 @@ class Assignment implements \Interfaces\GradeStatistics, \JsonSerializable
             return $this->grades[$studentId];
         } else {
             return 0;
+        }
+    }
+
+    /**
+     * Sets the points for a student
+     * @param string $studentId
+     * @param number $points
+     */
+    public function setPoints($studentId, $points)
+    {
+        if (strlen($studentId) == 9) {
+            $this->grades[$studentId] = +$points;
         }
     }
 
