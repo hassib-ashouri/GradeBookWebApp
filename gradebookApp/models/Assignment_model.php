@@ -18,7 +18,7 @@ class Assignment_model extends \MY_Model
      * Creates an assignment,
      *      also initializes grades for students in a class
      * @param \Objects\Assignment $assignment
-     * @param \Objects\ClassObj $classObj
+     * @param \Objects\ClassObj $classObj needs students or class_id
      */
     public function createAssignment($assignment, $classObj)
     {
@@ -28,7 +28,7 @@ class Assignment_model extends \MY_Model
 
     /**
      * Creates all specified assignments for a class
-     * @param \Objects\ClassObj $classObj
+     * @param \Objects\ClassObj $classObj needs assignments, and students or class_id
      */
     public function createAssignments($classObj)
     {
@@ -41,8 +41,8 @@ class Assignment_model extends \MY_Model
     /**
      * Deletes an assignment
      *      from both class_table and assignments
-     * @param \Objects\Assignment $assignment
-     * @param \Objects\ClassObj $classObj
+     * @param \Objects\Assignment $assignment needs assignment_id
+     * @param \Objects\ClassObj $classObj needs table_name
      */
     public function deleteAssignment($assignment, $classObj)
     {
@@ -124,23 +124,52 @@ class Assignment_model extends \MY_Model
     /**
      * Updates the assignments in the db
      * @param \Objects\Assignment[] $assignments
-     * @param string $tableName
+     * @param \Objects\ClassObj $classObj needs class_id, and table_name
      */
-    public function updateAssignments($assignments, $tableName)
+    public function updateAssignments($assignments, $classObj)
     {
-        $this->_updateClassAssignments($assignments, $tableName);
+        $this->_updateClassAssignments($assignments, $classObj->table_name);
         $this->_updateBatchAssignments($assignments);
+        $this->_removeMissingAssignments($assignments, $classObj);
+        $this->_addNewAssignments($assignments, $classObj);
+    }
+
+    /**
+     * Filters out assignments that are marked as new,
+     *      and creates them for the specified class
+     * @param \Objects\Assignment[] $assignments
+     * @param \Objects\ClassObj $classObj
+     */
+    private function _addNewAssignments($assignments, $classObj)
+    {
+        $newAssignments = array();
+        foreach ($assignments as $assignment) {
+            if (!isset($assignment->assignment_id) ||
+                $assignment->assignment_id == $this->NEW_ASSIGNMENT_ID
+            ) {
+                array_push($newAssignments, $assignment);
+            }
+        }
+
+        $tempClass = new \Objects\ClassObj($newAssignments);
+        $tempClass->class_id = $classObj->class_id;
+        $this->createAssignments($tempClass);
     }
 
     /**
      * Initializes the assignment for each student in the class
+     *      if no students in class object, will attempt to load students from db
      * @param \Objects\Assignment $assignment
-     * @param \Objects\ClassObj $classObj
+     * @param \Objects\ClassObj $classObj needs students or class_id
      */
     private function _initAssignment($assignment, $classObj)
     {
         $tableBatch = array();
         $students = $classObj->getStudents();
+        if (count($students) == 0) {
+            $this->load->model("student_model");
+            $students = $this->student_model->getStudents($classObj->class_id);
+        }
 
         /**
          * Determines which students have the assignment already
@@ -188,7 +217,9 @@ class Assignment_model extends \MY_Model
          * Checks if assignment already exists
          */
         $exists = false;
-        if (isset($assignment->assignment_id)) {
+        if (isset($assignment->assignment_id) &&
+            $assignment->assignment_id != $this->NEW_ASSIGNMENT_ID
+        ) {
             $assignmentCount = $this->db
                 ->from("assignments")
                 ->where("id", $assignment->assignment_id)
@@ -232,6 +263,40 @@ class Assignment_model extends \MY_Model
                 ->order_by("id", "DESC")
                 ->get()->row_array();
             $assignment->assignment_id = $assignmentArr["id"];
+        }
+    }
+
+    /**
+     * Removes the assignments from a class that are not included in $classObj
+     * @param \Objects\Assignment[] $assignments
+     * @param \Objects\ClassObj $classObj needs class_id and table_name
+     */
+    private function _removeMissingAssignments($assignments, $classObj)
+    {
+        /**
+         * Gets assignments currently associated with the class from the db
+         */
+        $classAssignments = $this->db
+            ->from("assignments")
+            ->where(array("class_id" => $classObj->class_id))
+            ->get()->result("\Objects\Assignment");
+
+        /**
+         * Determines assignments that require removal
+         */
+        foreach ($classAssignments as $classAssignment) {
+            /**
+             * @var \Objects\Assignment $classAssignment
+             */
+            $idMatch = false;
+            foreach ($assignments as $assignment) {
+                if ($classAssignment->assignment_id == $assignment->assignment_id) {
+                    $idMatch = true;
+                }
+            }
+            if (!$idMatch) {
+                $this->deleteAssignment($classAssignment, $classObj);
+            }
         }
     }
 
