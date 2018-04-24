@@ -69,6 +69,14 @@ class Mitchell_controller extends MY_Controller
         pretty_dump($classObj);
     }
 
+    public function assignmentArrayClassTest()
+    {
+        $classObj = $this->_getTestClass();
+        $assignments = $classObj->getAssignments();
+
+        pretty_dump(new \Objects\ClassObj($assignments));
+    }
+
     public function createClassTest()
     {
         $this->load->model("class_list_model");

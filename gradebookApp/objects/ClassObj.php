@@ -35,13 +35,19 @@ class ClassObj implements \Interfaces\GradeStatistics, \JsonSerializable
 
     /**
      * ClassObj constructor.
-     * @param AssignmentList $assignmentList
+     * @param AssignmentList|Assignment[] $assignmentList
      * @param Student[] $students
      */
     public function __construct($assignmentList = null, $students = array())
     {
         if (is_null($assignmentList)) {
             $assignmentList = new AssignmentList();
+        } else if (gettype($assignmentList) == "array") {
+            $assignments = $assignmentList;
+            $assignmentList = new AssignmentList();
+            foreach ($assignments as $assignment) {
+                $assignmentList->addAssignment($assignment);
+            }
         }
 
         $this->assignmentList = $assignmentList;
