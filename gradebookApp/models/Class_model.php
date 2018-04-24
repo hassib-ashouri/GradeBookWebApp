@@ -121,7 +121,6 @@ class Class_model extends \MY_Model
 
     /**
      * Removes assignment entries for each student
-     *      $classObj needs table_name
      * @param \Objects\Student[] $students
      * @param string $tableName
      */
