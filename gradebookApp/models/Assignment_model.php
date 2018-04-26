@@ -6,8 +6,6 @@
  */
 class Assignment_model extends \MY_Model
 {
-    private $NEW_ASSIGNMENT_ID = -1;
-
     // model is in charge of crud: create, read, update, delete
     public function __construct()
     {
@@ -118,7 +116,7 @@ class Assignment_model extends \MY_Model
      */
     public function markAsNew($assignment)
     {
-        $assignment->assignment_id = $this->NEW_ASSIGNMENT_ID;
+        $assignment->assignment_id = \Objects\Assignment::NEW_ASSIGNMENT_ID;
     }
 
     /**
@@ -145,7 +143,7 @@ class Assignment_model extends \MY_Model
         $newAssignments = array();
         foreach ($assignments as $assignment) {
             if (!isset($assignment->assignment_id) ||
-                $assignment->assignment_id == $this->NEW_ASSIGNMENT_ID
+                $assignment->assignment_id == \Objects\Assignment::NEW_ASSIGNMENT_ID
             ) {
                 array_push($newAssignments, $assignment);
             }

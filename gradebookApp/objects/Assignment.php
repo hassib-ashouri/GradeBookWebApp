@@ -30,6 +30,12 @@ class Assignment implements \Interfaces\GradeStatistics, \JsonSerializable
     private $grades = array();
 
     /**
+     * Static identifier for new assignment ids
+     * @var int
+     */
+    const NEW_ASSIGNMENT_ID = -1;
+
+    /**
      * Do nothing
      * __set is typically used to set values where an error would otherwise be thrown
      *      such as when accessing a private field, or a field that doesn't exist
@@ -52,6 +58,14 @@ class Assignment implements \Interfaces\GradeStatistics, \JsonSerializable
         } else {
             return 0;
         }
+    }
+
+    /**
+     * Sets this assignment as new
+     */
+    public function markAsNew()
+    {
+        $this->assignment_id = self::NEW_ASSIGNMENT_ID;
     }
 
     /**
