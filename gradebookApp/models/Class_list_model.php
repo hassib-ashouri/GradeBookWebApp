@@ -28,7 +28,7 @@ class Class_list_model extends \MY_Model
          * Gets the row from classes for the class
          */
         $classRow = $this->db
-            ->where("table_name", $classObj->table_name)
+            ->where("class_id", $classObj->class_id)
             ->get("classes")->result_array();
         /**
          * Gets the rows from students_enrolled for each student in the class
@@ -37,13 +37,30 @@ class Class_list_model extends \MY_Model
             ->where("class_id", $classObj->class_id)
             ->count_all_results("students_enrolled");
         $rowExists = count($classRow) == 1;
-        $tableExists = $this->db->table_exists($classObj->table_name);
+        if (isset($classObj->table_name)) {
+            $tableExists = $this->db->table_exists($classObj->table_name);
+        } else {
+            $tableExists = false;
+        }
 
         return array(
             "rowExists" => $rowExists,
             "tableExists" => $tableExists,
             "studentsEnrolled" => $studentsEnrolled,
         );
+    }
+
+    /**
+     * Checks if a class exists or not
+     * @param string $classId
+     * @return bool
+     */
+    public function classExists($classId)
+    {
+        $classObj = new \Objects\ClassObj();
+        $classObj->class_id = $classId;
+        $classData = $this->classData($classObj);
+        return $classData["rowExists"];
     }
 
     /**
@@ -56,44 +73,46 @@ class Class_list_model extends \MY_Model
     {
         $classData = $this->classData($classObj);
 
-        if (!$classData["rowExists"]) {
-            /**
-             * Inserts row into classes containing info on class
-             */
-            $classesData = array(
-                "class_id" => $classObj->class_id,
-                "professor_id" => $classObj->professor_id,
-                "class_name" => $classObj->class_name,
-                "section" => $classObj->section,
-                "class_title" => $classObj->class_title,
-                "meeting_times" => $classObj->meeting_times,
-                "table_name" => $classObj->table_name,
-            );
-            $this->db->insert("classes", $classesData);
-        }
+        if (!($classData["rowExists"])) {
+            if (!$classData["rowExists"]) {
+                /**
+                 * Inserts row into classes containing info on class
+                 */
+                $classesData = array(
+                    "class_id" => $classObj->class_id,
+                    "professor_id" => $classObj->professor_id,
+                    "class_name" => $classObj->class_name,
+                    "section" => $classObj->section,
+                    "class_title" => $classObj->class_title,
+                    "meeting_times" => $classObj->meeting_times,
+                    "table_name" => $classObj->table_name,
+                );
+                $this->db->insert("classes", $classesData);
+            }
 
-        if (!$classData["tableExists"]) {
-            /**
-             * Creates table for class in db
-             */
-            $this->_createTable($classObj->table_name);
-        }
+            if (!$classData["tableExists"]) {
+                /**
+                 * Creates table for class in db
+                 */
+                $this->_createTable($classObj->table_name);
+            }
 
-        if ($classData["studentsEnrolled"] == 0) {
-            /**
-             * Inserts rows into students_enrolled for each student in the class
-             */
-            $students = $classObj->getStudents();
-            $this->load->model("class_model");
-            $this->class_model->addStudents($students, $classObj);
+            if ($classData["studentsEnrolled"] == 0) {
+                /**
+                 * Inserts rows into students_enrolled for each student in the class
+                 */
+                $students = $classObj->getStudents();
+                $this->load->model("class_model");
+                $this->class_model->addStudents($students, $classObj);
+            }
         }
     }
 
     /**
-     * Deletes a class in the db with specified table_name
-     *      deletes row from classes
-     *      drops table for class
-     * @param \Objects\ClassObj $classObj
+     * Deletes a class in the db with specified table_name;
+     *      deletes row from classes, and
+     *      drops table for class;
+     * @param \Objects\ClassObj $classObj needs class_id, and table_name
      */
     public function deleteClass($classObj)
     {
