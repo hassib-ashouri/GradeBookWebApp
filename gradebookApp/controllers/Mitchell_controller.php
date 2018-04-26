@@ -218,13 +218,15 @@ class Mitchell_controller extends MY_Controller
 
         $this->load->model("class_model");
         $classObj = $this->class_model->getClass($tableName);
+        $classId = $classObj->class_id;
         $assignmentList = $classObj->getAssignmentList();
         $groups = $assignmentList->getGroupNames();
         $grouped = $assignmentList->getGroupedAssignments();
 
-        $formAction = base_url() . "Index_controller/submitGenericAssignmentTest";
+        $formAction = base_url() . "Mitchell_controller/submitGenericAssignmentTest";
         echo "<form action='$formAction' method='post'>";
         echo "<input name='tableName' value='$tableName' type='hidden'>";
+        echo "<input name='classId' value='$classId' type='hidden'>";
         foreach ($grouped as $group) {
             $groupName = $group->getGroupName();
             $groupWeight = $group->getGroupWeight();
@@ -234,6 +236,7 @@ class Mitchell_controller extends MY_Controller
             $assignments = $group->getAssignments();
             foreach ($assignments as $assignment) {
                 echo "<div>";
+                echo "<input name='assignClassId[]' value='$assignment->class_id' type='hidden'>";
                 echo "<input name='assignId[]' value='$assignment->assignment_id' type='hidden'>";
                 echo "<input name='assignName[]' value='$assignment->assignment_name'>";
                 echo "<textarea name='assignDesc[]'>$assignment->description</textarea>";
@@ -262,10 +265,29 @@ class Mitchell_controller extends MY_Controller
         $post = $this->input->post();
 
         $this->load->model("assignment_model");
-        $this->assignment_model->readPost($post);
-        $this->assignment_model->updateAssignments();
 
-        redirect("Index_controller/genericAssignmentDisplay");
+        $assignments = array();
+        $assignmentCount = count($post['assignId']);
+        for ($i = 0; $i < $assignmentCount; $i++) {
+            $assignmentTemp = new \Objects\Assignment();
+            $assignmentTemp->class_id = $post['assignClassId'][$i];
+            $assignmentTemp->assignment_id = $post['assignId'][$i];
+            $assignmentTemp->assignment_name = $post['assignName'][$i];
+            $assignmentTemp->description = $post['assignDesc'][$i];
+            $assignmentTemp->type = $post['assignType'][$i];
+            $assignmentTemp->max_points = $post['assignMaxPts'][$i];
+            $assignmentTemp->max_points_old = $post['assignMaxPtsOld'][$i];
+            $assignmentTemp->graded = $post['assignGraded'][$i];
+
+            array_push($assignments, $assignmentTemp);
+        }
+
+        $tempClass = new \Objects\ClassObj();
+        $tempClass->class_id = $post['classId'];
+        $tempClass->table_name = $post['tableName'];
+
+        $this->assignment_model->updateAssignments($assignments, $tempClass);
+        redirect("Mitchell_controller/genericAssignmentDisplay");
     }
 
     public function genericAssignmentDisplay()

@@ -277,6 +277,7 @@ class Assignment_model extends \MY_Model
          * Gets assignments currently associated with the class from the db
          */
         $classAssignments = $this->db
+            ->select("id as assignment_id, class_id, assignment_name, description, max_points, type, weight, graded")
             ->from("assignments")
             ->where(array("class_id" => $classObj->class_id))
             ->get()->result("\Objects\Assignment");
@@ -356,13 +357,15 @@ class Assignment_model extends \MY_Model
                 ->get()->result_array();
 
             foreach ($assignmentsData as $assignmentData) {
-                $tempPoints = +$assignmentData["points"] *
-                    $ratios[$assignmentData["assignment_id"]];
-                $temp = array(
-                    "id" => $assignmentData["id"],
-                    "points" => $tempPoints,
-                );
-                array_push($classAssignments, $temp);
+                if (isset($ratios[$assignmentData["assignment_id"]])) {
+                    $tempPoints = +$assignmentData["points"] *
+                        $ratios[$assignmentData["assignment_id"]];
+                    $temp = array(
+                        "id" => $assignmentData["id"],
+                        "points" => $tempPoints,
+                    );
+                    array_push($classAssignments, $temp);
+                }
             }
         }
 
@@ -370,6 +373,4 @@ class Assignment_model extends \MY_Model
             $this->db->update_batch($tableName, $classAssignments, "id");
         }
     }
-
-    // todo remove assignments from assignments table based on what ids are not present in the array that are present in the database
 }
