@@ -66,7 +66,6 @@ class Edit_class_controller extends MY_Controller
     {
         $postData = $this->input->post();
 
-        pretty_dump($postData);
         $assignmentGroups = $postData["assignmentGroups"];
 
         //prepare the grouped assignments that will go in the classobj
@@ -118,19 +117,20 @@ class Edit_class_controller extends MY_Controller
              * @var string[] representing the ids of the new students.
              */
             $newStudents = array();
-            foreach ($postData["students"] as $index => $studentId) {
-                if (array_search($studentId, $oldStudentIds) == null) {//if the student is new.
-                    array_push($newStudents, $studentId);
-                } else {// if the student exists, remove from these lists.
+            foreach ($postData["students"] as $studentId) {
+                $index = array_search($studentId, $oldStudentIds);
+                if ($index !== false) {
+                    // if the student exists, remove from these lists.
                     unset($oldStudentIds[$index]);
+                } else {
+                    //if the student is new.
+                    array_push($newStudents, $studentId);
                 }
             }
             // remove old students and add new students.
-            $this->load->model("class_model");
             $this->class_model->removeStudents($oldStudentIds, $classObj);
             $this->class_model->addStudents($newStudents, $classObj);
 
-            //// works!!
             //creates a class object to update the meta data only.
             $classObject = new \Objects\ClassObj(null, null);
             $classObject->class_id = $postData["classId"];
@@ -142,7 +142,6 @@ class Edit_class_controller extends MY_Controller
 
             $this->load->model("Class_list_model");
             $this->class_list_model->updateClass($classObject);
-            ////
         } catch (Exception $e) {
             // suppress errors?
         }
