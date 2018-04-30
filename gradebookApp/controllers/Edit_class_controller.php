@@ -18,16 +18,10 @@ class Edit_class_controller extends MY_Controller
      */
     public function editClassView($classId)
     {
-        $tableName = $this->validateClass($classId);
+        $this->load->model("class_model");
 
-        //i should check if the class exists first.
-        if ($tableName != null) {
-            //get the class obj.
-            $this->load->model("class_model");
-            /**
-             * @var \Objects\ClassObj $classObj
-             */
-            $classObj = $this->class_model->getClass($tableName);
+        try {
+            $classObj = $this->class_model->getClassById($classId);
 
             // get the ids of the students
             $studentIds = array();
@@ -56,11 +50,9 @@ class Edit_class_controller extends MY_Controller
             );
 
             $this->load->view("main", $mainViewComponents);
-        } else {
-            //load a class does not exist view.
+        } catch (Exception $e) {
+            // load a class does not exist view.
         }
-
-
     }
 
     /**
@@ -68,25 +60,8 @@ class Edit_class_controller extends MY_Controller
      */
 
     /**
-     * verifies the class id in sent in the request.
-     * @param string $classId represent the class id.
-     * @return null | string representing the tablename of the class.
+     * todo please comment
      */
-    public function validateClass($classId)
-    {
-        $userId = $this->session->get_userdata()["loggedUser"];
-        $this->load->model("class_list_model");
-        $classes = $this->class_list_model->readProfessorClassList($userId);
-
-        foreach ($classes as $class) {
-            if ($classId == $class->class_id) {
-                return $class->table_name;
-            }
-        }
-
-        return null;
-    }
-
     public function recieveClassInfo()
     {
         $postData = $this->input->post();
@@ -125,60 +100,52 @@ class Edit_class_controller extends MY_Controller
             }
         }
 
-        //get the class obj.
-        $tableName = $this->validateClass($postData["classId"]);
         $this->load->model("class_model");
-        /**
-         * @var \Objects\ClassObj $classObj
-         */
-        $classObj = $this->class_model->getClass($tableName);
+        try {
+            $classObj = $this->class_model->getClassById($postData["classId"]);
 
-        $this->load->model("Assignment_model");
-        $this->assignment_model->updateAssignments($assignmentsToBeProcessed, $classObj);
+            $this->load->model("Assignment_model");
+            $this->assignment_model->updateAssignments($assignmentsToBeProcessed, $classObj);
 
 
-        // get the ids of the students
-        $oldStudentIds = array();
-        foreach ($classObj->getStudents() as $student) {
-            array_push($oldStudentIds, $student->student_id);
-        }
-
-        /**
-         * @var string[] representing the ids of the new students.
-         */
-        $newStudents = array();
-        foreach ($postData["students"] as $index => $studentId) {
-            if (array_search($studentId, $oldStudentIds) == null) {//if the student is new.
-                array_push($newStudents, $studentId);
-            } else {// if the student exists, remove from these lists.
-                unset($oldStudentIds[$index]);
+            // get the ids of the students
+            $oldStudentIds = array();
+            foreach ($classObj->getStudents() as $student) {
+                array_push($oldStudentIds, $student->student_id);
             }
+
+            /**
+             * @var string[] representing the ids of the new students.
+             */
+            $newStudents = array();
+            foreach ($postData["students"] as $index => $studentId) {
+                if (array_search($studentId, $oldStudentIds) == null) {//if the student is new.
+                    array_push($newStudents, $studentId);
+                } else {// if the student exists, remove from these lists.
+                    unset($oldStudentIds[$index]);
+                }
+            }
+            // remove old students and add new students.
+            $this->load->model("class_model");
+            $this->class_model->removeStudents($oldStudentIds, $classObj);
+            $this->class_model->addStudents($newStudents, $classObj);
+
+            //// works!!
+            //creates a class object to update the meta data only.
+            $classObject = new \Objects\ClassObj(null, null);
+            $classObject->class_id = $postData["classId"];
+            $classObject->professor_id = null;
+            $classObject->class_name = $postData["className"];
+            $classObject->section = $postData["section"];
+            $classObject->class_title = $postData["classTitle"];
+            $classObject->meeting_times = $postData["meetingTimes"];
+
+            $this->load->model("Class_list_model");
+            $this->class_list_model->updateClass($classObject);
+            ////
+        } catch (Exception $e) {
+            // suppress errors?
         }
-        // remove old students and add new students.
-        $this->load->model("class_model");
-        $this->class_model->removeStudents($oldStudentIds, $classObj);
-        $this->class_model->addStudents($newStudents, $classObj);
-
-        //// works!!
-        //creates a class object to update the meta data only.
-        $classObject = new \Objects\ClassObj(null, null);
-        $classObject->class_id = $postData["classId"];
-        $classObject->professor_id = null;
-        $classObject->class_name = $postData["className"];
-        $classObject->section = $postData["section"];
-        $classObject->class_title = $postData["classTitle"];
-        $classObject->meeting_times = $postData["meetingTimes"];
-
-        $this->load->model("Class_list_model");
-        $this->class_list_model->updateClass($classObject);
-        ////
-    }
-
-    public function recieveClassInfoM()
-    {
-        $postData = $this->input->post();
-
-        pretty_dump($postData);
     }
 
     /**
