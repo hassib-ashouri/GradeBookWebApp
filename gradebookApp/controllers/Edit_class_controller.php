@@ -66,8 +66,30 @@ class Edit_class_controller extends MY_Controller
     {
         $postData = $this->input->post();
 
-        $assignmentGroups = $postData["assignmentGroups"];
+        try {
+            $this->load->model("class_model");
+            $classObj = $this->class_model->getClassById($postData["classId"]);
 
+            $this->_updateAssignments($classObj, $postData["assignmentGroups"]);
+            $this->_updateStudents($classObj, $postData["students"]);
+            $this->_updateClass($postData);
+        } catch (Exception $e) {
+            // suppress errors?
+        }
+    }
+
+    /**
+     * Private methods
+     */
+
+    /**
+     * Processes assignments;
+     *      todo Hassib comment more please
+     * @param \Objects\ClassObj $classObj
+     * @param array $assignmentGroups
+     */
+    private function _updateAssignments($classObj, $assignmentGroups)
+    {
         //prepare the grouped assignments that will go in the classobj
         $assignmentsToBeProcessed = array();
 
@@ -99,55 +121,58 @@ class Edit_class_controller extends MY_Controller
             }
         }
 
-        $this->load->model("class_model");
-        try {
-            $classObj = $this->class_model->getClassById($postData["classId"]);
-
-            $this->load->model("Assignment_model");
-            $this->assignment_model->updateAssignments($assignmentsToBeProcessed, $classObj);
-
-
-            // get the ids of the students
-            $oldStudentIds = array();
-            foreach ($classObj->getStudents() as $student) {
-                array_push($oldStudentIds, $student->student_id);
-            }
-
-            /**
-             * @var string[] representing the ids of the new students.
-             */
-            $newStudents = array();
-            foreach ($postData["students"] as $studentId) {
-                $index = array_search($studentId, $oldStudentIds);
-                if ($index !== false) {
-                    // if the student exists, remove from these lists.
-                    unset($oldStudentIds[$index]);
-                } else {
-                    //if the student is new.
-                    array_push($newStudents, $studentId);
-                }
-            }
-            // remove old students and add new students.
-            $this->class_model->removeStudents($oldStudentIds, $classObj);
-            $this->class_model->addStudents($newStudents, $classObj);
-
-            //creates a class object to update the meta data only.
-            $classObject = new \Objects\ClassObj(null, null);
-            $classObject->class_id = $postData["classId"];
-            $classObject->professor_id = null;
-            $classObject->class_name = $postData["className"];
-            $classObject->section = $postData["section"];
-            $classObject->class_title = $postData["classTitle"];
-            $classObject->meeting_times = $postData["meetingTimes"];
-
-            $this->load->model("Class_list_model");
-            $this->class_list_model->updateClass($classObject);
-        } catch (Exception $e) {
-            // suppress errors?
-        }
+        $this->load->model("Assignment_model");
+        $this->assignment_model->updateAssignments($assignmentsToBeProcessed, $classObj);
     }
 
     /**
-     * Private methods
+     * Creates a classObj to update the meta data only.
+     * @param $postData
      */
+    private function _updateClass($postData)
+    {
+        $classObject = new \Objects\ClassObj(null, null);
+        $classObject->class_id = $postData["classId"];
+        $classObject->professor_id = null;
+        $classObject->class_name = $postData["className"];
+        $classObject->section = $postData["section"];
+        $classObject->class_title = $postData["classTitle"];
+        $classObject->meeting_times = $postData["meetingTimes"];
+
+        $this->load->model("class_list_model");
+        $this->class_list_model->updateClass($classObject);
+    }
+
+    /**
+     * Adds and removes students from the class
+     * @param \Objects\ClassObj $classObj
+     * @param string[] $studentIds
+     */
+    private function _updateStudents($classObj, $studentIds)
+    {
+        // get the ids of the students
+        $oldStudentIds = array();
+        foreach ($classObj->getStudents() as $student) {
+            array_push($oldStudentIds, $student->student_id);
+        }
+
+        /**
+         * @var string[] representing the ids of the new students.
+         */
+        $newStudents = array();
+        foreach ($studentIds as $studentId) {
+            $index = array_search($studentId, $oldStudentIds);
+            if ($index !== false) {
+                // if the student exists, remove from these lists.
+                unset($oldStudentIds[$index]);
+            } else {
+                //if the student is new.
+                array_push($newStudents, $studentId);
+            }
+        }
+
+        // remove old students and add new students.
+        $this->class_model->removeStudents($oldStudentIds, $classObj);
+        $this->class_model->addStudents($newStudents, $classObj);
+    }
 }
