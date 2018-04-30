@@ -21,19 +21,17 @@ class Edit_class_controller extends MY_Controller
         $tableName = $this->validateClass($classId);
 
         //i should check if the class exists first.
-        if($tableName != null)
-        {
+        if ($tableName != null) {
             //get the class obj.
-            $this->load->model("Class_model");
+            $this->load->model("class_model");
             /**
              * @var \Objects\ClassObj $classObj
              */
-            $classObj = $this->Class_model->getClass($tableName);
+            $classObj = $this->class_model->getClass($tableName);
 
             // get the ids of the students
             $studentIds = array();
-            foreach ($classObj->getStudents() as $student)
-            {
+            foreach ($classObj->getStudents() as $student) {
                 array_push($studentIds, $student->student_id);
             }
 
@@ -58,9 +56,7 @@ class Edit_class_controller extends MY_Controller
             );
 
             $this->load->view("main", $mainViewComponents);
-        }
-        else
-        {
+        } else {
             //load a class does not exist view.
         }
 
@@ -82,10 +78,10 @@ class Edit_class_controller extends MY_Controller
         $this->load->model("class_list_model");
         $classes = $this->class_list_model->readProfessorClassList($userId);
 
-        foreach($classes as $class)
-        {
-            if($classId == $class->class_id)
+        foreach ($classes as $class) {
+            if ($classId == $class->class_id) {
                 return $class->table_name;
+            }
         }
 
         return null;
@@ -131,7 +127,7 @@ class Edit_class_controller extends MY_Controller
 
         //get the class obj.
         $tableName = $this->validateClass($postData["classId"]);
-        $this->load->model("Class_model");
+        $this->load->model("class_model");
         /**
          * @var \Objects\ClassObj $classObj
          */
@@ -141,11 +137,9 @@ class Edit_class_controller extends MY_Controller
         $this->assignment_model->updateAssignments($assignmentsToBeProcessed, $classObj);
 
 
-
         // get the ids of the students
         $oldStudentIds = array();
-        foreach ($classObj->getStudents() as $student)
-        {
+        foreach ($classObj->getStudents() as $student) {
             array_push($oldStudentIds, $student->student_id);
         }
 
@@ -154,20 +148,18 @@ class Edit_class_controller extends MY_Controller
          */
         $newStudents = array();
         foreach ($postData["students"] as $index => $studentId) {
-            if(array_search($studentId, $oldStudentIds) == null)
-            {//if the student is new.
-                array_push($newStudents,$studentId);
-            }
-            else
-            {// if the student exists, remove from these lists.
+            if (array_search($studentId, $oldStudentIds) == null) {//if the student is new.
+                array_push($newStudents, $studentId);
+            } else {// if the student exists, remove from these lists.
                 unset($oldStudentIds[$index]);
             }
         }
         // remove old students and add new students.
         $this->load->model("class_model");
-        $this->class_model->removeStudents($oldStudentIds,$classObj);
-        $this->class_model->addStudents($newStudents,$classObj);
+        $this->class_model->removeStudents($oldStudentIds, $classObj);
+        $this->class_model->addStudents($newStudents, $classObj);
 
+        //// works!!
         //creates a class object to update the meta data only.
         $classObject = new \Objects\ClassObj(null, null);
         $classObject->class_id = $postData["classId"];
@@ -179,9 +171,11 @@ class Edit_class_controller extends MY_Controller
 
         $this->load->model("Class_list_model");
         $this->class_list_model->updateClass($classObject);
+        ////
     }
 
-    public function recieveClassInfoM() {
+    public function recieveClassInfoM()
+    {
         $postData = $this->input->post();
 
         pretty_dump($postData);
