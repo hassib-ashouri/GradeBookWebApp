@@ -27,12 +27,21 @@ class Assignment_model extends \MY_Model
     /**
      * Creates all specified assignments for a class
      * @param \Objects\ClassObj $classObj needs assignments, and students or class_id
+     * @param \Objects\Student[] $students alternate list of students
      */
-    public function createAssignments($classObj)
+    public function createAssignments($classObj, $students = null)
     {
         $assignments = $classObj->getAssignments();
+        if (!is_null($students)) {
+            $tempClassObj = new \Objects\ClassObj($assignments, $students);
+            foreach ($classObj as $key => $value) {
+                $tempClassObj->$key = $value;
+            }
+        } else {
+            $tempClassObj = $classObj;
+        }
         foreach ($assignments as $assignment) {
-            $this->createAssignment($assignment, $classObj);
+            $this->createAssignment($assignment, $tempClassObj);
         }
     }
 

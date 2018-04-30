@@ -37,7 +37,7 @@ class Class_model extends \MY_Model
          * Creates assignments
          */
         $this->load->model("assignment_model");
-        $this->assignment_model->createAssignments($classObj);
+        $this->assignment_model->createAssignments($classObj, $students);
     }
 
     /**
