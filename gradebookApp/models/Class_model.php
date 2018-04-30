@@ -8,13 +8,6 @@
  */
 class Class_model extends \MY_Model
 {
-    /**
-     * Class object,
-     *      created from class table in the database
-     * @var \Objects\ClassObj
-     */
-    private $classObj;
-
     // model is in charge of crud: create, read, update, delete
     public function __construct()
     {
@@ -63,32 +56,7 @@ class Class_model extends \MY_Model
         $classes = $this->class_list_model->getClassesBy("table_name", $classTableName);
 
         if (isset($classes[0])) {
-            /**
-             * @var \Objects\ClassObj $classObj
-             */
-            $classObj = $classes[0];
-
-            $this->load->model("student_model");
-            $this->load->model("assignment_model");
-
-            $students = $this->student_model->getStudents($classObj->class_id);
-            $assignments = $this->assignment_model->getAssignments($classObj);
-            $assignmentList = $this->_getAssignmentList($assignments);
-
-            $this->_setAssignmentList($assignmentList, $students);
-
-            $this->classObj = new \Objects\ClassObj($assignmentList, $students);
-
-            /**
-             * Copies all properties from $classObj to $this->classObj
-             */
-            foreach ($classObj as $propertyName => $value) {
-                if (isset($value)) {
-                    $this->classObj->$propertyName = $value;
-                }
-            }
-
-            return $this->classObj;
+            return $this->_getClass($classes[0]);
         }
 
         throw new \Exception("No class with such table found: '$classTableName'");
@@ -189,6 +157,36 @@ class Class_model extends \MY_Model
         }
 
         return $assignmentList;
+    }
+
+    /**
+     * Creates and returns a fully formed class object
+     * @param \Objects\ClassObj $tempClassObj
+     * @return \Objects\ClassObj
+     */
+    private function _getClass($tempClassObj)
+    {
+        $this->load->model("student_model");
+        $this->load->model("assignment_model");
+
+        $students = $this->student_model->getStudents($tempClassObj->class_id);
+        $assignments = $this->assignment_model->getAssignments($tempClassObj);
+        $assignmentList = $this->_getAssignmentList($assignments);
+
+        $this->_setAssignmentList($assignmentList, $students);
+
+        $classObj = new \Objects\ClassObj($assignmentList, $students);
+
+        /**
+         * Copies all properties from $tempClassObj to $classObj
+         */
+        foreach ($tempClassObj as $propertyName => $value) {
+            if (isset($value)) {
+                $classObj->$propertyName = $value;
+            }
+        }
+
+        return $classObj;
     }
 
     /**
