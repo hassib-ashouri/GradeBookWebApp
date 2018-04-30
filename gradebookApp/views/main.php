@@ -16,9 +16,10 @@ this is also the general template for all the pages-->
 
 <?= $header ?>
 <body>
-<?= $mainContent ?>
-<?php foreach($partialViews as $partialView): ?>
-  <?= $partialView ?>
-<?php endforeach; ?>
-
+    <div class="container">
+        <?= $mainContent ?>
+        <?php foreach($partialViews as $partialView): ?>
+          <?= $partialView ?>
+        <?php endforeach; ?>
+    </div>
 </body>
