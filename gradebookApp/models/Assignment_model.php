@@ -216,7 +216,7 @@ class Assignment_model extends \MY_Model
          */
         $exists = false;
         if (isset($assignment->assignment_id) &&
-            $assignment->assignment_id != $this->NEW_ASSIGNMENT_ID
+            $assignment->assignment_id != \Objects\Assignment::NEW_ASSIGNMENT_ID
         ) {
             $assignmentCount = $this->db
                 ->from("assignments")
@@ -345,7 +345,11 @@ class Assignment_model extends \MY_Model
         if (isset($tableName)) {
             $ratios = array();
             foreach ($assignments as $assignment) {
-                $ratio = +$assignment->max_points / +$assignment->max_points_old;
+                if (isset($assignment->max_points_old) && $assignment->max_points_old != 0) {
+                    $ratio = +$assignment->max_points / +$assignment->max_points_old;
+                } else {
+                    $ratio = 1;
+                }
                 $ratios[$assignment->assignment_id] = $ratio;
             }
 

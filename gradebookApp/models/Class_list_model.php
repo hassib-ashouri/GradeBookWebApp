@@ -181,7 +181,7 @@ class Class_list_model extends \MY_Model
      * Updates a class in the db with specified class_id;
      *     Updates class metadata only,
      *     eg. class_name, class_title, meeting_times, etc.
-     * @param \Objects\ClassObj $classObj
+     * @param \Objects\ClassObj $classObj needs class_id
      */
     public function updateClass($classObj)
     {
