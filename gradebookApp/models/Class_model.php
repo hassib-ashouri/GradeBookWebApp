@@ -41,25 +41,38 @@ class Class_model extends \MY_Model
     }
 
     /**
-     * Loads a table, creates and returns a classObj;
-     *      throws an exception if class not found
-     * @param $classTableName
+     * Wrapper for getClassByTableName
+     * @param string $classTableName
      * @return \Objects\ClassObj
      * @throws \Exception
      */
     public function getClass($classTableName)
     {
-        /**
-         * Gets classes from the db that match the table name
-         */
-        $this->load->model("class_list_model");
-        $classes = $this->class_list_model->getClassesBy("table_name", $classTableName);
+        return $this->getClassByTableName($classTableName);
+    }
 
-        if (isset($classes[0])) {
-            return $this->_getClass($classes[0]);
-        }
+    /**
+     * Loads a table by class_id, creates and returns a classObj;
+     *      throws an exception if class not found
+     * @param string $classId
+     * @return \Objects\ClassObj
+     * @throws \Exception
+     */
+    public function getClassById($classId)
+    {
+        return $this->_getClassBy("class_id", $classId);
+    }
 
-        throw new \Exception("No class with such table found: '$classTableName'");
+    /**
+     * Loads a table by table_name, creates and returns a classObj;
+     *      throws an exception if class not found
+     * @param string $classTableName
+     * @return \Objects\ClassObj
+     * @throws \Exception
+     */
+    public function getClassByTableName($classTableName)
+    {
+        return $this->_getClassBy("table_name", $classTableName);
     }
 
     /**
@@ -187,6 +200,29 @@ class Class_model extends \MY_Model
         }
 
         return $classObj;
+    }
+
+    /**
+     * Loads a table, creates and returns a classObj;
+     *      throws an exception if class not found
+     * @param string $propertyName best options are 'class_id', and 'table_name'
+     * @param string $property
+     * @return \Objects\ClassObj
+     * @throws \Exception
+     */
+    private function _getClassBy($propertyName, $property)
+    {
+        /**
+         * Gets classes from the db that match the table name
+         */
+        $this->load->model("class_list_model");
+        $classes = $this->class_list_model->getClassesBy($propertyName, $property);
+
+        if (isset($classes[0])) {
+            return $this->_getClass($classes[0]);
+        }
+
+        throw new \Exception("No class with such $propertyName found: '$property'");
     }
 
     /**
