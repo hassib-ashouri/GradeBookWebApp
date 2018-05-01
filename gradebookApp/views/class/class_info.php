@@ -1,6 +1,9 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
+if (!isset($infoComponent)) {
+    $infoComponent = "";
+}
 if (!isset($statsComponent)) {
     $statsComponent = "";
 }
@@ -23,7 +26,7 @@ if (!isset($statsComponent)) {
     <div class="row">
         <div class="col-lg">
             <div class="container">
-<!--                //Code goes here-->
+                <?= $infoComponent ?>
             </div>
         </div>
         <div class="col-lg">

@@ -26,6 +26,7 @@ class Class_controller extends MY_Controller
         $this->load->model('class_model');
         $classObj = $this->class_model->getClass($tableName);
 
+        $info = array();
         $stats = array(
             'highGrade' => number_format($classObj->getHighGrade(), 2),
             'lowGrade' => number_format($classObj->getLowGrade(), 2),
@@ -35,6 +36,7 @@ class Class_controller extends MY_Controller
             'stdDevGrade' => number_format($classObj->getStdDevGrade(), 2),
         );
         $classInfo = array(
+            'infoComponent' => $this->load->view("class/info", $info, true),
             'statsComponent' => $this->load->view("class/stats", $stats, true),
         );
 
