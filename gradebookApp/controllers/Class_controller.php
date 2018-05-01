@@ -26,7 +26,11 @@ class Class_controller extends MY_Controller
         $this->load->model('class_model');
         $classObj = $this->class_model->getClass($tableName);
 
-        $info = array();
+        $info = array(
+            'className' => $classObj->class_name,
+            'section' => $classObj->section,
+            'schedule' => $classObj->meeting_times,
+        );
         $stats = array(
             'highGrade' => number_format($classObj->getHighGrade(), 2),
             'lowGrade' => number_format($classObj->getLowGrade(), 2),
