@@ -53,7 +53,7 @@
  *
  * NOTE: If you change these, also change the error_reporting() code below
  */
-	define('ENVIRONMENT', 'development');
+	define('ENVIRONMENT', 'mitchell');
 
 /*
  *---------------------------------------------------------------
@@ -66,6 +66,9 @@
 switch (ENVIRONMENT)
 {
 	case 'development':
+    case 'hassib':
+    case 'manuel':
+    case 'mitchell':
 		error_reporting(-1);
 		ini_set('display_errors', 1);
 	break;
@@ -114,7 +117,7 @@ switch (ENVIRONMENT)
  *
  * NO TRAILING SLASH!
  */
-	$application_folder = '/home/mypoin6/cmpe131.trybabynamer.com/gradebookApp';
+	$application_folder = '/home/mypoin6/cmpe131.trybabynamer.com/mitchell/gradebookApp';
 
 /*
  *---------------------------------------------------------------

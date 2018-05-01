@@ -24,6 +24,25 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 |
 */
 $config['base_url'] = 'http://cmpe131.trybabynamer.com/';
+switch (ENVIRONMENT)
+{
+    case 'development':
+        $config['base_url'] = 'http://cmpe131.trybabynamer.com/';
+        break;
+    case 'hassib':
+        $config['base_url'] = 'http://hassib.cmpe131.trybabynamer.com/';
+        break;
+    case 'manuel':
+        $config['base_url'] = 'http://manuel.cmpe131.trybabynamer.com/';
+        break;
+    case 'mitchell':
+        $config['base_url'] = 'http://mitchell.cmpe131.trybabynamer.com/';
+        break;
+    default:
+        header('HTTP/1.1 503 Service Unavailable.', TRUE, 503);
+        echo 'The application environment is not set correctly.';
+        exit(1); // EXIT_ERROR
+}
 
 /*
 |--------------------------------------------------------------------------
