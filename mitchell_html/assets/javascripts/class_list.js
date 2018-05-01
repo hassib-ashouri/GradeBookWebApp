@@ -1,3 +1,0 @@
-$('.deleteClassButton').popover({
-    trigger: 'focus'
-});
