@@ -1,5 +1,9 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
+
+$detailedGrades = isset($detailedGrades) ? $detailedGrades : "info of this var id not";
+$assignments = isset($assignments) ? $assignments : "info of this var id not";
+$gradesOverview = isset($gradesOverview) ? $gradesOverview : "info of this var id not";
 ?>
 
 <div class="container mt-4">
@@ -19,13 +23,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     </ul>
     <div class="tab-content" id="myTabContent">
       <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="details-tab">
-          studets and their detainled grades.
+          <?= $detailedGrades ?>
       </div>
       <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="overview-tab">
-          students and their overall grades
+          <?= $gradesOverview ?>
       </div>
       <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="assignments-tab">
-          Assignments overview
+          <?= $assignments ?>
       </div>
     </div>
 </div>

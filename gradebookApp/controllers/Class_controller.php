@@ -44,9 +44,18 @@ class Class_controller extends MY_Controller
             'statsComponent' => $this->load->view("class/stats", $stats, true),
         );
 
+        //we need to add the three different partail views to mainPatialView.
+        //this view loading will eventually be methods.
+        $mainPartialViewData["detailedGrades"] = $this->loadStudentsGradesPartialView($tableName);
+        $mainPartialViewData["gradesOverview"] = $this->load->view("class/main/overview", null,true);
+        $mainPartialViewData["assignments"] = $this->load->view("class/main/assignment_list",null,true);
+        $mainPartialView = $this->load->view("class/main", $mainPartialViewData, true);
+
+
         $view_components["header"] = $this->load->view("header", $header, true);
         $view_components["partialViews"] = array(
             $this->load->view("class/class_info", $classInfo, true),
+            $mainPartialView,
         );
         $this->load->view("main", $view_components);
     }
@@ -73,6 +82,13 @@ class Class_controller extends MY_Controller
     /**
      * Private methods
      */
+
+    private function loadStudentsGradesPartialView($tableName)
+    {
+
+
+        return $this->load->view("class/main/detailed",null,true);
+    }
 
     /**
      * Transforms an $assignmentName into something more 'table-friendly';
