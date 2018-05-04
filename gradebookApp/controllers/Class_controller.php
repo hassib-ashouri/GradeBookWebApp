@@ -88,8 +88,7 @@ class Class_controller extends MY_Controller
     private function _overviewComp($classObj)
     {
         //Manuel's implementation for Overview component
-        $this->load->model('student_model');
-        $students = $this->student_model->getStudents($classObj->class_id);
+        $students = $classObj->getStudents();
 
         $overview = array(
             'students' => $students,
