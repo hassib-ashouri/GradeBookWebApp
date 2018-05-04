@@ -23,7 +23,7 @@ class Login_controller extends MY_Controller
      * This method loads the view responsible for creating a password
      * for a new user.
      * @param string $userName the name of the user.
-     * @param string $userId   the id number of the user.
+     * @param string $userId the id number of the user.
      */
     public function createPasswordView($userName, $userId)
     {
@@ -101,8 +101,7 @@ class Login_controller extends MY_Controller
     {
         $post = $this->input->post();
 
-        if (isset($post["username"]) && isset($post["password"]) && isset($post["passwordConfirm"]))
-        {
+        if (isset($post["username"]) && isset($post["password"]) && isset($post["passwordConfirm"])) {
             $user = $post["username"];
             $password = $post["password"];
             $passwordConfirm = $post["passwordConfirm"];
@@ -110,13 +109,10 @@ class Login_controller extends MY_Controller
             $this->load->model("login_model");
             $this->login_model->verifyUser($user);
             //if the passwords match.
-            if ($password == $passwordConfirm)
-            {
+            if ($password == $passwordConfirm) {
                 $this->login_model->setPassword($password);
                 redirect("Login_controller/existingUserView");
-            }
-            else
-            {//if they dont match
+            } else {//if they dont match
                 $this->session->set_flashdata("errorMessage", "Passwords Don't Match");
                 $user = $this->login_model->getUser();
                 $userName = $user->name_first . " " . $user->name_last;
@@ -126,6 +122,10 @@ class Login_controller extends MY_Controller
         }
     }
 
+    /**
+     * It logs the user in if the user exists and the password in correct.
+     * it also passes the id of the logged user to the session data through the variabel "loggedUser".
+     */
     public function loginPassword()
     {
         $post = $this->input->post();
@@ -149,15 +149,11 @@ class Login_controller extends MY_Controller
             redirect(sprintf("Login_controller/newUserView/%s/%s", $userName, $userId));
         } else {
             $this->session->set_userdata("userId", $user);
-            if ($this->login_model->isProfessor())
-            {
+            if ($this->login_model->isProfessor()) {
                 // load professor view
                 //since the user is logged in add the id in the session data
                 $this->session->set_userdata("loggedUser", $this->login_model->getUser()->user_id);
-                $title["title"] = "professor view with list";
-                $view_components["header"] = $this->load->view("header", $title, true);
-                $view_components["mainContent"] = $this->load->view("classlist/classlist_comp", array("addClassLink" => base_url()."Add_class_controller/addClassView"), true);
-                $this->load->view("main", $view_components);
+                redirect("Class_list_controller/classListView");
             } else {
                 // load student view
             }
@@ -170,20 +166,16 @@ class Login_controller extends MY_Controller
         $userIsValid = false;
 
         //verify that the user exists
-        if (isset($post["username"]))
-        {
+        if (isset($post["username"])) {
             $user = $post["username"];
             $this->load->model("login_model");
             $userIsValid = $this->login_model->verifyUser($user);
         }
 
-        if (!$userIsValid)
-        {
+        if (!$userIsValid) {
             $this->session->set_flashdata("errorMessage", "No Such ID Exists");
             redirect("Login_controller/newUserView");
-        }
-        else
-        {
+        } else {
             $view = ($this->login_model->hasPassword()) ? "newUserView" : "createPasswordView";
             $user = $this->login_model->getUser();
             $userName = $user->name_first . " " . $user->name_last;
