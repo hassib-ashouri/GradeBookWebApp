@@ -48,7 +48,7 @@ class Class_controller extends MY_Controller
         //this view loading will eventually be methods.
         $mainPartialViewData["detailedGrades"] = $this->loadStudentsGradesPartialView($tableName);
         $mainPartialViewData["gradesOverview"] = $this->load->view("class/main/overview", null,true);
-        $mainPartialViewData["assignments"] = $this->load->view("class/main/assignment_list",null,true);
+        $mainPartialViewData["assignments"] = $this->_assignmentListComp($classObj);
         $mainPartialView = $this->load->view("class/main", $mainPartialViewData, true);
 
 
@@ -82,6 +82,20 @@ class Class_controller extends MY_Controller
     /**
      * Private methods
      */
+
+    /**
+     * Returns the assignment_list component view
+     * @param \Objects\ClassObj $classObj
+     * @return string
+     */
+    private function _assignmentListComp($classObj)
+    {
+        $assignmentGroups = $classObj->getAssignmentList()->getGroupedAssignments();
+        $assignmentList = array(
+            'assignmentGroups' => $assignmentGroups,
+        );
+        return $this->load->view('class/main/assignment_list', $assignmentList, true);
+    }
 
     private function loadStudentsGradesPartialView($tableName)
     {
