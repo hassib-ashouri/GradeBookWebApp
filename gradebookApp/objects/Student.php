@@ -192,7 +192,7 @@ class Student implements \JsonSerializable
                 $totalWeight += $groupInfo["weight"];
             }
         }
-        if (count($this->groups) == 0) {
+        if (count($this->groups) == 0 || $totalWeight == 0) {
             return 100;
         }
         return $grade / $totalWeight;
