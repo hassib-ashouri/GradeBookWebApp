@@ -1,6 +1,5 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
-
 if (!isset($highGrade)) {
     $highGrade = 0;
 }
@@ -23,41 +22,27 @@ if (!isset($stdDevGrade)) {
 
 <div class="row">
     <div class="col">
-        Mean:
+        Class Name:
     </div>
     <div class="col-sm text-right">
-        <?= $meanGrade ?>
-    </div>
-    <div class="col-sm">
-        Median:
-    </div>
-    <div class="col-sm text-right">
-        <?= $medianGrade ?>
+        <?= $className ?>
     </div>
 </div>
 <div class="row">
     <div class="col-sm">
-        High:
+        Section:
     </div>
     <div class="col-sm text-right">
-        <?= $highGrade ?>
+        <?= $section ?>
     </div>
-    <div class="col-sm">
-        Low:
-    </div>
-    <div class="col-sm text-right">
-        <?= $lowGrade ?>
-    </div>
+</div>
 </div>
 <div class="row">
     <div class="col-sm">
-        StdDev:
+        Schedule:
     </div>
     <div class="col-sm text-right">
-        <?= $stdDevGrade ?>
-    </div>
-    <div class="col-sm">
-    </div>
-    <div class="col-sm text-right">
+        <?= $schedule ?>
     </div>
 </div>
+
