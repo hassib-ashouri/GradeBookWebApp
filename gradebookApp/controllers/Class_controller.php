@@ -99,9 +99,34 @@ class Class_controller extends MY_Controller
 
     private function loadStudentsGradesPartialView($tableName)
     {
+        $this->load->model("class_model");
+        $classObj = $this->class_model->getClass($tableName);
+
+        $assignmentsNames = array();
+        $assignments = $classObj->getAssignmentList()->getAssignments();
+
+        foreach($assignments as $assignment)
+        {
+            array_push($assignmentsNames, $this->_aliasAssignmentName($assignment->assignment_name));
+        }
+        $data["assignmentsNames"] =  $assignmentsNames;
 
 
-        return $this->load->view("class/main/detailed",null,true);
+
+        $studentsNames = array();
+        foreach($classObj->getStudents() as $student)
+        {
+            $studentNameKey = $student->name_last.", ". $student->name_first;
+            $studentId = $student->student_id;
+            $studentsNames[$studentNameKey] = array();
+            foreach ($assignments as $assignment)
+            {
+                array_push($studentsNames[$studentNameKey], $assignment->getPoints($studentId));
+            }
+
+        }
+        $data["grades"] =  $studentsNames;
+        return $this->load->view("class/main/detailed",$data,true);
     }
 
     /**
