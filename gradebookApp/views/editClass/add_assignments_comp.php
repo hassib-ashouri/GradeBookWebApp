@@ -7,6 +7,7 @@ $Assignments;
 
 
     <h3>Add Assignments:  <button id="addgroupbtn" type="button" class="btn">Add Group</button></h3>
+    <p class="text-muted fornt-weight-light">Note: the sum of all the weights should equal to 100.</p>
 
 
 
