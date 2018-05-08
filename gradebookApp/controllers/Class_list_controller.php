@@ -30,18 +30,21 @@ class Class_list_controller extends MY_Controller
         //model name should be lower case.
         $this->load->model("class_list_model");
         $classes = $this->class_list_model->readProfessorClassList($userId);
-        $classesTableNames = array();
+        $classObjects = array();
 
-        //todo: find a better type of information to be displayed.
-        //get the table names.
+        $this->load->model("class_model");
         foreach ($classes as $classObj) {
-            array_push($classesTableNames, $classObj->table_name);
+            try {
+                $tempClassObj = $this->class_model->getClassByTableName($classObj->table_name);
+                array_push($classObjects, $tempClassObj);
+            } catch (Exception $e) {
+                // do nothing
+            }
         }
 
         $mainComponentData = array(
             "addClassLink" => base_url() . "Add_class_controller/addClassView",
-            "editClassLink" => base_url() . "Edit_class_controller/editClassView/12345",
-            "classes" => $classesTableNames,
+            "classObjects" => $classObjects,
             "loggedUser" => $userId,
         );
 
