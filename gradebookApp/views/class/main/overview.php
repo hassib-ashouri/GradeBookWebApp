@@ -8,8 +8,8 @@ $students = (isset($students)) ? $students : array();
 ?>
 
 <div class="container">
-    <h2>Hover Rows</h2>
-    <p>The .table-hover class enables a hover state on table rows:</p>
+    <h2>Overview</h2>
+    <p>Overall class overview displaying students first, last names and overall grade score:</p>
     <table class="table table-hover">
         <thead>
         <tr>
@@ -26,16 +26,6 @@ $students = (isset($students)) ? $students : array();
             <th> <?= $student->getGrade() ?> </th>
         </tr>
         <?php endforeach; ?>
-        <tr>
-            <td>Mary</td>
-            <td>Moe</td>
-            <td>mary@example.com</td>
-        </tr>
-        <tr>
-            <td>July</td>
-            <td>Dooley</td>
-            <td>july@example.com</td>
-        </tr>
         </tbody>
     </table>
 </div>
