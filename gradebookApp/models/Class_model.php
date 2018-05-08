@@ -115,19 +115,28 @@ class Class_model extends \MY_Model
                 $classObj = $this->class_model->getClassById($classId);
                 $tableName = $classObj->table_name;
 
+                $this->_saveIdMap($tableName);
                 $changedAssignments = $this->_getChangedAssignments($classObj, $assignments);
+                $batchUpdate = array();
                 foreach ($changedAssignments as $assignment) {
                     $grades = $assignment->getAllPoints();
                     $assignmentId = $assignment->assignment_id;
                     foreach ($grades as $studentId => $points) {
-                        $this->db
-                            ->set('points', $points)
-                            ->where('student_id', $studentId)
-                            ->where('assignment_id', $assignmentId)
-                            ->update($tableName);
+                        try {
+                            array_push($batchUpdate, array(
+                                'id' => $this->_getAssignmentUpdateId($studentId, $assignmentId),
+                                'points' => $points,
+                            ));
+                        } catch (\Exception $e) {
+                            // fail silently
+                        }
                     }
                 }
+                if (count($batchUpdate) > 0) {
+                    $this->db->update_batch($tableName, $batchUpdate, 'id');
+                }
             } catch (\Exception $e) {
+                // fail silently
             }
         }
     }
@@ -217,6 +226,32 @@ class Class_model extends \MY_Model
         }
 
         return $assignmentList;
+    }
+
+    /**
+     * Gets the database id that matches the given ids
+     * @param string $studentId
+     * @param string $assignmentId
+     * @return number
+     * @throws \Exception if id combination not found
+     */
+    private function _getAssignmentUpdateId($studentId, $assignmentId)
+    {
+        foreach ($this->idMap as $value) {
+            if ($value['student_id'] == $studentId && $value['assignment_id'] == $assignmentId) {
+                return $value['id'];
+            }
+        }
+        throw new \Exception('id combination not found');
+    }
+
+    /**
+     * Saves table for lookup with '_getAssignmentUpdateId' method
+     * @param string $tableName
+     */
+    private function _saveIdMap($tableName)
+    {
+        $this->idMap = $this->db->get($tableName)->result_array();
     }
 
     /**
@@ -344,4 +379,6 @@ class Class_model extends \MY_Model
             $this->db->delete("students_enrolled");
         }
     }
+
+    private $idMap;
 }
