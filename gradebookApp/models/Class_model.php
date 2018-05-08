@@ -101,7 +101,8 @@ class Class_model extends \MY_Model
     }
 
     /**
-     * todo comment
+     * Updates the db with contents of $assignments;
+     *      for updating grades only
      * @param \Objects\Assignment[] $assignments
      */
     public function updateStudentAssignments($assignments)
@@ -109,11 +110,24 @@ class Class_model extends \MY_Model
         if (count($assignments) > 0) {
             $classId = $assignments[0]->class_id;
 
-            $this->load->model('class_model');
-            $classObj = $this->class_model->getClassById($classId);
-            $tableName = $classObj->table_name;
+            try {
+                $this->load->model('class_model');
+                $classObj = $this->class_model->getClassById($classId);
+                $tableName = $classObj->table_name;
 
-            $this->db->update($tableName);
+                foreach ($assignments as $assignment) {
+                    $grades = $assignment->getAllPoints();
+                    $assignmentId = $assignment->assignment_id;
+                    foreach ($grades as $studentId => $points) {
+                        $this->db
+                            ->set('points', $points)
+                            ->where('student_id', $studentId)
+                            ->where('assignment_id', $assignmentId)
+                            ->update($tableName);
+                    }
+                }
+            } catch (\Exception $e) {
+            }
         }
     }
 

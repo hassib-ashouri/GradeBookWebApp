@@ -47,6 +47,15 @@ class Assignment implements \Interfaces\GradeStatistics, \JsonSerializable
     }
 
     /**
+     * Gets the grades array;
+     *      only used for updating database
+     * @return number[]
+     */
+    public function getAllPoints() {
+        return $this->grades;
+    }
+
+    /**
      * Gets the points of a student
      * @param string $studentId
      * @return number
