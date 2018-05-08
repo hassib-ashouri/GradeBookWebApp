@@ -101,6 +101,23 @@ class Class_model extends \MY_Model
     }
 
     /**
+     * todo comment
+     * @param \Objects\Assignment[] $assignments
+     */
+    public function updateStudentAssignments($assignments)
+    {
+        if (count($assignments) > 0) {
+            $classId = $assignments[0]->class_id;
+
+            $this->load->model('class_model');
+            $classObj = $this->class_model->getClassById($classId);
+            $tableName = $classObj->table_name;
+
+            $this->db->update($tableName);
+        }
+    }
+
+    /**
      * Removes assignment entries for each student
      * @param \Objects\Student[] $students
      * @param string $tableName
