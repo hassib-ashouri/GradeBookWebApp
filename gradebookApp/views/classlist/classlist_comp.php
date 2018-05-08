@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
-$loggedUser = isset($loggedUser) ? $loggedUser : "its not in the session data.";
 
+$loggedUser = isset($loggedUser) ? $loggedUser : "its not in the session data.";
 /**
  * @var \Objects\ClassObj[] $classObjects
  */
