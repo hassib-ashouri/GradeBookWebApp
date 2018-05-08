@@ -107,6 +107,7 @@ class Login_model extends \MY_Model
                 ->where("student_id", $userId)
                 ->get("students");
             if ($query->num_rows() == 0) {
+                $this->user = new \Objects\User();
                 return false;
             }
         }

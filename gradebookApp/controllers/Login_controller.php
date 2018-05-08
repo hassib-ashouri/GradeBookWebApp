@@ -129,26 +129,31 @@ class Login_controller extends MY_Controller
     public function loginPassword()
     {
         $post = $this->input->post();
-        $passwordIsValid = false;
+        $isUser = false;
+        $hasPassword = false;
+        $validPassword = false;
 
         //checking is also done in the front end
         if (isset($post["username"]) && isset($post["password"])) {
-            $user = $post["username"];
+            $username = $post["username"];
             $password = $post["password"];
             $this->load->model("login_model");
             // what if this method returned a false and the user does not exist
-            $this->login_model->verifyUser($user);
-            $passwordIsValid = $this->login_model->verifyPassword($password);
+            $isUser = $this->login_model->verifyUser($username);
+            $hasPassword = $this->login_model->hasPassword();
+            $validPassword = $this->login_model->verifyPassword($password);
         }
 
-        if (!$passwordIsValid) {
-            $this->session->set_flashdata("errorMessage", "Incorrect Password");
+        if ($isUser && !$hasPassword) {
             $user = $this->login_model->getUser();
             $userName = $user->name_first . " " . $user->name_last;
             $userId = $user->user_id;
             redirect(sprintf("Login_controller/newUserView/%s/%s", $userName, $userId));
+        } else if (!$isUser || !$validPassword) {
+            $this->session->set_flashdata("errorMessage", "Incorrect User ID or Password");
+            redirect('Login_controller/existingUserView');
         } else {
-            $this->session->set_userdata("userId", $user);
+            $this->session->set_userdata("userId", $username);
             if ($this->login_model->isProfessor()) {
                 // load professor view
                 //since the user is logged in add the id in the session data
