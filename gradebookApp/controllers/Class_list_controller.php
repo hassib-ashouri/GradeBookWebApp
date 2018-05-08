@@ -18,6 +18,8 @@ class Class_list_controller extends MY_Controller
      */
     public function classListView()
     {
+        redirectNonUser();
+
         $userId = $this->session->get_userdata()["loggedUser"];
 
         //prepare the header.
@@ -62,6 +64,8 @@ class Class_list_controller extends MY_Controller
      */
     public function deleteClass($tableName)
     {
+        redirectNonUser();
+
         $this->load->model("class_model");
         $this->load->model("class_list_model");
 

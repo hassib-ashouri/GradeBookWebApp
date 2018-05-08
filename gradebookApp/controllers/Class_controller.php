@@ -18,6 +18,8 @@ class Class_controller extends MY_Controller
      */
     public function displayClassInfo($tableName)
     {
+        redirectNonUser();
+
         $header = array(
             // todo change me!
             "title" => "Class Test",

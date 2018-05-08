@@ -18,6 +18,8 @@ class Edit_class_controller extends MY_Controller
      */
     public function editClassView($classId)
     {
+        redirectNonUser();
+
         $this->load->model("class_model");
 
         try {
@@ -64,6 +66,8 @@ class Edit_class_controller extends MY_Controller
      */
     public function recieveClassInfo()
     {
+        redirectNonUser();
+
         $postData = $this->input->post();
 
         try {

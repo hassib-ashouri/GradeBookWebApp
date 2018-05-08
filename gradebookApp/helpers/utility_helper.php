@@ -50,6 +50,16 @@ if (!function_exists('pretty_dump')) {
     }
 }
 
+if (!function_exists('redirectNonUser')) {
+    function redirectNonUser()
+    {
+        $CI =& get_instance();
+        if (!isset($CI->session->get_userdata()["loggedUser"])) {
+            redirect("Login_controller/existingUserView");
+        }
+    }
+}
+
 if (!function_exists('images_url')) {
     /**
      * Gets the absolute url to the assets/images directory

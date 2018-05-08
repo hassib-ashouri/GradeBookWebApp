@@ -30,6 +30,8 @@ class Add_class_controller extends MY_Controller
      */
     public function addClassView()
     {
+        redirectNonUser();
+
         //header component.
         $header = array(
             "title" => "Add class",
@@ -58,6 +60,8 @@ class Add_class_controller extends MY_Controller
 
     public function recieveClassInfo()
     {
+        redirectNonUser();
+
         $postData = $this->input->post();
 
         $assignmentGroups = $postData["assignmentGroups"];
