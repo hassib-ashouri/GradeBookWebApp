@@ -115,7 +115,8 @@ class Class_model extends \MY_Model
                 $classObj = $this->class_model->getClassById($classId);
                 $tableName = $classObj->table_name;
 
-                foreach ($assignments as $assignment) {
+                $changedAssignments = $this->_getChangedAssignments($classObj, $assignments);
+                foreach ($changedAssignments as $assignment) {
                     $grades = $assignment->getAllPoints();
                     $assignmentId = $assignment->assignment_id;
                     foreach ($grades as $studentId => $points) {
@@ -129,6 +130,21 @@ class Class_model extends \MY_Model
             } catch (\Exception $e) {
             }
         }
+    }
+
+    /**
+     * Creates a copy of an assignment,
+     *      without copying grades
+     * @param \Objects\Assignment $assignment
+     * @return \Objects\Assignment
+     */
+    private function _cloneAssignment($assignment)
+    {
+        $tempAssignment = new \Objects\Assignment();
+        foreach ($assignment as $key => $value) {
+            $tempAssignment->$key = $value;
+        }
+        return $tempAssignment;
     }
 
     /**
@@ -201,6 +217,46 @@ class Class_model extends \MY_Model
         }
 
         return $assignmentList;
+    }
+
+    /**
+     * Determines which assignments for which students need to be changed;
+     *      returns newly constructed assignment objects with the results
+     * @param \Objects\ClassObj $classObj
+     * @param \Objects\Assignment[] $assignments
+     * @return \Objects\Assignment[]
+     */
+    private function _getChangedAssignments($classObj, $assignments)
+    {
+        $changedAssignments = array();
+
+        $classAssignments = $classObj->getAssignments();
+        foreach ($classAssignments as $classAssignment) {
+            foreach ($assignments as $assignment) {
+                if ($classAssignment->assignment_id === $assignment->assignment_id) {
+                    $classGrades = $classAssignment->getAllPoints();
+                    $grades = $assignment->getAllPoints();
+
+                    $tempAssignment = $this->_cloneAssignment($assignment);
+                    foreach ($classGrades as $classStudentId => $classPoints) {
+                        foreach ($grades as $studentId => $points) {
+                            if ($classStudentId === $studentId) {
+                                if ($classPoints !== $points) {
+                                    $tempAssignment->setPoints($studentId, $points);
+                                }
+
+                                break;
+                            }
+                        }
+                    }
+                    array_push($changedAssignments, $tempAssignment);
+
+                    break;
+                }
+            }
+        }
+
+        return $changedAssignments;
     }
 
     /**
