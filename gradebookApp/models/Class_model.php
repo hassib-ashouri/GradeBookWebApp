@@ -103,7 +103,7 @@ class Class_model extends \MY_Model
     /**
      * Updates the db with contents of $assignments;
      *      for updating grades only
-     * @param \Objects\Assignment[] $assignments
+     * @param \Objects\Assignment[] $assignments each assignment needs assignment_id, and grades
      */
     public function updateStudentAssignments($assignments)
     {
