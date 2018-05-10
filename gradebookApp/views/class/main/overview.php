@@ -13,18 +13,16 @@ $students = (isset($students)) ? $students : array();
     <table class="table table-hover">
         <thead>
         <tr>
-            <th> First Name </th>
-            <th> Last Name </th>
-            <th> Overall Grade </th>
+            <th>Student Name</th>
+            <th>Overall Grade</th>
         </tr>
         </thead>
         <tbody>
         <?php foreach ($students as $student): ?>
-        <tr>
-            <th> <?= $student->name_first ?> </th>
-            <th> <?= $student->name_last ?> </th>
-            <th> <?= $student->getGrade() ?> </th>
-        </tr>
+            <tr>
+                <th><?= "$student->name_last, $student->name_first" ?></th>
+                <td><?= number_format($student->getGrade(), 2) ?>%</td>
+            </tr>
         <?php endforeach; ?>
         </tbody>
     </table>
