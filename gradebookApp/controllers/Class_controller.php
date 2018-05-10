@@ -81,22 +81,6 @@ class Class_controller extends MY_Controller
      */
 
     /**
-     * todo comment
-     * @param \Objects\ClassObj $classObj
-     * @return string
-     */
-    private function _overviewComp($classObj)
-    {
-        //Manuel's implementation for Overview component
-        $students = $classObj->getStudents();
-
-        $overview = array(
-            'students' => $students,
-        );
-
-        return $this->load->view('class/main/overview',$overview,true);
-    }
-    /**
      * Transforms an $assignmentName into something more 'table-friendly';
      *      maximum length of 4 characters
      * @param string $assignmentName
@@ -132,5 +116,22 @@ class Class_controller extends MY_Controller
         }
 
         return $alias;
+    }
+
+    /**
+     * Creates and returns the overview component
+     * @param \Objects\ClassObj $classObj
+     * @return string
+     */
+    private function _overviewComp($classObj)
+    {
+        //Manuel's implementation for Overview component
+        $students = $classObj->getStudents();
+
+        $overview = array(
+            'students' => $students,
+        );
+
+        return $this->load->view('class/main/overview', $overview, true);
     }
 }
