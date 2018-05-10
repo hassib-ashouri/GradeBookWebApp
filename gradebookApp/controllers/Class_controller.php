@@ -26,17 +26,10 @@ class Class_controller extends MY_Controller
         $this->load->model('class_model');
         $classObj = $this->class_model->getClass($tableName);
 
-        // we need to add the three different partial views to mainPartialView.
-        $mainPartialViewData["detailedGrades"] = $this->_detailedComp($classObj);
-        $mainPartialViewData["gradesOverview"] = $this->_overviewComp($classObj);
-        $mainPartialViewData["assignments"] = $this->_assignmentListComp($classObj);
-        $mainPartialView = $this->load->view("class/main", $mainPartialViewData, true);
-
-
         $view_components["header"] = $this->load->view("header", $header, true);
         $view_components["partialViews"] = array(
             $this->_classInfoComp($classObj),
-            $mainPartialView,
+            $this->_classMainComp($classObj),
         );
         $this->load->view("main", $view_components);
     }
@@ -88,7 +81,7 @@ class Class_controller extends MY_Controller
     }
 
     /**
-     * Returns the assignment_list component view
+     * Creates and returns the assignment_list component
      * @param \Objects\ClassObj $classObj
      * @return string
      */
@@ -158,6 +151,21 @@ class Class_controller extends MY_Controller
         $data["grades"] = $grades;
 
         return $this->load->view("class/main/detailed", $data, true);
+    }
+
+    /**
+     * Creates and returns the main class component
+     * @param \Objects\ClassObj $classObj
+     * @return string
+     */
+    private function _classMainComp($classObj)
+    {
+        // we need to add the three different partial views to mainPartialView.
+        $main["detailedGrades"] = $this->_detailedComp($classObj);
+        $main["gradesOverview"] = $this->_overviewComp($classObj);
+        $main["assignments"] = $this->_assignmentListComp($classObj);
+
+        return $this->load->view("class/main", $main, true);
     }
 
     /**
