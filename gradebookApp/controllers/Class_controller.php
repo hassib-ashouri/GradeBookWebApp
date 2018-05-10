@@ -28,36 +28,10 @@ class Class_controller extends MY_Controller
         $this->load->model('class_model');
         $classObj = $this->class_model->getClass($tableName);
 
-        $info = array(
-            'className' => $classObj->class_name,
-            'section' => $classObj->section,
-            'schedule' => $classObj->meeting_times,
-        );
-        $stats = array(
-            'highGrade' => number_format($classObj->getHighGrade(), 2),
-            'lowGrade' => number_format($classObj->getLowGrade(), 2),
-            'meanGrade' => number_format($classObj->getMeanGrade(), 2),
-            'medianGrade' => number_format($classObj->getMedianGrade(), 2),
-            'varGrade' => number_format($classObj->getVarGrade(), 2),
-            'stdDevGrade' => number_format($classObj->getStdDevGrade(), 2),
-        );
-        $classInfo = array(
-            'infoComponent' => $this->load->view("class/info", $info, true),
-            'statsComponent' => $this->load->view("class/stats", $stats, true),
-        );
-
-        //we need to add the three different partail views to mainPatialView.
-        //this view loading will eventually be methods.
-        $mainPartialViewData["detailedGrades"] = $this->loadStudentsGradesPartialView($tableName);
-        $mainPartialViewData["gradesOverview"] = $this->load->view("class/main/overview", null,true);
-        $mainPartialViewData["assignments"] = $this->_assignmentListComp($classObj);
-        $mainPartialView = $this->load->view("class/main", $mainPartialViewData, true);
-
-
         $view_components["header"] = $this->load->view("header", $header, true);
         $view_components["partialViews"] = array(
-            $this->load->view("class/class_info", $classInfo, true),
-            $mainPartialView,
+            $this->_classInfoComp($classObj),
+            $this->_classMainComp($classObj),
         );
         $this->load->view("main", $view_components);
     }
@@ -67,44 +41,8 @@ class Class_controller extends MY_Controller
      */
 
     /**
-     * todo remove if not needed
-     */
-    public function testAlias()
-    {
-        $tableName = "class_29506_SE-131_02_table";
-        $this->load->model("class_model");
-        $classObj = $this->class_model->getClass($tableName);
-
-        foreach ($classObj->getAssignments() as $assignment) {
-            pretty_dump($assignment->assignment_name);
-            $this->_aliasAssignmentName($assignment->assignment_name);
-        }
-    }
-
-    /**
      * Private methods
      */
-
-    /**
-     * Returns the assignment_list component view
-     * @param \Objects\ClassObj $classObj
-     * @return string
-     */
-    private function _assignmentListComp($classObj)
-    {
-        $assignmentGroups = $classObj->getAssignmentList()->getGroupedAssignments();
-        $assignmentList = array(
-            'assignmentGroups' => $assignmentGroups,
-        );
-        return $this->load->view('class/main/assignment_list', $assignmentList, true);
-    }
-
-    private function loadStudentsGradesPartialView($tableName)
-    {
-
-
-        return $this->load->view("class/main/detailed",null,true);
-    }
 
     /**
      * Transforms an $assignmentName into something more 'table-friendly';
@@ -142,5 +80,110 @@ class Class_controller extends MY_Controller
         }
 
         return $alias;
+    }
+
+    /**
+     * Creates and returns the assignment_list component
+     * @param \Objects\ClassObj $classObj
+     * @return string
+     */
+    private function _assignmentListComp($classObj)
+    {
+        $assignmentGroups = $classObj->getAssignmentList()->getGroupedAssignments();
+        $assignmentList = array(
+            'assignmentGroups' => $assignmentGroups,
+        );
+        return $this->load->view('class/main/assignment_list', $assignmentList, true);
+    }
+
+    /**
+     * Creates and returns the class_info component
+     * @param \Objects\ClassObj $classObj
+     * @return string
+     */
+    private function _classInfoComp($classObj)
+    {
+        $info = array(
+            'className' => $classObj->class_name,
+            'section' => $classObj->section,
+            'schedule' => $classObj->meeting_times,
+        );
+
+        $stats = array(
+            'highGrade' => number_format($classObj->getHighGrade(), 2),
+            'lowGrade' => number_format($classObj->getLowGrade(), 2),
+            'meanGrade' => number_format($classObj->getMeanGrade(), 2),
+            'medianGrade' => number_format($classObj->getMedianGrade(), 2),
+            'varGrade' => number_format($classObj->getVarGrade(), 2),
+            'stdDevGrade' => number_format($classObj->getStdDevGrade(), 2),
+        );
+
+        $classInfo = array(
+            'infoComponent' => $this->load->view("class/info", $info, true),
+            'statsComponent' => $this->load->view("class/stats", $stats, true),
+        );
+
+        return $this->load->view("class/class_info", $classInfo, true);
+    }
+
+    /**
+     * Creates and returns the detailed component
+     * @param \Objects\ClassObj $classObj
+     * @return string
+     */
+    private function _detailedComp($classObj)
+    {
+        $assignmentsNames = array();
+        $assignments = $classObj->getAssignments();
+        foreach ($assignments as $assignment) {
+            array_push($assignmentsNames, $this->_aliasAssignmentName($assignment->assignment_name));
+        }
+        $data["assignmentsNames"] = $assignmentsNames;
+
+        $grades = array();
+        $students = $classObj->getStudents();
+        foreach ($students as $student) {
+            $studentNameKey = $student->name_last . ", " . $student->name_first;
+            $studentId = $student->student_id;
+            $grades[$studentNameKey] = array();
+            foreach ($assignments as $assignment) {
+                array_push($grades[$studentNameKey], $assignment->getPoints($studentId));
+            }
+        }
+        $data["grades"] = $grades;
+
+        return $this->load->view("class/main/detailed", $data, true);
+    }
+
+    /**
+     * Creates and returns the main class component
+     * @param \Objects\ClassObj $classObj
+     * @return string
+     */
+    private function _classMainComp($classObj)
+    {
+        // we need to add the three different partial views to mainPartialView.
+        $main["detailedGrades"] = $this->_detailedComp($classObj);
+        $main["gradesOverview"] = $this->_overviewComp($classObj);
+        $main["assignments"] = $this->_assignmentListComp($classObj);
+
+        return $this->load->view("class/main", $main, true);
+    }
+
+    /**
+     * Creates and returns the overview component
+     * @param \Objects\ClassObj $classObj
+     * @return string
+     */
+    private function _overviewComp($classObj)
+    {
+        //Manuel's implementation for Overview component
+        $students = $classObj->getStudents();
+
+        $overview = array(
+            'students' => $students,
+        );
+
+        return $this->load->view('class/main/overview', $overview, true);
     }
 }

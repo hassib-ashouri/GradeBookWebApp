@@ -25,6 +25,14 @@ class Student implements \JsonSerializable
     public $groups = array();
 
     /**
+     * Student constructor.
+     */
+    public function __construct()
+    {
+        $this->assignmentList = new AssignmentList();
+    }
+
+    /**
      * Do nothing
      * __set is typically used to set values where an error would otherwise be thrown
      *      such as when accessing a private field, or a field that doesn't exist
