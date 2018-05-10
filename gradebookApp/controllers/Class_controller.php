@@ -26,9 +26,8 @@ class Class_controller extends MY_Controller
         $this->load->model('class_model');
         $classObj = $this->class_model->getClass($tableName);
 
-        //we need to add the three different partail views to mainPatialView.
-        //this view loading will eventually be methods.
-        $mainPartialViewData["detailedGrades"] = $this->loadStudentsGradesPartialView($tableName);
+        // we need to add the three different partial views to mainPartialView.
+        $mainPartialViewData["detailedGrades"] = $this->_detailedComp($classObj);
         $mainPartialViewData["gradesOverview"] = $this->_overviewComp($classObj);
         $mainPartialViewData["assignments"] = $this->_assignmentListComp($classObj);
         $mainPartialView = $this->load->view("class/main", $mainPartialViewData, true);
@@ -132,36 +131,33 @@ class Class_controller extends MY_Controller
         return $this->load->view("class/class_info", $classInfo, true);
     }
 
-    private function loadStudentsGradesPartialView($tableName)
+    /**
+     * Creates and returns the detailed component
+     * @param \Objects\ClassObj $classObj
+     * @return string
+     */
+    private function _detailedComp($classObj)
     {
-        $this->load->model("class_model");
-        $classObj = $this->class_model->getClass($tableName);
-
         $assignmentsNames = array();
-        $assignments = $classObj->getAssignmentList()->getAssignments();
-
-        foreach($assignments as $assignment)
-        {
+        $assignments = $classObj->getAssignments();
+        foreach ($assignments as $assignment) {
             array_push($assignmentsNames, $this->_aliasAssignmentName($assignment->assignment_name));
         }
-        $data["assignmentsNames"] =  $assignmentsNames;
+        $data["assignmentsNames"] = $assignmentsNames;
 
-
-
-        $studentsNames = array();
-        foreach($classObj->getStudents() as $student)
-        {
-            $studentNameKey = $student->name_last.", ". $student->name_first;
+        $grades = array();
+        $students = $classObj->getStudents();
+        foreach ($students as $student) {
+            $studentNameKey = $student->name_last . ", " . $student->name_first;
             $studentId = $student->student_id;
-            $studentsNames[$studentNameKey] = array();
-            foreach ($assignments as $assignment)
-            {
-                array_push($studentsNames[$studentNameKey], $assignment->getPoints($studentId));
+            $grades[$studentNameKey] = array();
+            foreach ($assignments as $assignment) {
+                array_push($grades[$studentNameKey], $assignment->getPoints($studentId));
             }
-
         }
-        $data["grades"] =  $studentsNames;
-        return $this->load->view("class/main/detailed",$data,true);
+        $data["grades"] = $grades;
+
+        return $this->load->view("class/main/detailed", $data, true);
     }
 
     /**
