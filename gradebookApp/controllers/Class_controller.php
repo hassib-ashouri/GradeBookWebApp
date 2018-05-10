@@ -62,21 +62,6 @@ class Class_controller extends MY_Controller
      */
 
     /**
-     * todo remove if not needed
-     */
-    public function testAlias()
-    {
-        $tableName = "class_29506_SE-131_02_table";
-        $this->load->model("class_model");
-        $classObj = $this->class_model->getClass($tableName);
-
-        foreach ($classObj->getAssignments() as $assignment) {
-            pretty_dump($assignment->assignment_name);
-            $this->_aliasAssignmentName($assignment->assignment_name);
-        }
-    }
-
-    /**
      * Private methods
      */
 
