@@ -29,7 +29,7 @@ class Class_controller extends MY_Controller
         //we need to add the three different partail views to mainPatialView.
         //this view loading will eventually be methods.
         $mainPartialViewData["detailedGrades"] = $this->loadStudentsGradesPartialView($tableName);
-        $mainPartialViewData["gradesOverview"] = $this->load->view("class/main/overview", null,true);
+        $mainPartialViewData["gradesOverview"] = $this->_overviewComp($classObj);
         $mainPartialViewData["assignments"] = $this->_assignmentListComp($classObj);
         $mainPartialView = $this->load->view("class/main", $mainPartialViewData, true);
 
@@ -47,69 +47,8 @@ class Class_controller extends MY_Controller
      */
 
     /**
-     * todo remove if not needed
-     */
-    public function testAlias()
-    {
-        $tableName = "class_29506_SE-131_02_table";
-        $this->load->model("class_model");
-        $classObj = $this->class_model->getClass($tableName);
-
-        foreach ($classObj->getAssignments() as $assignment) {
-            pretty_dump($assignment->assignment_name);
-            $this->_aliasAssignmentName($assignment->assignment_name);
-        }
-    }
-
-    /**
      * Private methods
      */
-
-    /**
-     * Returns the assignment_list component view
-     * @param \Objects\ClassObj $classObj
-     * @return string
-     */
-    private function _assignmentListComp($classObj)
-    {
-        $assignmentGroups = $classObj->getAssignmentList()->getGroupedAssignments();
-        $assignmentList = array(
-            'assignmentGroups' => $assignmentGroups,
-        );
-        return $this->load->view('class/main/assignment_list', $assignmentList, true);
-    }
-
-    private function loadStudentsGradesPartialView($tableName)
-    {
-        $this->load->model("class_model");
-        $classObj = $this->class_model->getClass($tableName);
-
-        $assignmentsNames = array();
-        $assignments = $classObj->getAssignmentList()->getAssignments();
-
-        foreach($assignments as $assignment)
-        {
-            array_push($assignmentsNames, $this->_aliasAssignmentName($assignment->assignment_name));
-        }
-        $data["assignmentsNames"] =  $assignmentsNames;
-
-
-
-        $studentsNames = array();
-        foreach($classObj->getStudents() as $student)
-        {
-            $studentNameKey = $student->name_last.", ". $student->name_first;
-            $studentId = $student->student_id;
-            $studentsNames[$studentNameKey] = array();
-            foreach ($assignments as $assignment)
-            {
-                array_push($studentsNames[$studentNameKey], $assignment->getPoints($studentId));
-            }
-
-        }
-        $data["grades"] =  $studentsNames;
-        return $this->load->view("class/main/detailed",$data,true);
-    }
 
     /**
      * Transforms an $assignmentName into something more 'table-friendly';
@@ -150,6 +89,20 @@ class Class_controller extends MY_Controller
     }
 
     /**
+     * Returns the assignment_list component view
+     * @param \Objects\ClassObj $classObj
+     * @return string
+     */
+    private function _assignmentListComp($classObj)
+    {
+        $assignmentGroups = $classObj->getAssignmentList()->getGroupedAssignments();
+        $assignmentList = array(
+            'assignmentGroups' => $assignmentGroups,
+        );
+        return $this->load->view('class/main/assignment_list', $assignmentList, true);
+    }
+
+    /**
      * Creates and returns the class_info component
      * @param \Objects\ClassObj $classObj
      * @return string
@@ -177,5 +130,54 @@ class Class_controller extends MY_Controller
         );
 
         return $this->load->view("class/class_info", $classInfo, true);
+    }
+
+    private function loadStudentsGradesPartialView($tableName)
+    {
+        $this->load->model("class_model");
+        $classObj = $this->class_model->getClass($tableName);
+
+        $assignmentsNames = array();
+        $assignments = $classObj->getAssignmentList()->getAssignments();
+
+        foreach($assignments as $assignment)
+        {
+            array_push($assignmentsNames, $this->_aliasAssignmentName($assignment->assignment_name));
+        }
+        $data["assignmentsNames"] =  $assignmentsNames;
+
+
+
+        $studentsNames = array();
+        foreach($classObj->getStudents() as $student)
+        {
+            $studentNameKey = $student->name_last.", ". $student->name_first;
+            $studentId = $student->student_id;
+            $studentsNames[$studentNameKey] = array();
+            foreach ($assignments as $assignment)
+            {
+                array_push($studentsNames[$studentNameKey], $assignment->getPoints($studentId));
+            }
+
+        }
+        $data["grades"] =  $studentsNames;
+        return $this->load->view("class/main/detailed",$data,true);
+    }
+
+    /**
+     * Creates and returns the overview component
+     * @param \Objects\ClassObj $classObj
+     * @return string
+     */
+    private function _overviewComp($classObj)
+    {
+        //Manuel's implementation for Overview component
+        $students = $classObj->getStudents();
+
+        $overview = array(
+            'students' => $students,
+        );
+
+        return $this->load->view('class/main/overview', $overview, true);
     }
 }

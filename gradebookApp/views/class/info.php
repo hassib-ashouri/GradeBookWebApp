@@ -1,63 +1,32 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-if (!isset($highGrade)) {
-    $highGrade = 0;
-}
-if (!isset($lowGrade)) {
-    $lowGrade = 0;
-}
-if (!isset($meanGrade)) {
-    $meanGrade = 0;
-}
-if (!isset($medianGrade)) {
-    $medianGrade = 0;
-}
-if (!isset($varGrade)) {
-    $varGrade = 0;
-}
-if (!isset($stdDevGrade)) {
-    $stdDevGrade = 0;
-}
+$className = (isset($className)) ? $className : '';
+$section = (isset($section)) ? $section : '';
+$schedule = (isset($schedule)) ? $schedule : '';
 ?>
 
 <div class="row">
     <div class="col">
-        Mean:
+        Class Name:
     </div>
     <div class="col-sm text-right">
-        <?= $meanGrade ?>
-    </div>
-    <div class="col-sm">
-        Median:
-    </div>
-    <div class="col-sm text-right">
-        <?= $medianGrade ?>
+        <?= $className ?>
     </div>
 </div>
 <div class="row">
     <div class="col-sm">
-        High:
+        Section:
     </div>
     <div class="col-sm text-right">
-        <?= $highGrade ?>
-    </div>
-    <div class="col-sm">
-        Low:
-    </div>
-    <div class="col-sm text-right">
-        <?= $lowGrade ?>
+        <?= $section ?>
     </div>
 </div>
 <div class="row">
     <div class="col-sm">
-        StdDev:
+        Schedule:
     </div>
     <div class="col-sm text-right">
-        <?= $stdDevGrade ?>
-    </div>
-    <div class="col-sm">
-    </div>
-    <div class="col-sm text-right">
+        <?= $schedule ?>
     </div>
 </div>
