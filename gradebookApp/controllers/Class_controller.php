@@ -26,24 +26,6 @@ class Class_controller extends MY_Controller
         $this->load->model('class_model');
         $classObj = $this->class_model->getClass($tableName);
 
-        $info = array(
-            'className' => $classObj->class_name,
-            'section' => $classObj->section,
-            'schedule' => $classObj->meeting_times,
-        );
-        $stats = array(
-            'highGrade' => number_format($classObj->getHighGrade(), 2),
-            'lowGrade' => number_format($classObj->getLowGrade(), 2),
-            'meanGrade' => number_format($classObj->getMeanGrade(), 2),
-            'medianGrade' => number_format($classObj->getMedianGrade(), 2),
-            'varGrade' => number_format($classObj->getVarGrade(), 2),
-            'stdDevGrade' => number_format($classObj->getStdDevGrade(), 2),
-        );
-        $classInfo = array(
-            'infoComponent' => $this->load->view("class/info", $info, true),
-            'statsComponent' => $this->load->view("class/stats", $stats, true),
-        );
-
         //we need to add the three different partail views to mainPatialView.
         //this view loading will eventually be methods.
         $mainPartialViewData["detailedGrades"] = $this->loadStudentsGradesPartialView($tableName);
@@ -54,7 +36,7 @@ class Class_controller extends MY_Controller
 
         $view_components["header"] = $this->load->view("header", $header, true);
         $view_components["partialViews"] = array(
-            $this->load->view("class/class_info", $classInfo, true),
+            $this->_classInfoComp($classObj),
             $mainPartialView,
         );
         $this->load->view("main", $view_components);
@@ -165,5 +147,35 @@ class Class_controller extends MY_Controller
         }
 
         return $alias;
+    }
+
+    /**
+     * Creates and returns the class_info component
+     * @param \Objects\ClassObj $classObj
+     * @return string
+     */
+    private function _classInfoComp($classObj)
+    {
+        $info = array(
+            'className' => $classObj->class_name,
+            'section' => $classObj->section,
+            'schedule' => $classObj->meeting_times,
+        );
+
+        $stats = array(
+            'highGrade' => number_format($classObj->getHighGrade(), 2),
+            'lowGrade' => number_format($classObj->getLowGrade(), 2),
+            'meanGrade' => number_format($classObj->getMeanGrade(), 2),
+            'medianGrade' => number_format($classObj->getMedianGrade(), 2),
+            'varGrade' => number_format($classObj->getVarGrade(), 2),
+            'stdDevGrade' => number_format($classObj->getStdDevGrade(), 2),
+        );
+
+        $classInfo = array(
+            'infoComponent' => $this->load->view("class/info", $info, true),
+            'statsComponent' => $this->load->view("class/stats", $stats, true),
+        );
+
+        return $this->load->view("class/class_info", $classInfo, true);
     }
 }
