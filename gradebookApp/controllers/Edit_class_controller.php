@@ -25,32 +25,13 @@ class Edit_class_controller extends MY_Controller
         try {
             $classObj = $this->class_model->getClassById($classId);
 
-            // get the ids of the students
-            $studentIds = array();
-            foreach ($classObj->getStudents() as $student) {
-                array_push($studentIds, $student->student_id);
-            }
-
-
-            $headerData = array(
-                "title" => "Edit Class View",
-                "javascripts" => array(
-                    "add_assignments.js",
-                ),
+            $header = array(
+                'title' => 'Edit Class',
+                'javascripts' => array('add_assignments.js',),
                 'name' => $this->session->userdata('userName'),
-                "classObj" => $classObj,
-                "loggedUser" => $this->session->userdata('loggedUser'),
-                "studentIds" => $studentIds,
-                "Assignments" => $classObj->getAssignmentList()->getGroupedAssignments(),
             );
-            $mainViewComponents["header"] = $this->load->view("header", $headerData, true);
-
-
-            $mainViewComponents["partialViews"] = array(
-                $this->load->view("editClass/basic_info_comp", null, true),
-                $this->load->view("editClass/add_students_table_comp", null, true),
-                $this->load->view("editClass/add_assignments_comp", null, true),
-            );
+            $mainViewComponents["header"] = $this->load->view("header", $header, true);
+            $mainViewComponents["partialViews"] = $this->_editClassComp($classObj);
 
             $this->load->view("main", $mainViewComponents);
         } catch (Exception $e) {
@@ -86,6 +67,37 @@ class Edit_class_controller extends MY_Controller
     /**
      * Private methods
      */
+
+    /**
+     * Creates and returns the array of edit class components
+     * @param \Objects\ClassObj $classObj
+     * @return array
+     */
+    private function _editClassComp($classObj)
+    {
+        // get the ids of the students
+        $studentIds = array();
+        foreach ($classObj->getStudents() as $student) {
+            array_push($studentIds, $student->student_id);
+        }
+
+        $basicInfo = array(
+            'classObj' => $classObj,
+            'loggedUser' => $this->session->userdata('loggedUser'),
+        );
+        $addStudents = array(
+            'studentIds' => $studentIds,
+        );
+        $addAssignments = array(
+            'assignments' => $classObj->getAssignmentList()->getGroupedAssignments(),
+        );
+
+        return array(
+            $this->load->view('editClass/basic_info_comp', $basicInfo, true),
+            $this->load->view('editClass/add_students_table_comp', $addStudents, true),
+            $this->load->view('editClass/add_assignments_comp', $addAssignments, true),
+        );
+    }
 
     /**
      * Processes assignments;
