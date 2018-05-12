@@ -30,3 +30,10 @@ $gradesOverview = isset($gradesOverview) ? $gradesOverview : "";
       </div>
     </div>
 </div>
+<div class="container mt-4">
+    <button type="button" class="btn">
+        <a href="<?= base_url() . 'Class_list_controller/classListView' ?>">
+            Back
+        </a>
+    </button>
+</div>
