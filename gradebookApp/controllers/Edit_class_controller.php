@@ -37,8 +37,9 @@ class Edit_class_controller extends MY_Controller
                 "javascripts" => array(
                     "add_assignments.js",
                 ),
+                'name' => $this->session->userdata('userName'),
                 "classObj" => $classObj,
-                "loggedUser" => $this->session->get_userdata()["loggedUser"],
+                "loggedUser" => $this->session->userdata('loggedUser'),
                 "studentIds" => $studentIds,
                 "Assignments" => $classObj->getAssignmentList()->getGroupedAssignments(),
             );

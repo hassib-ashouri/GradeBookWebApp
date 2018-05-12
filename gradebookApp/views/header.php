@@ -44,12 +44,11 @@ if (!isset($stylesheets)) {
         IDGF.baseURL = '<?= base_url(); ?>';
     </script>
 </head>
-
+<meta charset="UTF-8">
 
 <div class="container-fluid bg-primary" style="">
-    <div class="h1">IDGF</div>
-    <div class="h5">the user name could go here</div>
+    <div class="h1">IDGF GradeBook</div>
+    <?php if (isset($name)): ?>
+        <div class="h5"><?= "Welcome, $name!" ?></div>
+    <?php endif; ?>
 </div>
-
-
-<meta charset="UTF-8">

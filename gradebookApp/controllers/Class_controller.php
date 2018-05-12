@@ -20,14 +20,13 @@ class Class_controller extends MY_Controller
     {
         redirectNonUser();
 
-        $header = array(
-            // todo change me!
-            "title" => "Class Test",
-        );
-
         $this->load->model('class_model');
         $classObj = $this->class_model->getClass($tableName);
 
+        $header = array(
+            'title' => "Class $classObj->class_name",
+            'name' => $this->session->userdata('userName'),
+        );
         $view_components["header"] = $this->load->view("header", $header, true);
         $view_components["partialViews"] = array(
             $this->_classInfoComp($classObj),

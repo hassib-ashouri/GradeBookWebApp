@@ -20,12 +20,13 @@ class Class_list_controller extends MY_Controller
     {
         redirectNonUser();
 
-        $userId = $this->session->get_userdata()["loggedUser"];
+        $userId = $this->session->userdata('loggedUser');
 
         //prepare the header.
-        $header["title"] = "professor view with list";
-        $header["javascripts"] = array(
-            "class_list.js",
+        $header = array(
+            'title' => 'Class List',
+            'javascripts' => array('class_list.js',),
+            'name' => $this->session->userdata('userName'),
         );
         $view_components["header"] = $this->load->view("header", $header, true);
         //prepare the date for the main body.

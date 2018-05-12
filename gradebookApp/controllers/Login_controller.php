@@ -153,7 +153,9 @@ class Login_controller extends MY_Controller
             $this->session->set_flashdata("errorMessage", "Incorrect User ID or Password");
             redirect('Login_controller/existingUserView');
         } else {
-            $this->session->set_userdata("userId", $username);
+            $user = $this->login_model->getUser();
+            $this->session->set_userdata("userId", $user->user_id);
+            $this->session->set_userdata("userName", $user->name_first . " " . $user->name_last);
             if ($this->login_model->isProfessor()) {
                 // load professor view
                 //since the user is logged in add the id in the session data

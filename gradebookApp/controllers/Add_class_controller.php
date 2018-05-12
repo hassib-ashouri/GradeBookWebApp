@@ -34,10 +34,9 @@ class Add_class_controller extends MY_Controller
 
         //header component.
         $header = array(
-            "title" => "Add class",
-            "javascripts" => array(
-                "add_assignments.js",
-            ),
+            'title' => 'Add class',
+            'javascripts' => array('add_assignments.js',),
+            'name' => $this->session->userdata('userName'),
         );
         $view_components["header"] = $this->load->view("header", $header, true);
         //prepare the mainContenet variable.
