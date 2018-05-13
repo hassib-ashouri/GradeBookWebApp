@@ -1,14 +1,17 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-$loggedUser = isset($loggedUser) ? $loggedUser : "its not in the session data.";
 /**
  * @var \Objects\ClassObj[] $classObjects
  */
 $classObjects = (isset($classObjects)) ? $classObjects : array();
+/**
+ * @var string $addClassLink
+ */
+$addClassLink = (isset($addClassLink)) ? $addClassLink : '';
 ?>
 
-<h3>professor's list of classes (<?= $loggedUser ?>)</h3>
+<h3>Class List</h3>
 <div class="container">
     <ul class="list-group">
         <?php

@@ -22,37 +22,15 @@ class Class_list_controller extends MY_Controller
 
         $userId = $this->session->userdata('loggedUser');
 
-        //prepare the header.
+        // prepare the header.
         $header = array(
             'title' => 'Class List',
             'javascripts' => array('class_list.js',),
             'name' => $this->session->userdata('userName'),
         );
         $view_components["header"] = $this->load->view("header", $header, true);
-        //prepare the date for the main body.
-        //model name should be lower case.
-        $this->load->model("class_list_model");
-        $classes = $this->class_list_model->readProfessorClassList($userId);
-        $classObjects = array();
 
-        $this->load->model("class_model");
-        foreach ($classes as $classObj) {
-            try {
-                $tempClassObj = $this->class_model->getClassByTableName($classObj->table_name);
-                array_push($classObjects, $tempClassObj);
-            } catch (Exception $e) {
-                // do nothing
-            }
-        }
-
-        $mainComponentData = array(
-            "addClassLink" => base_url() . "Add_class_controller/addClassView",
-            "classObjects" => $classObjects,
-            "loggedUser" => $userId,
-        );
-
-
-        $view_components["mainContent"] = $this->load->view("classlist/classlist_comp", $mainComponentData, true);
+        $view_components["mainContent"] = $this->_classListComp($userId);
         $this->load->view("main", $view_components);
     }
 
@@ -79,4 +57,35 @@ class Class_list_controller extends MY_Controller
     /**
      * Private methods
      */
+
+    /**
+     * Creates and returns the overview component
+     * @param string $userId
+     * @return string
+     */
+    private function _classListComp($userId)
+    {
+        // model name should be lower case.
+        $this->load->model("class_list_model");
+        $this->load->model("class_model");
+
+        // prepare the data for the main body.
+        $classes = $this->class_list_model->readProfessorClassList($userId);
+        $classObjects = array();
+        foreach ($classes as $classObj) {
+            try {
+                $tempClassObj = $this->class_model->getClassByTableName($classObj->table_name);
+                array_push($classObjects, $tempClassObj);
+            } catch (Exception $e) {
+                // do nothing
+            }
+        }
+
+        $data = array(
+            'addClassLink' => base_url() . 'Add_class_controller/addClassView',
+            'classObjects' => $classObjects,
+        );
+
+        return $this->load->view('classlist/classlist_comp', $data, true);
+    }
 }
