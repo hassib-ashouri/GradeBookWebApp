@@ -30,10 +30,13 @@ $gradesOverview = isset($gradesOverview) ? $gradesOverview : "";
       </div>
     </div>
 </div>
-<div class="container mt-2 mb-2">
+<div class="container d-flex mt-2 mb-2">
     <?php $backLink = base_url() . 'Class_list_controller/classListView'; ?>
-    <button type="button" class="btn"
+    <button type="button" class="btn mr-auto"
             onclick="location.href = '<?= $backLink ?>'">
         Back
+    </button>
+    <button id="detailedSubmit" type="button" class="btn">
+        Submit
     </button>
 </div>

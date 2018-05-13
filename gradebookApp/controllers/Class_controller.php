@@ -39,6 +39,10 @@ class Class_controller extends MY_Controller
      * Action methods
      */
 
+    public function updateStudentAssignments() {
+        pretty_dump($this->input->post());
+    }
+
     /**
      * Private methods
      */

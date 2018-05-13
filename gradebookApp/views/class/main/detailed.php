@@ -12,53 +12,55 @@ $grades = isset($grades) ? $grades : array();
 ?>
 
 <h4>Students' Grades</h4>
-<table class="table">
-    <thead>
-    <tr>
-        <th scope="col">
-            Student Name
-        </th>
-        <th></th>
-        <?php foreach ($assignmentsNames as $assignmentArray): ?>
-            <th scope="col" title="<?= $assignmentArray['name'] ?>">
-                <input type="checkbox" class="toggle_col">
-                <br>
-                <?= $assignmentArray['alias'] ?>
-            </th>
-        <?php endforeach; ?>
-    </tr>
-    </thead>
-    <tbody>
-    <?php $rowCount = count($grades);
-    $row = 0;
-    foreach ($grades as $studentName => $gradeArr): ?>
+<form id="detailedForm" method="post"
+      action="<?= base_url() . "Class_controller/updateStudentAssignments" ?>">
+    <table class="table">
+        <thead>
         <tr>
-            <th scope="row">
-                <?= $studentName ?>
+            <th scope="col">
+                Student Name
             </th>
-            <td>
-                <input type="checkbox" class="toggle_row">
-            </td>
-            <?php $colCount = count($gradeArr['grades']); ?>
-            <?php foreach ($gradeArr['grades'] as $col => $grade):
-                $studentId = $gradeArr['studentId'];
-                $assignId = $assignmentsNames[$col]['assignId']; ?>
-                <td class="<?= "col_$col row_$row" ?>" style="height: 1.5em; width: 5em">
+            <th></th>
+            <?php foreach ($assignmentsNames as $assignmentArray): ?>
+                <th scope="col" title="<?= $assignmentArray['name'] ?>">
+                    <input type="checkbox" class="toggle_col">
+                    <br>
+                    <?= $assignmentArray['alias'] ?>
+                </th>
+            <?php endforeach; ?>
+        </tr>
+        </thead>
+        <tbody>
+        <?php $rowCount = count($grades);
+        $row = 0;
+        foreach ($grades as $studentName => $gradeArr): ?>
+            <tr>
+                <th scope="row">
+                    <?= $studentName ?>
+                </th>
+                <td>
+                    <input type="checkbox" class="toggle_row">
+                </td>
+                <?php $colCount = count($gradeArr['grades']); ?>
+                <?php foreach ($gradeArr['grades'] as $col => $grade):
+                    $studentId = $gradeArr['studentId'];
+                    $assignId = $assignmentsNames[$col]['assignId']; ?>
+                    <td class="<?= "col_$col row_$row" ?>" style="height: 1.5em; width: 5em">
                     <span class="d-inline-block"
                           style="height: inherit; width: inherit;">
                         <?= $grade ?>
                     </span>
-                    <input name="<?= "a-$studentId-$assignId" ?>"
-                           class="d-none" value="<?= $grade ?>"
-                           style="height: inherit; width: inherit;">
-                </td>
-            <?php endforeach; ?>
-        </tr>
-        <?php $row++;
-    endforeach; ?>
-    </tbody>
-</table>
-
+                        <input name="<?= "a-$studentId-$assignId" ?>"
+                               class="d-none" value="<?= $grade ?>"
+                               style="height: inherit; width: inherit;">
+                    </td>
+                <?php endforeach; ?>
+            </tr>
+            <?php $row++;
+        endforeach; ?>
+        </tbody>
+    </table>
+</form>
 <script>
     $(document).ready(() => {
         function toggleRow(row) {
@@ -119,6 +121,12 @@ $grades = isset($grades) ? $grades : array();
 
         $('.toggle_col').each((index, ele) => {
             $(ele).on({change: toggleCol(index)});
+        });
+
+        $("#detailedSubmit").on({
+            click: (e) => {
+                $("#detailedForm").submit();
+            }
         });
     });
 </script>
