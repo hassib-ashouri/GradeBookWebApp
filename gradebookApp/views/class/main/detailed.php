@@ -46,10 +46,10 @@ $grades = isset($grades) ? $grades : array();
                     $studentId = $gradeArr['studentId'];
                     $assignId = $assignmentsNames[$col]['assignId']; ?>
                     <td class="<?= "col_$col row_$row" ?>" style="height: 1.5em; width: 5em">
-                    <span class="d-inline-block"
-                          style="height: inherit; width: inherit;">
-                        <?= $grade ?>
-                    </span>
+                        <span class="d-inline-block"
+                              style="height: inherit; width: inherit;">
+                            <?= $grade ?>
+                        </span>
                         <input name="<?= "a-$studentId-$assignId" ?>"
                                class="d-none" value="<?= $grade ?>"
                                style="height: inherit; width: inherit;">
@@ -115,12 +115,30 @@ $grades = isset($grades) ? $grades : array();
             };
         }
 
-        $('.toggle_row').each((index, ele) => {
+        function bindNeighbors(row) {
+            let $input = $('.row_' + row).find("input");
+            $input.on({
+                change: (e) => {
+                    let $currentTarget = $(e.currentTarget);
+                    let val = $currentTarget.val();
+                    let $span = $currentTarget.siblings("span");
+                    $span.html(val);
+                }
+            });
+        }
+
+        let $toggleRow = $('.toggle_row');
+        let $toggleCol = $('.toggle_col');
+
+        $toggleRow.each((index, ele) => {
             $(ele).on({change: toggleRow(index)});
         });
-
-        $('.toggle_col').each((index, ele) => {
+        $toggleCol.each((index, ele) => {
             $(ele).on({change: toggleCol(index)});
+        });
+
+        $toggleRow.each((index, ele) => {
+            $(ele).on({change: bindNeighbors(index)});
         });
 
         let $detailedSubmit = $("#detailedSubmit");
