@@ -73,7 +73,7 @@
                 url: IDGF.baseURL + "Add_class_controller/recieveClassInfo",
                 data: classData,
                 success: function (data) {
-                    console.log(data);
+                    location.href = IDGF.baseURL + "Class_list_controller/classListView";
                 }
             });
 
@@ -145,7 +145,7 @@
                 url: IDGF.baseURL + "Edit_class_controller/recieveClassInfo",
                 data: classData,
                 success: function (data) {
-                    console.log(data);
+                    location.href = IDGF.baseURL + "Class_list_controller/classListView";
                 }
             });
         });
