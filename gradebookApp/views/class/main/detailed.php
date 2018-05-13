@@ -18,8 +18,11 @@ $grades = isset($grades) ? $grades : array();
         <th scope="col">
             Student Name
         </th>
+        <th></th>
         <?php foreach ($assignmentsNames as $assignmentArray): ?>
             <th scope="col" title="<?= $assignmentArray['name'] ?>">
+                <input type="checkbox" class="toggle_col">
+                <br>
                 <?= $assignmentArray['alias'] ?>
             </th>
         <?php endforeach; ?>
@@ -33,14 +36,21 @@ $grades = isset($grades) ? $grades : array();
             <th scope="row">
                 <?= $studentName ?>
             </th>
+            <td>
+                <input type="checkbox" class="toggle_row">
+            </td>
             <?php $colCount = count($gradeArr['grades']); ?>
             <?php foreach ($gradeArr['grades'] as $col => $grade):
                 $studentId = $gradeArr['studentId'];
                 $assignId = $assignmentsNames[$col]['assignId']; ?>
-                <td class="<?= "col_$col row_$row" ?>">
-                    <span class="d-inline"><?= $grade ?></span>
+                <td class="<?= "col_$col row_$row" ?>" style="height: 1.5em; width: 5em">
+                    <span class="d-inline-block"
+                          style="height: inherit; width: inherit;">
+                        <?= $grade ?>
+                    </span>
                     <input name="<?= "a-$studentId-$assignId" ?>"
-                           class="d-none" value="<?= $grade ?>">
+                           class="d-none" value="<?= $grade ?>"
+                           style="height: inherit; width: inherit;">
                 </td>
             <?php endforeach; ?>
         </tr>
@@ -48,3 +58,45 @@ $grades = isset($grades) ? $grades : array();
     endforeach; ?>
     </tbody>
 </table>
+
+<script>
+    $(document).ready(() => {
+        function toggleRow(row) {
+            return (e) => {
+                let isChecked = $(e.currentTarget).is(":checked");
+                let $td = $('.row_' + row);
+
+                if (isChecked) {
+                    $td.find("span").removeClass("d-inline-block").addClass("d-none");
+                    $td.find("input").removeClass("d-none").addClass("d-inline-block");
+                } else {
+                    $td.find("input").removeClass("d-inline-block").addClass("d-none");
+                    $td.find("span").removeClass("d-none").addClass("d-inline-block");
+                }
+            };
+        }
+
+        function toggleCol(col) {
+            return (e) => {
+                let isChecked = $(e.currentTarget).is(":checked");
+                let $td = $('.col_' + col);
+
+                if (isChecked) {
+                    $td.find("span").removeClass("d-inline-block").addClass("d-none");
+                    $td.find("input").removeClass("d-none").addClass("d-inline-block");
+                } else {
+                    $td.find("input").removeClass("d-inline-block").addClass("d-none");
+                    $td.find("span").removeClass("d-none").addClass("d-inline-block");
+                }
+            };
+        }
+
+        $('.toggle_row').each((index, ele) => {
+            $(ele).on({change: toggleRow(index)});
+        });
+
+        $('.toggle_col').each((index, ele) => {
+            $(ele).on({change: toggleCol(index)});
+        });
+    });
+</script>
