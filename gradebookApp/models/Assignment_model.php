@@ -99,6 +99,7 @@ class Assignment_model extends \MY_Model
             ->where("class_id", $classObj->class_id)
             ->from("assignments")
             ->join($classObj->table_name, "assignments.id = assignment_id", "left")
+            ->order_by('assignments.id', 'ASC')
             ->get()->result_array();
 
         $assignments = array();

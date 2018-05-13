@@ -137,22 +137,29 @@ class Class_controller extends MY_Controller
         foreach ($assignments as $assignment) {
             array_push($assignmentsNames, array(
                 'alias' => $this->_aliasAssignmentName($assignment->assignment_name),
+                'assignId' => $assignment->assignment_id,
                 'name' => $assignment->assignment_name,
             ));
         }
-        $data["assignmentsNames"] = $assignmentsNames;
 
         $grades = array();
         $students = $classObj->getStudents();
         foreach ($students as $student) {
             $studentNameKey = $student->name_last . ", " . $student->name_first;
             $studentId = $student->student_id;
-            $grades[$studentNameKey] = array();
+            $grades[$studentNameKey] = array(
+                'studentId' => $studentId,
+                'grades' => array(),
+            );
             foreach ($assignments as $assignment) {
-                array_push($grades[$studentNameKey], $assignment->getPoints($studentId));
+                array_push($grades[$studentNameKey]['grades'], $assignment->getPoints($studentId));
             }
         }
-        $data["grades"] = $grades;
+
+        $data = array(
+            'assignmentsNames' => $assignmentsNames,
+            'grades' => $grades,
+        );
 
         return $this->load->view("class/main/detailed", $data, true);
     }

@@ -11,12 +11,7 @@ $assignmentsNames = isset($assignmentsNames) ? $assignmentsNames : array();
 $grades = isset($grades) ? $grades : array();
 ?>
 
-
-<span>This is the component where the detailed grades for the students to show.</span>
-
-
 <h4>Students' Grades</h4>
-
 <table class="table">
     <thead>
     <tr>
@@ -31,20 +26,25 @@ $grades = isset($grades) ? $grades : array();
     </tr>
     </thead>
     <tbody>
-    <?php foreach($grades as $studentName => $gradeArr): ?>
-    <tr>
-        <th scope="row">
-            <?= $studentName ?>
-        </th>
-        <?php foreach($gradeArr as $grade):?>
-            <td>
-                <?= $grade ?>
-            </td>
-        <?php endforeach;?>
-    </tr>
-    <?php endforeach; ?>
-
+    <?php $rowCount = count($grades);
+    $row = 0;
+    foreach ($grades as $studentName => $gradeArr): ?>
+        <tr>
+            <th scope="row">
+                <?= $studentName ?>
+            </th>
+            <?php $colCount = count($gradeArr['grades']); ?>
+            <?php foreach ($gradeArr['grades'] as $col => $grade):
+                $studentId = $gradeArr['studentId'];
+                $assignId = $assignmentsNames[$col]['assignId']; ?>
+                <td class="<?= "col_$col row_$row" ?>">
+                    <span class="d-inline"><?= $grade ?></span>
+                    <input name="<?= "a-$studentId-$assignId" ?>"
+                           class="d-none" value="<?= $grade ?>">
+                </td>
+            <?php endforeach; ?>
+        </tr>
+        <?php $row++;
+    endforeach; ?>
     </tbody>
-
-
 </table>
