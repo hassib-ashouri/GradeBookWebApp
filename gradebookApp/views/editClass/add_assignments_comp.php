@@ -15,10 +15,10 @@ $assignments = (isset($assignments)) ? $assignments : array();
 <ul id="groupsList" class="list-group"></ul>
 
 <div class="container d-flex mt-2 mb-2">
-    <button type="button" class="btn mr-auto">
-        <a href="<?= base_url() . 'Class_list_controller/classListView' ?>">
-            Back
-        </a>
+    <?php $backLink = base_url() . 'Class_list_controller/classListView'; ?>
+    <button type="button" class="btn mr-auto"
+            onclick="location.href = '<?= $backLink ?>'">
+        Back
     </button>
     <button id="Submit" type="button" class="btn">Submit Changes</button>
 </div>

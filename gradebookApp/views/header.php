@@ -55,12 +55,12 @@ if (!isset($stylesheets)) {
     </div>
     <div>
         <?php if (isset($name)): ?>
+            <?php $logoutLink = base_url() . 'Login_controller/logout'; ?>
             <!-- only creates if there's a named user -->
-            <form action="<?= base_url() . 'Login_controller/logout' ?>">
-                <button type="submit" class="btn btn-light mt-2">
-                    Logout
-                </button>
-            </form>
+            <button type="button" class="btn btn-light mt-2"
+                    onclick="location.href = '<?= $logoutLink ?>'">
+                Logout
+            </button>
         <?php endif; ?>
     </div>
 </div>
