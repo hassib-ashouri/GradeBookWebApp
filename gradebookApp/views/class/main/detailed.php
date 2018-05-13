@@ -66,6 +66,8 @@ $grades = isset($grades) ? $grades : array();
                 let isChecked = $(e.currentTarget).is(":checked");
                 let $td = $('.row_' + row);
 
+                $td.data("row", isChecked);
+
                 if (isChecked) {
                     $td.find("span").removeClass("d-inline-block").addClass("d-none");
                     $td.find("input").removeClass("d-none").addClass("d-inline-block");
@@ -73,6 +75,15 @@ $grades = isset($grades) ? $grades : array();
                     $td.find("input").removeClass("d-inline-block").addClass("d-none");
                     $td.find("span").removeClass("d-none").addClass("d-inline-block");
                 }
+
+                $td.each((index, ele) => {
+                    let $ele = $(ele);
+                    let colChecked = $ele.data("col");
+                    if (colChecked) {
+                        $ele.find("span").removeClass("d-inline-block").addClass("d-none");
+                        $ele.find("input").removeClass("d-none").addClass("d-inline-block");
+                    }
+                });
             };
         }
 
@@ -81,6 +92,8 @@ $grades = isset($grades) ? $grades : array();
                 let isChecked = $(e.currentTarget).is(":checked");
                 let $td = $('.col_' + col);
 
+                $td.data("col", isChecked);
+
                 if (isChecked) {
                     $td.find("span").removeClass("d-inline-block").addClass("d-none");
                     $td.find("input").removeClass("d-none").addClass("d-inline-block");
@@ -88,6 +101,15 @@ $grades = isset($grades) ? $grades : array();
                     $td.find("input").removeClass("d-inline-block").addClass("d-none");
                     $td.find("span").removeClass("d-none").addClass("d-inline-block");
                 }
+
+                $td.each((index, ele) => {
+                    let $ele = $(ele);
+                    let rowChecked = $ele.data("row");
+                    if (rowChecked) {
+                        $ele.find("span").removeClass("d-inline-block").addClass("d-none");
+                        $ele.find("input").removeClass("d-none").addClass("d-inline-block");
+                    }
+                });
             };
         }
 
