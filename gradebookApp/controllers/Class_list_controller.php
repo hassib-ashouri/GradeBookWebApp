@@ -39,6 +39,7 @@ class Class_list_controller extends MY_Controller
      */
 
     /**
+     * Deletes a class with specified tablename
      * @param string $tableName
      */
     public function deleteClass($tableName)
@@ -48,8 +49,12 @@ class Class_list_controller extends MY_Controller
         $this->load->model("class_model");
         $this->load->model("class_list_model");
 
-        $classObj = $this->class_model->getClass($tableName);
-        $this->class_list_model->deleteClass($classObj);
+        try {
+            $classObj = $this->class_model->getClass($tableName);
+            $this->class_list_model->deleteClass($classObj);
+        } catch (Exception $e) {
+            // fail silently
+        }
 
         redirect('Class_list_controller/classListView');
     }
