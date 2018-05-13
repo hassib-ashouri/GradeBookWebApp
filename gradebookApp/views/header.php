@@ -46,9 +46,21 @@ if (!isset($stylesheets)) {
 </head>
 <meta charset="UTF-8">
 
-<div class="container-fluid bg-primary" style="">
-    <div class="h1">IDGF GradeBook</div>
-    <?php if (isset($name)): ?>
-        <div class="h5"><?= "Welcome, $name!" ?></div>
-    <?php endif; ?>
+<div class="container-fluid bg-primary d-flex" style="">
+    <div class="mr-auto">
+        <div class="h1">IDGF GradeBook</div>
+        <?php if (isset($name)): ?>
+            <div class="h5"><?= "Welcome, $name!" ?></div>
+        <?php endif; ?>
+    </div>
+    <div>
+        <?php if (isset($name)): ?>
+            <!-- only creates if there's a named user -->
+            <form action="<?= base_url() . 'Login_controller/logout' ?>">
+                <button type="submit" class="btn btn-light mt-2">
+                    Logout
+                </button>
+            </form>
+        <?php endif; ?>
+    </div>
 </div>

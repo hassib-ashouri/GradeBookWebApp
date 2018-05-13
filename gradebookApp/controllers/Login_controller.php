@@ -193,6 +193,20 @@ class Login_controller extends MY_Controller
     }
 
     /**
+     * Logs the user out, removes session data, and redirects to login page
+     */
+    public function logout()
+    {
+        $this->session->unset_userdata(array(
+            'loggedUser',
+            'userId',
+            'userName'
+        ));
+
+        redirect("Login_controller/existingUserView");
+    }
+
+    /**
      * Private methods
      */
 }
