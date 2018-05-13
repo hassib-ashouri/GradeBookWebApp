@@ -123,9 +123,22 @@ $grades = isset($grades) ? $grades : array();
             $(ele).on({change: toggleCol(index)});
         });
 
-        $("#detailedSubmit").on({
+        let $detailedSubmit = $("#detailedSubmit");
+
+        $detailedSubmit.on({
             click: (e) => {
                 $("#detailedForm").submit();
+            }
+        });
+
+        $("#details-tab").on({
+            click: () => {
+                $detailedSubmit.fadeIn(600);
+            }
+        });
+        $("#overview-tab, #assignments-tab").on({
+            click: () => {
+                $detailedSubmit.fadeOut(600);
             }
         });
     });
