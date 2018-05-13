@@ -14,10 +14,13 @@ $assignments = (isset($assignments)) ? $assignments : array();
 
 <ul id="groupsList" class="list-group"></ul>
 
-<div class="container mt-2">
-    <div class="d-flex flex-row-reverse mt-4">
-        <button id="Submit" type="button" class="btn">Submit Changes</button>
-    </div>
+<div class="container d-flex mt-2 mb-2">
+    <button type="button" class="btn mr-auto">
+        <a href="<?= base_url() . 'Class_list_controller/classListView' ?>">
+            Back
+        </a>
+    </button>
+    <button id="Submit" type="button" class="btn">Submit Changes</button>
 </div>
 </form>
 <script type="text/javascript">
