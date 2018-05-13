@@ -4,7 +4,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 /**
  * @var String[] the names of the assignments.
  */
-$assignmentsNames = isset($assignmentsNames) ? $assignmentsNames : array("no data");
+$assignmentsNames = isset($assignmentsNames) ? $assignmentsNames : array();
 /**
  * @var array[] where the keys are the names of students and the values are arrays of grades.
  */
@@ -23,9 +23,9 @@ $grades = isset($grades) ? $grades : array();
         <th scope="col">
             Student Name
         </th>
-        <?php foreach ($assignmentsNames as $index => $assignmentName): ?>
-            <th scope="col">
-                <?=$assignmentName ?>
+        <?php foreach ($assignmentsNames as $assignmentArray): ?>
+            <th scope="col" title="<?= $assignmentArray['name'] ?>">
+                <?= $assignmentArray['alias'] ?>
             </th>
         <?php endforeach; ?>
     </tr>
@@ -33,11 +33,9 @@ $grades = isset($grades) ? $grades : array();
     <tbody>
     <?php foreach($grades as $studentName => $gradeArr): ?>
     <tr>
-
         <th scope="row">
             <?= $studentName ?>
         </th>
-
         <?php foreach($gradeArr as $grade):?>
             <td>
                 <?= $grade ?>

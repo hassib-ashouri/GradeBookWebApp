@@ -135,7 +135,10 @@ class Class_controller extends MY_Controller
         $assignmentsNames = array();
         $assignments = $classObj->getAssignments();
         foreach ($assignments as $assignment) {
-            array_push($assignmentsNames, $this->_aliasAssignmentName($assignment->assignment_name));
+            array_push($assignmentsNames, array(
+                'alias' => $this->_aliasAssignmentName($assignment->assignment_name),
+                'name' => $assignment->assignment_name,
+            ));
         }
         $data["assignmentsNames"] = $assignmentsNames;
 
