@@ -23,10 +23,10 @@ $addClassLink = (isset($addClassLink)) ? $addClassLink : '';
                     </a>
                 </div>
                 <div class="mr-1">
-                    <button type="button" class="btn">
-                        <a href="<?= base_url() . 'Edit_class_controller/editClassView/' . $classObj->class_id ?>">
-                            Edit
-                        </a>
+                    <?php $editClassLink = base_url() . 'Edit_class_controller/editClassView/' . $classObj->class_id; ?>
+                    <button type="button" class="btn"
+                            onclick="location.href = '<?= $editClassLink ?>'">
+                        Edit
                     </button>
                 </div>
                 <div>
@@ -41,4 +41,7 @@ $addClassLink = (isset($addClassLink)) ? $addClassLink : '';
         <?php endforeach; ?>
     </ul>
 </div>
-<button class="btn" onclick="location.href = '<?= $addClassLink ?>';">add class</button>
+<button class="btn mt-2 mb-2"
+        onclick="location.href = '<?= $addClassLink ?>';">
+    Add Class
+</button>
