@@ -9,11 +9,16 @@ $assignmentsNames = isset($assignmentsNames) ? $assignmentsNames : array();
  * @var array[] where the keys are the names of students and the values are arrays of grades.
  */
 $grades = isset($grades) ? $grades : array();
+/**
+ * @var string $classId
+ */
+$classId = isset($classId) ? $classId : '';
 ?>
 
 <h4>Students' Grades</h4>
 <form id="detailedForm" method="post"
       action="<?= base_url() . "Class_controller/updateStudentAssignments" ?>">
+    <input type="hidden" name="classId" value="<?= $classId ?>">
     <table class="table">
         <thead>
         <tr>
@@ -78,7 +83,7 @@ $grades = isset($grades) ? $grades : array();
                 <td style="height: 1.5em; width: 1.5em">
                     <input name="<?= "graded-$col" ?>" type="checkbox"
                            value="1"
-                           <?= ($assignmentArray['graded']) ? 'checked' : '' ?>
+                        <?= ($assignmentArray['graded']) ? 'checked' : '' ?>
                            style="height: inherit; width: inherit;">
                 </td>
                 <?php $col++;

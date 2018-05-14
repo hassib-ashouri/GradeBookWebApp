@@ -39,8 +39,47 @@ class Class_controller extends MY_Controller
      * Action methods
      */
 
-    public function updateStudentAssignments() {
-        pretty_dump($this->input->post());
+    /**
+     * Receives post data, and updates the grades of assignments in a class table
+     */
+    public function updateStudentAssignments()
+    {
+        $post = $this->input->post();
+
+        try {
+            $classId = $post['classId'];
+
+            $assignments = array();
+            foreach ($post as $key => $value) {
+                $matches = array();
+                if (preg_match("/a-(\d{9})-(\d+)/", $key, $matches)) {
+                    $studentId = $matches[1];
+                    $assignmentId = $matches[2];
+
+                    if (!isset($assignments[$assignmentId])) {
+                        $tempAssignment = new \Objects\Assignment();
+                        $tempAssignment->class_id = $classId;
+                        $tempAssignment->assignment_id = $assignmentId;
+                        $assignments[$assignmentId] = $tempAssignment;
+                    }
+                    $assignments[$assignmentId]->setPoints($studentId, $value);
+                } else if (preg_match("/graded-(\d+)/", $key, $matches)) {
+                    $assignmentId = $matches[1];
+                    if (!isset($assignments[$assignmentId])) {
+                        $tempAssignment = new \Objects\Assignment();
+                        $assignments[$assignmentId] = $tempAssignment;
+                    }
+                    $assignments[$assignmentId]->graded = $value;
+                }
+            }
+
+            $this->load->model('class_model');
+            $this->class_model->updateStudentAssignments($assignments);
+        } catch (Exception $e) {
+            // cry
+        }
+
+//        pretty_dump($this->input->post());
     }
 
     /**
@@ -165,6 +204,7 @@ class Class_controller extends MY_Controller
         $data = array(
             'assignmentsNames' => $assignmentsNames,
             'grades' => $grades,
+            'classId' => $classObj->class_id,
         );
 
         return $this->load->view("class/main/detailed", $data, true);
