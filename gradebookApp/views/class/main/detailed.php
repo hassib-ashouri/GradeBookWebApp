@@ -23,7 +23,8 @@ $grades = isset($grades) ? $grades : array();
             <th></th>
             <?php foreach ($assignmentsNames as $assignmentArray): ?>
                 <th scope="col" title="<?= $assignmentArray['name'] ?>">
-                    <input type="checkbox" class="toggle_col">
+                    <input type="checkbox" class="toggle_col"
+                           style="height: 1em; width: 1em;">
                     <br>
                     <?= $assignmentArray['alias'] ?>
                 </th>
@@ -31,17 +32,16 @@ $grades = isset($grades) ? $grades : array();
         </tr>
         </thead>
         <tbody>
-        <?php $rowCount = count($grades);
-        $row = 0;
+        <?php $row = 0;
         foreach ($grades as $studentName => $gradeArr): ?>
             <tr>
                 <th scope="row">
                     <?= $studentName ?>
                 </th>
                 <td>
-                    <input type="checkbox" class="toggle_row">
+                    <input type="checkbox" class="toggle_row"
+                           style="height: 1em; width: 1em;">
                 </td>
-                <?php $colCount = count($gradeArr['grades']); ?>
                 <?php foreach ($gradeArr['grades'] as $col => $grade):
                     $studentId = $gradeArr['studentId'];
                     $assignId = $assignmentsNames[$col]['assignId']; ?>
@@ -58,6 +58,32 @@ $grades = isset($grades) ? $grades : array();
             </tr>
             <?php $row++;
         endforeach; ?>
+        <tr>
+            <th>Max Points</th>
+            <td></td>
+            <?php foreach ($assignmentsNames as $assignmentArray): ?>
+                <th style="height: 1.5em; width: 5em">
+                    <span class="d-inline-block"
+                          style="height: inherit; width: inherit;">
+                        <?= $assignmentArray['maxPoints'] ?>
+                    </span>
+                </th>
+            <?php endforeach; ?>
+        </tr>
+        <tr>
+            <th>Graded</th>
+            <td></td>
+            <?php $col = 0;
+            foreach ($assignmentsNames as $assignmentArray): ?>
+                <td style="height: 1.5em; width: 1.5em">
+                    <input name="<?= "graded-$col" ?>" type="checkbox"
+                           value="1"
+                           <?= ($assignmentArray['graded']) ? 'checked' : '' ?>
+                           style="height: inherit; width: inherit;">
+                </td>
+                <?php $col++;
+            endforeach; ?>
+        </tr>
         </tbody>
     </table>
 </form>

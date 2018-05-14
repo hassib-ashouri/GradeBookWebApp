@@ -143,6 +143,8 @@ class Class_controller extends MY_Controller
                 'alias' => $this->_aliasAssignmentName($assignment->assignment_name),
                 'assignId' => $assignment->assignment_id,
                 'name' => $assignment->assignment_name,
+                'graded' => $assignment->graded,
+                'maxPoints' => $assignment->max_points,
             ));
         }
 
