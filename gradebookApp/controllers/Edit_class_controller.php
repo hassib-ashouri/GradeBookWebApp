@@ -121,6 +121,7 @@ class Edit_class_controller extends MY_Controller
                 foreach ($group["assignmentsArr"] as $assignment) {
 
                     $assignmentObj = new \Objects\Assignment();
+                    $assignmentObj->class_id = $classObj->class_id;
                     $assignmentObj->assignment_name = $assignment["assignmentName"];
                     $assignmentObj->type = $groupName;
                     $assignmentObj->weight = $groupWeight;

@@ -16,7 +16,7 @@ class Assignment_model extends \MY_Model
      * Creates an assignment,
      *      also initializes grades for students in a class
      * @param \Objects\Assignment $assignment
-     * @param \Objects\ClassObj $classObj needs students or class_id
+     * @param \Objects\ClassObj $classObj needs students or class_id, also needs table_name
      */
     public function createAssignment($assignment, $classObj)
     {
@@ -146,7 +146,7 @@ class Assignment_model extends \MY_Model
      * Filters out assignments that are marked as new,
      *      and creates them for the specified class
      * @param \Objects\Assignment[] $assignments
-     * @param \Objects\ClassObj $classObj
+     * @param \Objects\ClassObj $classObj needs class_id, and table_name
      */
     private function _addNewAssignments($assignments, $classObj)
     {
@@ -161,6 +161,7 @@ class Assignment_model extends \MY_Model
 
         $tempClass = new \Objects\ClassObj($newAssignments);
         $tempClass->class_id = $classObj->class_id;
+        $tempClass->table_name = $classObj->table_name;
         $this->createAssignments($tempClass);
     }
 

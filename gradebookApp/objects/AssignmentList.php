@@ -24,6 +24,14 @@ class AssignmentList implements \JsonSerializable
      */
     private $grouped = array();
 
+    private $newAssignmentCounter = -1;
+
+    /**
+     *
+     * @var int
+     */
+    const MAX_EDIT_ASSIGNMENTS = 1000;
+
     /**
      * AssignmentList constructor.
      */
@@ -34,6 +42,7 @@ class AssignmentList implements \JsonSerializable
     /**
      * Adds a new assignment to the list
      * @param Assignment $assignment
+     * @throws \Exception
      */
     public function addAssignment($assignment)
     {
@@ -43,7 +52,20 @@ class AssignmentList implements \JsonSerializable
         if (is_null($id)) {
             array_push($this->assignments, $assignment);
         } else {
-            $this->assignments[$id] = $assignment;
+            if ($id == Assignment::NEW_ASSIGNMENT_ID) {
+                if (isset($this->assignments[$this->newAssignmentCounter])) {
+                    if (abs($this->newAssignmentCounter) <= $this::MAX_EDIT_ASSIGNMENTS) {
+                        $this->newAssignmentCounter--;
+                        $this->assignments[$this->newAssignmentCounter] = $assignment;
+                    } else {
+                        throw new \Exception('New Assignment count exceeded MAX_EDIT_ASSIGNMENTS');
+                    }
+                } else {
+                    $this->assignments[$this->newAssignmentCounter] = $assignment;
+                }
+            } else {
+                $this->assignments[$id] = $assignment;
+            }
         }
         // only applies if top level
         if ($this->doGroup) {

@@ -46,7 +46,11 @@ class ClassObj implements \Interfaces\GradeStatistics, \JsonSerializable
             $assignments = $assignmentList;
             $assignmentList = new AssignmentList();
             foreach ($assignments as $assignment) {
-                $assignmentList->addAssignment($assignment);
+                try {
+                    $assignmentList->addAssignment($assignment);
+                } catch (\Exception $e) {
+                    // fail silently
+                }
             }
         }
 
