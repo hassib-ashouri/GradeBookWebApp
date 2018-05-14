@@ -117,13 +117,16 @@ class Class_model extends \MY_Model
 
                 $this->_saveIdMap($tableName);
                 $changedAssignments = $this->_getChangedAssignments($classObj, $assignments);
-                $batchUpdate = array();
+
+                $tableBatchUpdate = array();
+                $assignmentsBatchUpdate = array();
                 foreach ($changedAssignments as $assignment) {
                     $grades = $assignment->getAllPoints();
                     $assignmentId = $assignment->assignment_id;
+
                     foreach ($grades as $studentId => $points) {
                         try {
-                            array_push($batchUpdate, array(
+                            array_push($tableBatchUpdate, array(
                                 'id' => $this->_getAssignmentUpdateId($studentId, $assignmentId),
                                 'points' => $points,
                             ));
@@ -131,9 +134,19 @@ class Class_model extends \MY_Model
                             // fail silently
                         }
                     }
+
+                    array_push($assignmentsBatchUpdate, array(
+                        'id' => $assignmentId,
+                        'graded' => $assignment->graded,
+                    ));
+
                 }
-                if (count($batchUpdate) > 0) {
-                    $this->db->update_batch($tableName, $batchUpdate, 'id');
+
+                if (count($tableBatchUpdate) > 0) {
+                    $this->db->update_batch($tableName, $tableBatchUpdate, 'id');
+                }
+                if (count($assignmentsBatchUpdate) > 0) {
+                    $this->db->update_batch('assignments', $assignmentsBatchUpdate, 'id');
                 }
             } catch (\Exception $e) {
                 // fail silently
