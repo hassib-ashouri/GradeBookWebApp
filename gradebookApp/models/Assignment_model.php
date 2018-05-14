@@ -26,7 +26,8 @@ class Assignment_model extends \MY_Model
 
     /**
      * Creates all specified assignments for a class
-     * @param \Objects\ClassObj $classObj needs assignments, and students or class_id
+     * @param \Objects\ClassObj $classObj needs assignments, and students or class_id,
+     *          also needs table_name
      * @param \Objects\Student[] $students alternate list of students
      */
     public function createAssignments($classObj, $students = null)

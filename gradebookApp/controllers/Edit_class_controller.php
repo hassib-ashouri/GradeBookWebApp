@@ -163,7 +163,7 @@ class Edit_class_controller extends MY_Controller
 
     /**
      * Adds and removes students from the class
-     * @param \Objects\ClassObj $classObj
+     * @param \Objects\ClassObj $classObj needs students, and table_name
      * @param string[] $studentIds
      */
     private function _updateStudents($classObj, $studentIds)
@@ -189,8 +189,14 @@ class Edit_class_controller extends MY_Controller
             }
         }
 
-        // remove old students and add new students.
-        $this->class_model->removeStudents($oldStudentIds, $classObj);
-        $this->class_model->addStudents($newStudents, $classObj);
+        try {
+            $tempClassObj = $this->class_model->getClass($classObj->table_name);
+
+            // remove old students and add new students.
+            $this->class_model->removeStudents($oldStudentIds, $tempClassObj);
+            $this->class_model->addStudents($newStudents, $tempClassObj);
+        } catch (Exception $e) {
+            // suppress exceptions?
+        }
     }
 }
