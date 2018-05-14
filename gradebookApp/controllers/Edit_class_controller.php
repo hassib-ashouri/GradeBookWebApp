@@ -115,7 +115,6 @@ class Edit_class_controller extends MY_Controller
             //loop through each assignment in each group.
             $groupName = $group["groupName"];
             $groupWeight = $group["weight"];
-            $groupStatus = $group["status"]; //it look like we dont need it.
 
             if (isset($group["assignmentsArr"])) {
                 foreach ($group["assignmentsArr"] as $assignment) {
@@ -135,6 +134,12 @@ class Edit_class_controller extends MY_Controller
                     }
                     //add to the assignment list
                     array_push($assignmentsToBeProcessed, $assignmentObj);
+
+                    foreach ($classObj->getAssignments() as $classAssignment) {
+                        if ($classAssignment->assignment_id == $assignmentObj->assignment_id) {
+                            $assignmentObj->graded = $classAssignment->graded;
+                        }
+                    }
                 }
             }
         }
