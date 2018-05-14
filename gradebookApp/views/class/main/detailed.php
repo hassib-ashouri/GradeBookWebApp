@@ -78,16 +78,15 @@ $classId = isset($classId) ? $classId : '';
         <tr>
             <th>Graded</th>
             <td></td>
-            <?php $col = 0;
-            foreach ($assignmentsNames as $assignmentArray): ?>
+            <?php foreach ($assignmentsNames as $assignmentArray):
+                $assignId = $assignmentArray['assignId']; ?>
                 <td style="height: 1.5em; width: 1.5em">
-                    <input name="<?= "graded-$col" ?>" type="checkbox"
+                    <input name="<?= "graded-$assignId" ?>" type="checkbox"
                            value="1"
                         <?= ($assignmentArray['graded']) ? 'checked' : '' ?>
                            style="height: inherit; width: inherit;">
                 </td>
-                <?php $col++;
-            endforeach; ?>
+            <?php endforeach; ?>
         </tr>
         </tbody>
     </table>
