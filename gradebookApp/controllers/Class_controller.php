@@ -49,37 +49,45 @@ class Class_controller extends MY_Controller
         try {
             $classId = $post['classId'];
 
-            $assignments = array();
+            $tempAssignments = array();
             foreach ($post as $key => $value) {
                 $matches = array();
                 if (preg_match("/a-(\d{9})-(\d+)/", $key, $matches)) {
                     $studentId = $matches[1];
                     $assignmentId = $matches[2];
 
-                    if (!isset($assignments[$assignmentId])) {
+                    if (!isset($tempAssignments[$assignmentId])) {
                         $tempAssignment = new \Objects\Assignment();
                         $tempAssignment->class_id = $classId;
                         $tempAssignment->assignment_id = $assignmentId;
-                        $assignments[$assignmentId] = $tempAssignment;
+                        $tempAssignments[$assignmentId] = $tempAssignment;
                     }
-                    $assignments[$assignmentId]->setPoints($studentId, $value);
+                    $tempAssignments[$assignmentId]->setPoints($studentId, $value);
                 } else if (preg_match("/graded-(\d+)/", $key, $matches)) {
                     $assignmentId = $matches[1];
-                    if (!isset($assignments[$assignmentId])) {
+                    if (!isset($tempAssignments[$assignmentId])) {
                         $tempAssignment = new \Objects\Assignment();
-                        $assignments[$assignmentId] = $tempAssignment;
+                        $tempAssignments[$assignmentId] = $tempAssignment;
                     }
-                    $assignments[$assignmentId]->graded = $value;
+                    $tempAssignments[$assignmentId]->graded = $value;
                 }
+            }
+
+            $assignments = array();
+            foreach ($tempAssignments as $tempAssignment) {
+                array_push($assignments, $tempAssignment);
             }
 
             $this->load->model('class_model');
             $this->class_model->updateStudentAssignments($assignments);
+
+            $classObj = $this->class_model->getClassById($classId);
+            $tableName = $classObj->table_name;
+
+            redirect("Class_controller/displayClassInfo/$tableName");
         } catch (Exception $e) {
             // cry
         }
-
-//        pretty_dump($this->input->post());
     }
 
     /**
