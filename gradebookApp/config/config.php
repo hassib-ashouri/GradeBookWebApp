@@ -28,16 +28,16 @@ switch (ENVIRONMENT)
     case 'development':
     case 'testing':
     case 'production':
-        $config['base_url'] = 'http://cmpe131.trybabynamer.com/';
+        $config['base_url'] = 'https://cmpe131.trybabynamer.com/';
         break;
     case 'hassib':
-        $config['base_url'] = 'http://hassib.cmpe131.trybabynamer.com/';
+        $config['base_url'] = 'https://hassib.cmpe131.trybabynamer.com/';
         break;
     case 'manuel':
-        $config['base_url'] = 'http://manuel.cmpe131.trybabynamer.com/';
+        $config['base_url'] = 'https://manuel.cmpe131.trybabynamer.com/';
         break;
     case 'mitchell':
-        $config['base_url'] = 'http://mitchell.cmpe131.trybabynamer.com/';
+        $config['base_url'] = 'https://mitchell.cmpe131.trybabynamer.com/';
         break;
     default:
         header('HTTP/1.1 503 Service Unavailable.', TRUE, 503);

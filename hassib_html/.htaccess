@@ -1,7 +1,11 @@
-# index.php rewrite
-# many thanks to: https://stackoverflow.com/a/6098033
 <IfModule mod_rewrite.c>
-    RewriteEngine on
+    RewriteEngine On
+    # https rewrite
+    # many thanks to: https://stackoverflow.com/a/48861388
+    RewriteCond %{HTTPS} off
+    RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+    # index.php rewrite
+    # many thanks to: https://stackoverflow.com/a/6098033
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^(.*)$ /index.php [NC,QSA,L]
 </IfModule>
