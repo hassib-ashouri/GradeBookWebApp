@@ -71,6 +71,8 @@ if (!function_exists('tableNameFormat')) {
     {
         $className = preg_replace("/\s/", "-", $className);
         $className = preg_replace("/[^A-Za-z\-\d]/", "", $className);
+        $classSection = preg_replace("/\s/", "-", $classSection);
+        $classSection = preg_replace("/[^A-Za-z\-\d]/", "", $classSection);
         $tableName = sprintf("class_%s_%s_%s_table", $classId, $className, $classSection);
 
         return $tableName;

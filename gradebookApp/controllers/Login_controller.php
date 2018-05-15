@@ -148,7 +148,7 @@ class Login_controller extends MY_Controller
             $user = $this->login_model->getUser();
             $userName = $user->name_first . " " . $user->name_last;
             $userId = $user->user_id;
-            redirect(sprintf("Login_controller/newUserView/%s/%s", $userName, $userId));
+            redirect("Login_controller/newUserView");
         } else if (!$isUser || !$validPassword) {
             $this->session->set_flashdata("errorMessage", "Incorrect User ID or Password");
             redirect('Login_controller/existingUserView');
