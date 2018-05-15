@@ -12,6 +12,7 @@
         /**
          * this function should collect the information about inputed about the class.
          */
+        // for add class
         $("#addClass").click(function () {
             var classData = {
                 classId: document.getElementById("classid").value,

@@ -60,6 +60,23 @@ if (!function_exists('redirectNonUser')) {
     }
 }
 
+if (!function_exists('tableNameFormat')) {
+    /**
+     * @param string $classId
+     * @param string $className
+     * @param string $classSection
+     * @return string
+     */
+    function tableNameFormat($classId, $className, $classSection)
+    {
+        $className = preg_replace("/\s/", "-", $className);
+        $className = preg_replace("/[^A-Za-z\-\d]/", "", $className);
+        $tableName = sprintf("class_%s_%s_%s_table", $classId, $className, $classSection);
+
+        return $tableName;
+    }
+}
+
 if (!function_exists('images_url')) {
     /**
      * Gets the absolute url to the assets/images directory
