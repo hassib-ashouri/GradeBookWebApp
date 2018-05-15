@@ -8,6 +8,9 @@ if (!function_exists('gradeLow')) {
      */
     function gradeLow($grades)
     {
+        if (count($grades) == 0) {
+            return null;
+        }
         return min($grades);
     }
 }
@@ -20,6 +23,9 @@ if (!function_exists('gradeHigh')) {
      */
     function gradeHigh($grades)
     {
+        if (count($grades) == 0) {
+            return null;
+        }
         return max($grades);
     }
 }
@@ -32,6 +38,9 @@ if (!function_exists('gradeMean')) {
      */
     function gradeMean($grades)
     {
+        if (count($grades) == 0) {
+            return null;
+        }
         return array_sum($grades) / count($grades);
     }
 }
@@ -67,6 +76,9 @@ if (!function_exists('gradeVar')) {
      */
     function gradeVar($grades)
     {
+        if (count($grades) == 0) {
+            return null;
+        }
         $mean = gradeMean($grades);
         $sumSquares = 0;
         foreach ($grades as $grade) {
@@ -84,6 +96,9 @@ if (!function_exists('gradeStdDev')) {
      */
     function gradeStdDev($grades)
     {
+        if (count($grades) == 0) {
+            return null;
+        }
         $variance = gradeVar($grades);
         return sqrt($variance);
     }

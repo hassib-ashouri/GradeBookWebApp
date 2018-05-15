@@ -96,10 +96,10 @@ class Add_class_controller extends MY_Controller
         }
 
         $classObject = new \Objects\ClassObj($assignmnetList, $students);
-        $classObject->class_id = $postData["classId"];
+        $classObject->class_id = substr($postData["classId"], 0, 5);
         $classObject->professor_id = $postData["professorId"];
         $classObject->class_name = $postData["className"];
-        $classObject->section = $postData["section"];
+        $classObject->section = substr($postData["section"], 0, 2);
         $classObject->class_title = $postData["classTitle"];
         $classObject->meeting_times = $postData["meetingTimes"];
         $classObject->table_name =
